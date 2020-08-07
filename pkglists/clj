@@ -1,0 +1,4 @@
+clojure
+jdk-openjdk
+leiningen
+rlwrap
