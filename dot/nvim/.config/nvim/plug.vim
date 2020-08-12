@@ -6,6 +6,7 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-vinegar'
+Plug 'junegunn/vim-slash'
 Plug 'sheerun/vim-polyglot'
 Plug 'simnalamburt/vim-mundo'
 nmap <leader>u :MundoToggle<CR>
@@ -17,6 +18,7 @@ nnoremap <silent> <leader> :<c-u>WhichKey '<leader>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<leader>'<CR>
 nnoremap <silent> <localleader> :<c-u>WhichKey '<localleader>'<CR>
 vnoremap <silent> <localleader> :<c-u>WhichKeyVisual '<localleader>'<CR>
+Plug 'junegunn/vim-peekaboo'
 
 " Tmux
 Plug 'christoomey/vim-tmux-navigator'
@@ -95,30 +97,28 @@ nmap <leader>gv :GV<CR>
 nmap <leader>gV :GV!<CR>
 
 " Clojure
-Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
-Plug 'clojure-vim/async-clj-omni', { 'for': 'clojure' }
-" Plug 'Olical/conjure', {'tag': '*'}
+Plug 'Olical/conjure', {'tag': '*'}
 Plug 'clojure-vim/vim-jack-in'
 
-" IDE
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'SirVer/ultisnips'
-let g:UltiSnipsExpandTrigger="<C-s>"
-Plug 'honza/vim-snippets'
+" Deoplete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+let g:deoplete#enable_at_startup = 1
+Plug 'ncm2/float-preview.nvim'
+set completeopt-=preview
+let g:float_preview#docked = 0
+Plug 'Shougo/neco-syntax'
+
+" Lint
 Plug 'dense-analysis/ale'
 let g:ale_disable_lsp=1
 let g:ale_virtualtext_cursor=1
 " Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(ale_previous_wrap)
-nmap <silent> ]g <Plug>(ale_next_wrap)
+nmap <silent> [g <Plug>(ale_previous)
+nmap <silent> ]g <Plug>(ale_next)
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
-Plug 'vim-airline/vim-airline'
-let g:airline_section_b=''
-let g:airline#extensions#tabline#enabled=1
-let g:airline#extensions#tabline#show_splits=0
-let g:airline#extensions#tabline#show_buffers=0
+Plug 'itchyny/lightline.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'norcalli/nvim-colorizer.lua'
 
@@ -134,35 +134,5 @@ nmap <leader>pU :PlugUpgrade<CR>
 
 let g:nord_underline=1
 colorscheme nord
+let g:lightline = { 'colorscheme': 'nord' }
 lua require'colorizer'.setup()
-
-" COC
-let g:coc_global_extensions = [
-      \ 'coc-css',
-      \ 'coc-conjure',
-      \ 'coc-html',
-      \ 'coc-json',
-      \ 'coc-snippets',
-      \ 'coc-vimlsp',
-      \ 'coc-xml',
-      \ ]
-
-" Use tab for trigger completion with characters ahead and navigate.
-inoremap <silent><expr> <TAB>
-                  \ pumvisible() ? "\<C-n>" :
-                  \ <SID>check_back_space() ? "\<TAB>" :
-                  \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-      let col = col('.') - 1
-      return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-" position. Coc only does snippet and additional edit on confirm.
-if exists('*complete_info')
-  inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-else
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-endif
