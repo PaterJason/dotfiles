@@ -1,6 +1,0 @@
-{
-  "coc.source.async_clj_omni.priority": 99,
-  "diagnostic.displayByAle": true,
-  "suggest.timeout": 500,
-  "xml.java.home": "/usr/lib/jvm/default"
-}

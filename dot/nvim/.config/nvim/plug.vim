@@ -6,7 +6,6 @@ Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-vinegar'
-Plug 'junegunn/vim-slash'
 Plug 'sheerun/vim-polyglot'
 Plug 'simnalamburt/vim-mundo'
 nmap <leader>u :MundoToggle<CR>
@@ -32,20 +31,21 @@ nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
 Plug 'junegunn/fzf.vim'
 " Customize fzf colors to match your color scheme
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+let g:fzf_colors = {
+      \ 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment']
+      \ }
 " Start fzf in a popup window
 let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.6 } }
 " FZF maps
@@ -62,7 +62,6 @@ nmap <leader>fl :BLines<CR>
 nmap <leader>fL :Lines<CR>
 nmap <leader>fm :Maps<CR>
 nmap <leader>fr :Rg<CR>
-nmap <leader>fs :Snippets<CR>
 nmap <leader>ft :BTags<CR>
 nmap <leader>fT :Tags<CR>
 nmap <leader>fw :Windows<CR>
@@ -80,8 +79,7 @@ xmap ga <Plug>(LiveEasyAlign)
 nmap ga <Plug>(LiveEasyAlign)
 
 " Parens
-Plug 'machakann/vim-sandwich'
-let g:textobj_sandwich_no_default_key_mappings = 1
+Plug 'tpope/vim-surround'
 Plug 'guns/vim-sexp'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
 
@@ -97,29 +95,35 @@ nmap <leader>gv :GV<CR>
 nmap <leader>gV :GV!<CR>
 
 " Clojure
-Plug 'Olical/conjure', {'tag': '*'}
+Plug 'Olical/conjure', {'tag': '*', 'on': 'ConjureConnect'}
+nmap <localleader>cc :ConjureConnect<CR>
 Plug 'clojure-vim/vim-jack-in'
 
-" Deoplete
+" IDE
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 let g:deoplete#enable_at_startup = 1
 Plug 'ncm2/float-preview.nvim'
 set completeopt-=preview
 let g:float_preview#docked = 0
-Plug 'Shougo/neco-syntax'
 
-" Lint
-Plug 'dense-analysis/ale'
-let g:ale_disable_lsp=1
-let g:ale_virtualtext_cursor=1
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(ale_previous)
-nmap <silent> ]g <Plug>(ale_next)
+if has('nvim-0.5')
+  Plug 'neovim/nvim-lsp'
+  Plug 'Shougo/deoplete-lsp'
+  Plug 'nvim-lua/diagnostic-nvim'
+  nmap <silent> [g :PrevDiagnostic<CR>
+  nmap <silent> ]g :NextDiagnostic<CR>
+else
+  Plug 'dense-analysis/ale'
+  let g:ale_disable_lsp=1
+  let g:ale_virtualtext_cursor=1
+  " Use `[g` and `]g` to navigate diagnostics
+  nmap <silent> [g <Plug>(ale_previous)
+  nmap <silent> ]g <Plug>(ale_next)
+endif
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
 Plug 'itchyny/lightline.vim'
-Plug 'machakann/vim-highlightedyank'
 Plug 'norcalli/nvim-colorizer.lua'
 
 call plug#end()
@@ -136,3 +140,21 @@ let g:nord_underline=1
 colorscheme nord
 let g:lightline = { 'colorscheme': 'nord' }
 lua require'colorizer'.setup()
+
+" IDE
+call deoplete#custom#option({ 'ignore_sources': {'_': ['buffer']} })
+call deoplete#custom#source('conjure', 'rank', 501)
+if has('nvim-0.5')
+  nnoremap <silent> gd    :lua vim.lsp.buf.declaration()<CR>
+  nnoremap <silent> <c-]> :lua vim.lsp.buf.definition()<CR>
+  nnoremap <silent> K     :lua vim.lsp.buf.hover()<CR>
+  nnoremap <silent> gD    :lua vim.lsp.buf.implementation()<CR>
+  nnoremap <silent> gK    :lua vim.lsp.buf.signature_help()<CR>
+  nnoremap <silent> 1gD   :lua vim.lsp.buf.type_definition()<CR>
+  nnoremap <silent> gr    :lua vim.lsp.buf.references()<CR>
+  nnoremap <silent> g0    :lua vim.lsp.buf.document_symbol()<CR>
+  nnoremap <silent> gW    :lua vim.lsp.buf.workspace_symbol()<CR>
+
+  lua require('lsp')
+  autocmd BufEnter * lua require'diagnostic'.on_attach()
+endif
