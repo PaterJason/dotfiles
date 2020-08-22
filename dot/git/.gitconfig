@@ -1,3 +1,5 @@
 [user]
 	email = jsn@juxt.pro
 	name = Jason Paterson
+[pull]
+	rebase = false

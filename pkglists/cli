@@ -1,5 +1,6 @@
 bat
 ctags
+fd
 fish
 fzf
 git
@@ -16,4 +17,5 @@ ripgrep
 stow
 sudo
 tmux
+tree
 xsel
