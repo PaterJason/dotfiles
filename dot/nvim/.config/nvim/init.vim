@@ -56,4 +56,6 @@ set signcolumn=auto:2
 set updatetime=100
 
 " Plugins
-source $HOME/.config/nvim/plug.vim
+if !empty(globpath(&rtp, 'autoload/plug.vim'))
+  source $HOME/.config/nvim/plug.vim
+endif
