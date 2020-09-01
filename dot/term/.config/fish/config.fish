@@ -1,9 +1,9 @@
-# fish_vi_key_bindings
-fzf_key_bindings
-
 set -gx fish_greeting ""
 
 # fzf
+if type -q fzf
+  fzf_key_bindings
+end
 set -gx FZF_DEFAULT_COMMAND "fd --type f"
 set -gx FZF_CTRL_T_COMMAND "fd"
 set -gx FZF_ALT_C_COMMAND "fd --type d"
@@ -18,3 +18,5 @@ if type -q nvim
   set -gx VISUAL nvim
   set -gx MANPAGER "nvim +Man!"
 end
+
+set -gx PATH ~/bin $PATH

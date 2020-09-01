@@ -13,5 +13,8 @@ In the `dot` directory:
 stow *
 ```
 
-## etc
+## Global config
 Copy `etc` files into `/etc/`
+
+## Bash scripts
+Run scripts in the `sh` directory
