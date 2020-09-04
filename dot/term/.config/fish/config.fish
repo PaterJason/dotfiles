@@ -19,4 +19,6 @@ if type -q nvim
   set -gx MANPAGER "nvim +Man!"
 end
 
-set -gx PATH ~/bin $PATH
+if test -d ~/bin
+  set -gx PATH ~/bin $PATH
+end
