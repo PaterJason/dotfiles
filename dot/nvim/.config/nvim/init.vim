@@ -22,6 +22,9 @@ set lazyredraw
 set colorcolumn=80
 set number relativenumber
 set noshowmode
+if has('nvim-0.5')
+  au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200}
+endif
 
 set fillchars=fold:\ ,diff:\ 
 set tabstop=4
@@ -88,7 +91,7 @@ Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 
 " Parens
-Plug 'tpope/vim-surround'
+Plug 'machakann/vim-sandwich'
 Plug 'guns/vim-sexp'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
 
@@ -97,7 +100,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
 " Clojure
-Plug 'Olical/conjure', {'tag': '*'}
+Plug 'Olical/conjure', { 'tag': '*' }
 Plug 'clojure-vim/vim-jack-in'
 
 " IDE
@@ -112,6 +115,8 @@ if has('nvim-0.5')
 else
   Plug 'dense-analysis/ale'
 endif
+" Fix for deoplete and gitgutter conflict
+Plug 'antoinemadec/FixCursorHold.nvim'
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
@@ -127,7 +132,13 @@ silent if !empty(glob('~/.local/share/nvim/plugged/*'))
 let g:nord_underline = 1
 colorscheme nord
 let g:lightline = { 'colorscheme': 'nord' }
-lua require'colorizer'.setup()
+lua require'colorizer'.setup {
+      \ '*';
+      \ css = { css = true; };
+      \ scss = { css = true; };
+      \ '!vim-plug';
+      \ '!fugitive';
+      \ }
 
 " Maps
 nnoremap <silent> <leader> :<c-u>WhichKey '<leader>'<CR>
@@ -151,15 +162,18 @@ imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-l> <plug>(fzf-complete-line)
 " Leader
+nmap <leader>f: :Commands<CR>
 nmap <leader>fb :Buffers<CR>
-nmap <leader>fc :Commands<CR>
 nmap <leader>ff :Files<CR>
 nmap <leader>fF :Filetypes<CR>
 nmap <leader>fgC :BCommits<CR>
 nmap <leader>fgc :Commits<CR>
 nmap <leader>fgf :GFiles<CR>
 nmap <leader>fgs :GFiles?<CR>
-nmap <leader>fh :Helptags<CR>
+nmap <leader>fh/ :History/<CR>
+nmap <leader>fh: :History:<CR>
+nmap <leader>fhf :History<CR>
+nmap <leader>fH :Helptags<CR>
 nmap <leader>fl :BLines<CR>
 nmap <leader>fL :Lines<CR>
 nmap <leader>fr :Rg<CR>
@@ -185,6 +199,8 @@ let g:targets_nl = 'nN'
 " Only consider targets around cursor
 let g:targets_seekRanges = 'cc cr cb cB lc ac Ac lr lb ar ab lB Ar aB Ab AB'
 
+runtime macros/sandwich/keymap/surround.vim
+
 " FZF
 let g:fzf_colors = {
       \ 'fg':      ['fg', 'Normal'],
@@ -207,39 +223,30 @@ let g:fzf_action = {
       \ 'ctrl-s': 'split',
       \ 'ctrl-v': 'vsplit' }
 
-
 " Conjure
+let g:gitgutter_sign_priority = 50
+
 let g:conjure#mapping#doc_word = 'K'
 let g:conjure#log#hud#width = 0.5
 let g:conjure#log#hud#height = 0.5
 
 " IDE
-let g:deoplete#enable_at_startup = 1
-let g:float_preview#docked = 0
 let g:UltiSnipsExpandTrigger = "<Tab>"
 let g:UltiSnipsJumpForwardTrigger = "<C-l>"
 let g:UltiSnipsJumpBackwardTrigger = "<C-h>"
+
+let g:deoplete#enable_at_startup = 1
+let g:float_preview#docked = 0
 call deoplete#custom#option({
-      \ 'ignore_sources': {'_': ['buffer']},
-      \ 'min_pattern_length': 1
+      \ 'ignore_sources': {'_': ['around', 'buffer']},
+      \ 'min_pattern_length': 1,
       \ })
-call deoplete#custom#source('conjure', 'rank', 501)
+call deoplete#custom#source('conjure', 'rank', 600)
+
 if has('nvim-0.5')
-  nnoremap <silent> gd    :lua vim.lsp.buf.declaration()<CR>
-  nnoremap <silent> <c-]> :lua vim.lsp.buf.definition()<CR>
-  nnoremap <silent> K     :lua vim.lsp.buf.hover()<CR>
-  nnoremap <silent> gD    :lua vim.lsp.buf.implementation()<CR>
-  nnoremap <silent> gK    :lua vim.lsp.buf.signature_help()<CR>
-  nnoremap <silent> 1gD   :lua vim.lsp.buf.type_definition()<CR>
-  nnoremap <silent> gr    :lua vim.lsp.buf.references()<CR>
-  nnoremap <silent> g0    :lua vim.lsp.buf.document_symbol()<CR>
-  nnoremap <silent> gW    :lua vim.lsp.buf.workspace_symbol()<CR>
-
-  nmap <silent> [g :PrevDiagnostic<CR>
-  nmap <silent> ]g :NextDiagnostic<CR>
-
   lua require('lsp')
-  autocmd BufEnter * lua require'diagnostic'.on_attach()
+  let g:diagnostic_enable_virtual_text = 1
+  let g:diagnostic_auto_popup_while_jump = 0
 else
   let g:ale_disable_lsp = 1
   let g:ale_virtualtext_cursor = 1
