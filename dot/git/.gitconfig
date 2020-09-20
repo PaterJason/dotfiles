@@ -3,3 +3,7 @@
 	name = Jason Paterson
 [pull]
 	rebase = false
+[core]
+	excludesfile = ~/.gitexcludes
+[commit]
+	gpgsign = true
