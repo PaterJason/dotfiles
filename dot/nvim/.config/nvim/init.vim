@@ -26,10 +26,10 @@ if has('nvim-0.5')
   au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=200}
 endif
 
-set fillchars=fold:\ ,diff:\ 
 set tabstop=4
 set list
-set listchars=tab:»\ ,trail:·,nbsp:⎵
+set listchars=tab:»\ ,trail:·,nbsp:·
+set fillchars=fold:\ ,diff:\ "
 
 " Edit
 set nojoinspaces
@@ -51,10 +51,6 @@ set diffopt=filler,vertical,algorithm:histogram,indent-heuristic
 set splitright splitbelow
 set winwidth=90
 
-" Clojure
-let g:clojure_maxlines = 0
-let g:clojure_align_subforms = 1
-
 " Gutter
 set updatetime=100
 
@@ -62,7 +58,7 @@ set updatetime=100
 set completeopt=menuone,noinsert,noselect
 " }}}
 " VIM-PLUG {{{
-silent if plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.local/share/nvim/plugged')
 " Util
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
@@ -98,6 +94,7 @@ Plug 'tpope/vim-sexp-mappings-for-regular-people'
 " Git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+Plug 'lambdalisue/gina.vim'
 
 " Clojure
 Plug 'Olical/conjure', { 'tag': '*' }
@@ -109,7 +106,7 @@ Plug 'ncm2/float-preview.nvim'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 if has('nvim-0.5')
-  Plug 'neovim/nvim-lsp'
+  Plug 'neovim/nvim-lspconfig'
   Plug 'Shougo/deoplete-lsp'
   Plug 'nvim-lua/diagnostic-nvim'
 else
@@ -120,18 +117,15 @@ Plug 'antoinemadec/FixCursorHold.nvim'
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
-Plug 'itchyny/lightline.vim'
+Plug 'vim-airline/vim-airline'
 Plug 'norcalli/nvim-colorizer.lua'
 
 call plug#end()
-endif
 " }}}
 " PLUGIN CONFIG {{{
-silent if !empty(glob('~/.local/share/nvim/plugged/*'))
 " Pretty
 let g:nord_underline = 1
 colorscheme nord
-let g:lightline = { 'colorscheme': 'nord' }
 lua require'colorizer'.setup {
       \ '*';
       \ css = { css = true; };
@@ -140,65 +134,81 @@ lua require'colorizer'.setup {
       \ '!fugitive';
       \ }
 
+" Airline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#show_splits = 0
+let g:airline#extensions#tabline#show_tab_type = 0
+let g:airline#extensions#tabline#tab_min_count = 2
+let g:airline#extensions#branch#enabled = 0
+let g:airline#extensions#hunks#enabled = 0
+let g:airline_symbols_ascii = 1
+
 " Maps
 nnoremap <silent> <leader> :<c-u>WhichKey '<leader>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<leader>'<CR>
 nnoremap <silent> <localleader> :<c-u>WhichKey '<localleader>'<CR>
 vnoremap <silent> <localleader> :<c-u>WhichKeyVisual '<localleader>'<CR>
 
-nmap <leader>pc :PlugClean<CR>
-nmap <leader>pd :PlugDiff<CR>
-nmap <leader>pi :PlugInstall<CR>
-nmap <leader>ps :PlugStatus<CR>
-nmap <leader>pu :PlugUpdate<CR>
-nmap <leader>pU :PlugUpgrade<CR>
+nmap <silent> <leader>pc :PlugClean<CR>
+nmap <silent> <leader>pd :PlugDiff<CR>
+nmap <silent> <leader>pi :PlugInstall<CR>
+nmap <silent> <leader>ps :PlugStatus<CR>
+nmap <silent> <leader>pu :PlugUpdate<CR>
+nmap <silent> <leader>pU :PlugUpgrade<CR>
 
 " Mapping selecting mappings
-nmap <leader>m <plug>(fzf-maps-n)
-xmap <leader>m <plug>(fzf-maps-x)
-omap <leader>m <plug>(fzf-maps-o)
+nmap <leader>fm <plug>(fzf-maps-n)
+xmap <leader>fm <plug>(fzf-maps-x)
+omap <leader>fm <plug>(fzf-maps-o)
 " Insert mode completion
 imap <c-x><c-k> <plug>(fzf-complete-word)
 imap <c-x><c-f> <plug>(fzf-complete-path)
 imap <c-x><c-l> <plug>(fzf-complete-line)
 " Leader
-nmap <leader>f: :Commands<CR>
-nmap <leader>fb :Buffers<CR>
-nmap <leader>ff :Files<CR>
-nmap <leader>fF :Filetypes<CR>
-nmap <leader>fgC :BCommits<CR>
-nmap <leader>fgc :Commits<CR>
-nmap <leader>fgf :GFiles<CR>
-nmap <leader>fgs :GFiles?<CR>
-nmap <leader>fh/ :History/<CR>
-nmap <leader>fh: :History:<CR>
-nmap <leader>fhf :History<CR>
-nmap <leader>fH :Helptags<CR>
-nmap <leader>fl :BLines<CR>
-nmap <leader>fL :Lines<CR>
-nmap <leader>fr :Rg<CR>
-nmap <leader>fs :Snippets<CR>
-nmap <leader>ft :BTags<CR>
-nmap <leader>fT :Tags<CR>
-nmap <leader>fw :Windows<CR>
+nmap <silent> <leader>f: :Commands<CR>
+nmap <silent> <leader>fb :Buffers<CR>
+nmap <silent> <leader>ff :Files<CR>
+nmap <silent> <leader>fF :Filetypes<CR>
+nmap <silent> <leader>fgC :BCommits<CR>
+nmap <silent> <leader>fgc :Commits<CR>
+nmap <silent> <leader>fgf :GFiles<CR>
+nmap <silent> <leader>fgs :GFiles?<CR>
+nmap <silent> <leader>fh/ :History/<CR>
+nmap <silent> <leader>fh: :History:<CR>
+nmap <silent> <leader>fhf :History<CR>
+nmap <silent> <leader>fH :Helptags<CR>
+nmap <silent> <leader>fl :BLines<CR>
+nmap <silent> <leader>fL :Lines<CR>
+nmap <silent> <leader>fr :Rg<CR>
+nmap <silent> <leader>fs :Snippets<CR>
+nmap <silent> <leader>ft :BTags<CR>
+nmap <silent> <leader>fT :Tags<CR>
+nmap <silent> <leader>fw :Windows<CR>
 
-nmap <leader>gg :Git<Space>
-nmap <leader>gb :Git blame<CR>
-nmap <leader>gd :Gdiffsplit!<CR>
-nmap <leader>gs :Git<CR>
+nmap <leader>g<Space> :Git<Space>
+nmap <silent> <leader>gb :Git blame<CR>
+nmap <silent> <leader>gd :Gdiffsplit!<CR>
+nmap <silent> <leader>gg :Git<CR>
+nmap <leader>gi :Gina<Space>
+nmap <silent> <leader>gG :Gina status<CR>
+nmap <leader>gp <Plug>(GitGutterPreviewHunk)
+nmap <leader>gs <Plug>(GitGutterStageHunk)
+nmap <leader>gu <Plug>(GitGutterUndoHunk)
+vmap <leader>gs <Plug>(GitGutterStageHunk)
 
 nmap <leader>G :Grepper<CR>
 nmap gs <plug>(GrepperOperator)
 xmap gs <plug>(GrepperOperator)
 
-nmap <leader>u :MundoToggle<CR>
+nmap <silent> <leader>u :MundoToggle<CR>
 
-" Targets
+" Text
 " Seek next and last text objects
 let g:targets_nl = 'nN'
 " Only consider targets around cursor
 let g:targets_seekRanges = 'cc cr cb cB lc ac Ac lr lb ar ab lB Ar aB Ab AB'
-
+" Use vim surround like bindings
 runtime macros/sandwich/keymap/surround.vim
 
 " FZF
@@ -224,13 +234,13 @@ let g:fzf_action = {
       \ 'ctrl-v': 'vsplit' }
 
 " Conjure
-let g:gitgutter_sign_priority = 50
-
 let g:conjure#mapping#doc_word = 'K'
 let g:conjure#log#hud#width = 0.5
 let g:conjure#log#hud#height = 0.5
 
 " IDE
+let g:gitgutter_sign_priority = 50
+
 let g:UltiSnipsExpandTrigger = "<Tab>"
 let g:UltiSnipsJumpForwardTrigger = "<C-l>"
 let g:UltiSnipsJumpBackwardTrigger = "<C-h>"
@@ -253,6 +263,5 @@ else
   " Use `[g` and `]g` to navigate diagnostics
   nmap <silent> [g <Plug>(ale_previous)
   nmap <silent> ]g <Plug>(ale_next)
-endif
 endif
 " }}}

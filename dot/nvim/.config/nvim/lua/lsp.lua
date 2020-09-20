@@ -1,4 +1,3 @@
-local vim = vim
 local nvim_lsp = require 'nvim_lsp'
 
 local set_keymap = function(bufnr, mode, lhs, rhs)
@@ -7,6 +6,8 @@ local set_keymap = function(bufnr, mode, lhs, rhs)
 end
 
 local on_attach = function(client, bufnr)
+	print("LSP attached")
+
 	require'diagnostic'.on_attach(client, bufnr)
 
 	set_keymap(bufnr, 'n', '[g', ':PrevDiagnostic<CR>')
@@ -29,16 +30,7 @@ local on_attach = function(client, bufnr)
 	set_keymap(bufnr, 'n', '<leader>lw', ':lua vim.lsp.buf.workspace_symbol()<CR>')
 end
 
-local servers = {'bashls', 'cssls', 'html', 'jsonls', 'sumneko_lua', 'vimls'}
-for _, server in ipairs(servers) do
-	nvim_lsp[server].setup {
-		on_attach = on_attach,
-	}
-end
-
-local clj_on_attach = function(client, bufnr)
-	on_attach(client, bufnr)
-
+local clj_on_attach = function(_, bufnr)
 	set_keymap(bufnr, 'n', '<leader>rcc', ":lua require'call'.clj_lsp_cmd('cycle-coll')<CR>")
 	set_keymap(bufnr, 'n', '<leader>rth', ":lua require'call'.clj_lsp_cmd('thread-first')<CR>")
 	set_keymap(bufnr, 'n', '<leader>rtt', ":lua require'call'.clj_lsp_cmd('thread-last')<CR>")
@@ -57,8 +49,32 @@ local clj_on_attach = function(client, bufnr)
 end
 
 nvim_lsp.clojure_lsp.setup{
+	on_attach = function(client, bufnr)
+		on_attach(client, bufnr)
+		clj_on_attach(client, bufnr)
+	end,
 	init_options = {
 		["ignore-classpath-directories"] = true,
-	},
-	on_attach = clj_on_attach,
+	}
 }
+
+nvim_lsp.sumneko_lua.setup{
+	on_attach = on_attach,
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = { "vim" }
+			},
+			workspace = {
+				library = { [vim.fn.expand("$VIMRUNTIME/lua")] = true }
+			}
+		}
+	}
+}
+
+local servers = {'bashls', 'cssls', 'html', 'jsonls', 'vimls'}
+for _, server in ipairs(servers) do
+	nvim_lsp[server].setup {
+		on_attach = on_attach,
+	}
+end

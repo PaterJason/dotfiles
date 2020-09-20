@@ -1,5 +1,3 @@
-local vim = vim
-
 local M = {}
 
 M.clj_lsp_cmd = function(cmd, prompt)
