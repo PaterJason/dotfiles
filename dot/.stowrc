@@ -1,2 +1,2 @@
---no-folding
+--verbose=1
 --target=$HOME

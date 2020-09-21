@@ -1,6 +1,3 @@
-set -gx fish_greeting ""
-fish_vi_key_bindings
-
 # fzf
 if type -q fzf
   fzf_key_bindings
