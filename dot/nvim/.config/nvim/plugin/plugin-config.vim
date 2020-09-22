@@ -9,6 +9,18 @@ lua require'colorizer'.setup {
       \ '!fugitive';
       \ }
 
+" Which Key
+function! WhichKeyFormat(mapping) abort
+  let l:ret = a:mapping
+  let l:ret = substitute(l:ret, '\c<cr>$', '', '')
+  let l:ret = substitute(l:ret, '^:', '', '')
+  let l:ret = substitute(l:ret, '^<cmd>', '', '')
+  let l:ret = substitute(l:ret, '^\c<c-u>', '', '')
+  let l:ret = substitute(l:ret, '^<Plug>', '', '')
+  return l:ret
+endfunction
+let g:WhichKeyFormatFunc = function('WhichKeyFormat')
+
 " Airline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_buffers = 0
