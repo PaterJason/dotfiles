@@ -53,6 +53,8 @@ set winwidth=90
 set updatetime=100
 
 " Completion
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 set completeopt=menuone,noinsert,noselect
 " }}}
 " PLUG BLOCK {{{
@@ -102,19 +104,24 @@ Plug 'Olical/conjure', { 'tag': '*' }
 Plug 'clojure-vim/vim-jack-in'
 
 " IDE
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'ncm2/float-preview.nvim'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
-  Plug 'Shougo/deoplete-lsp'
+  Plug 'nvim-lua/completion-nvim'
+  Plug 'm00qek/completion-conjure'
   Plug 'nvim-lua/diagnostic-nvim'
+
+  Plug 'nvim-lua/popup.nvim'
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-lua/telescope.nvim'
 else
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'ncm2/float-preview.nvim'
   Plug 'dense-analysis/ale'
+  " Fix for deoplete and gitgutter conflict
+  Plug 'antoinemadec/FixCursorHold.nvim'
 endif
-" Fix for deoplete and gitgutter conflict
-Plug 'antoinemadec/FixCursorHold.nvim'
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
@@ -191,23 +198,31 @@ let g:conjure#log#hud#height = 0.5
 " IDE
 let g:gitgutter_sign_priority = 50
 
-let g:UltiSnipsExpandTrigger = "<Tab>"
-let g:UltiSnipsJumpForwardTrigger = "<C-l>"
-let g:UltiSnipsJumpBackwardTrigger = "<C-h>"
-
-let g:deoplete#enable_at_startup = 1
-let g:float_preview#docked = 0
-call deoplete#custom#option({
-      \ 'ignore_sources': {'_': ['around', 'buffer']},
-      \ 'min_pattern_length': 1,
-      \ })
-call deoplete#custom#source('conjure', 'rank', 600)
-
 if has('nvim-0.5')
   lua require('lsp')
   let g:diagnostic_enable_virtual_text = 1
   let g:diagnostic_auto_popup_while_jump = 0
+
+  let g:vsnip_snippet_dir = expand('~/.config/nvim/vsnip')
+  let g:completion_chain_complete_list = {
+      \ 'default': [
+      \   {'complete_items': ['lsp', 'snippet', 'path']},
+      \ ],
+      \ 'clojure': [
+      \   {'complete_items': ['conjure', 'lsp', 'snippet', 'path']},
+      \ ],
+      \ }
+  let g:completion_enable_snippet = 'vim-vsnip'
+  autocmd BufEnter * lua require'completion'.on_attach()
 else
+  let g:deoplete#enable_at_startup = 1
+  let g:float_preview#docked = 0
+  call deoplete#custom#option({
+        \ 'ignore_sources': {'_': ['around', 'buffer']},
+        \ 'min_pattern_length': 1,
+        \ })
+  call deoplete#custom#source('conjure', 'rank', 600)
+
   let g:ale_disable_lsp = 1
   let g:ale_virtualtext_cursor = 1
   " Use `[g` and `]g` to navigate diagnostics
@@ -235,10 +250,6 @@ nmap <leader>fm <cmd>Maps<CR>
 xmap <leader>fm <plug>(fzf-maps-x)
 omap <leader>fm <plug>(fzf-maps-o)
 
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-
 nmap <silent> <leader>f: <cmd>Commands<CR>
 nmap <silent> <leader>fb <cmd>Buffers<CR>
 nmap <silent> <leader>ff <cmd>Files<CR>
@@ -258,6 +269,24 @@ nmap <silent> <leader>fs <cmd>Snippets<CR>
 nmap <silent> <leader>ft <cmd>BTags<CR>
 nmap <silent> <leader>fT <cmd>Tags<CR>
 nmap <silent> <leader>fw <cmd>Windows<CR>
+
+" Telescope
+nmap <silent> <leader>t: <cmd>lua require'telescope.builtin'.commands{}<CR>
+nmap <silent> <leader>t? <cmd>lua require'telescope.builtin'.builtin{}<CR>
+nmap <silent> <leader>tF <cmd>lua require'telescope.builtin'.find_files{}<CR>
+nmap <silent> <leader>tG <cmd>lua require'telescope.builtin'.grep_string{}<CR>
+nmap <silent> <leader>tH <cmd>lua require'telescope.builtin'.help_tags{}<CR>
+nmap <silent> <leader>tb <cmd>lua require'telescope.builtin'.buffers{}<CR>
+nmap <silent> <leader>tc <cmd>lua require'telescope.builtin'.current_buffer_fuzzy_find{}<CR>
+nmap <silent> <leader>tf <cmd>lua require'telescope.builtin'.git_files{}<CR>
+nmap <silent> <leader>tg <cmd>lua require'telescope.builtin'.live_grep{}<CR>
+nmap <silent> <leader>tl <cmd>lua require'telescope.builtin'.loclist{}<CR>
+nmap <silent> <leader>tm <cmd>lua require'telescope.builtin'.man_pages{}<CR>
+nmap <silent> <leader>tq <cmd>lua require'telescope.builtin'.quickfix{}<CR>
+nmap <silent> <leader>tr <cmd>lua require'telescope.builtin'.reloader{}<CR>
+
+nmap <silent> <leader>th: <cmd>lua require'telescope.builtin'.command_history{}<CR>
+nmap <silent> <leader>thf <cmd>lua require'telescope.builtin'.oldfiles{}<CR>
 
 " Git
 nmap <leader>g<Space> :Git<Space>
