@@ -6,7 +6,8 @@ local set_keymap = function(bufnr, mode, lhs, rhs)
 end
 
 local on_attach = function(client, bufnr)
-  print("LSP attached")
+  local name = client.name
+  print(name .. " attached")
 
   require'diagnostic'.on_attach(client, bufnr)
 
@@ -15,9 +16,11 @@ local on_attach = function(client, bufnr)
   set_keymap(bufnr, 'n', '<leader>do', '<cmd>OpenDiagnostic<CR>')
   set_keymap(bufnr, 'n', '<leader>ds', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
 
+  if name ~= "bashls" and name ~= "vimls" then
+    set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
+  end
   set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>')
   set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>')
-  set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>')
   set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
   set_keymap(bufnr, 'v', '<leader>l=', "<cmd>lua require'call'.range_formatting()<CR>")
   set_keymap(bufnr, 'n', '<leader>l=', '<cmd>lua vim.lsp.buf.formatting()<CR>')

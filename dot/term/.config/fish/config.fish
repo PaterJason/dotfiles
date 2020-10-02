@@ -15,7 +15,7 @@ if type -q bat && type -q tree
 end
 
 if type -q bat
-  set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+  set -gx MANPAGER "sh -c 'col -bx | bat -l man --paging=always -p'"
 end
 
 eval (dircolors -c)
