@@ -5,5 +5,3 @@
 	rebase = false
 [core]
 	excludesfile = ~/.gitexcludes
-[commit]
-	gpgsign = true
