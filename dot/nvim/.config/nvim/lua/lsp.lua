@@ -1,5 +1,4 @@
-local nvim_lsp = require 'nvim_lsp'
-local diagnostic = require 'diagnostic'
+local lspconfig = require 'lspconfig'
 local util = require'util'
 
 vim.cmd("autocmd BufEnter * lua require'completion'.on_attach()")
@@ -51,42 +50,30 @@ local on_attach = function(client, bufnr)
   local name = client.name
   print(name .. " attached")
 
-  diagnostic.on_attach(client, bufnr)
-
   util.buf_set_maps(bufnr, {
-      {'n', '[g', '<cmd>PrevDiagnostic<CR>'},
-      {'n', ']g', '<cmd>NextDiagnostic<CR>'},
-      {'n', '<leader>do', '<cmd>OpenDiagnostic<CR>'},
-      {'n', '<leader>ds', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>'},
+      {'n', '[g', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
+      {'n', ']g', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
+      {'n', '<leader>dd', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>'},
+      {'n', '<leader>dl', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>'},
     })
 
   local capability_mappings = {
     code_action = {
       {'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>'},
       {'v', '<leader>la', '<cmd>lua vim.lsp.buf.range_code_action()<CR>'},
-      {'n', '<leader>ta', "<cmd>lua require'telescope.builtin'.lsp_code_actions{}<CR>"},
     },
-    declaration = {{'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>'}},
+    declaration = {{'n', '<leader>lD', '<cmd>lua vim.lsp.buf.declaration()<CR>'}},
     document_formatting = {{'n', '<leader>l=', '<cmd>lua vim.lsp.buf.formatting()<CR>'}},
     document_range_formatting = {{'v', '<leader>l=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>'}},
-    document_symbol = {
-      {'n', '<leader>ld', '<cmd>lua vim.lsp.buf.document_symbol()<CR>'},
-      {'n', '<leader>td', "<cmd>lua require'telescope.builtin'.lsp_document_symbols{}<CR>"},
-    },
-    find_references = {
-      {'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>'},
-      {'n', '<leader>tr', "<cmd>lua require'telescope.builtin'.lsp_references{}<CR>"},
-    },
+    document_symbol = {{'n', '<leader>ld', '<cmd>lua vim.lsp.buf.document_symbol()<CR>'}},
+    find_references = {{'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>'}},
     goto_definition = {{'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>'}},
     hover = {{'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>'}},
     implementation = {{'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>'}},
-    rename = {{'n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>'}},
+    rename = {{'n', '<leader>lR', '<cmd>lua vim.lsp.buf.rename()<CR>'}},
     signature_help = {{'n', '<leader>ls', '<cmd>lua vim.lsp.buf.signature_help()<CR>'}},
     type_definition = {{'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>'}},
-    workspace_symbol = {
-      {'n', '<leader>lw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>'},
-      {'n', '<leader>tw', "<cmd>lua require'telescope.builtin'.lsp_workspace_symbols{}<CR>"},
-    },
+    workspace_symbol = {{'n', '<leader>lw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>'}},
   }
 
   for capability, maps_args in pairs(capability_mappings) do
@@ -97,7 +84,7 @@ local on_attach = function(client, bufnr)
 end
 
 local servers = {
-  bashls = {on_attach = on_attach},
+  bashls = {},
   clojure_lsp = {
     on_attach = function(client, bufnr)
       on_attach(client, bufnr)
@@ -130,5 +117,5 @@ local servers = {
 }
 
 for name, config in pairs(servers) do
-  nvim_lsp[name].setup(vim.tbl_extend('keep', config, {on_attach = on_attach}))
+  lspconfig[name].setup(vim.tbl_extend('keep', config, {on_attach = on_attach}))
 end

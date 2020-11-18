@@ -83,7 +83,6 @@ Plug 'mhinz/vim-grepper'
 Plug 'junegunn/fzf.vim'
 
 " Edit
-Plug 'wellle/targets.vim'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 
@@ -107,11 +106,13 @@ if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
   Plug 'nvim-lua/completion-nvim'
   Plug 'm00qek/completion-conjure'
-  Plug 'nvim-lua/diagnostic-nvim'
 
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'
   Plug 'nvim-lua/telescope.nvim'
+
+  Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 else
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'ncm2/float-preview.nvim'
@@ -155,10 +156,10 @@ function! WhichKeyFormat(mapping) abort
   let l:ret = a:mapping
   let l:ret = substitute(l:ret, '\c<cr>$', '', '')
   let l:ret = substitute(l:ret, '^:', '', '')
-  let l:ret = substitute(l:ret, '^<cmd>lua require', '', '')
-  let l:ret = substitute(l:ret, '^<cmd>lua vim\.', '', '')
   let l:ret = substitute(l:ret, '^<cmd>', '', '')
   let l:ret = substitute(l:ret, '^\c<c-u>', '', '')
+  let l:ret = substitute(l:ret, '^lua require', '', '')
+  let l:ret = substitute(l:ret, '^lua vim\.', '', '')
   let l:ret = substitute(l:ret, '^<Plug>', '', '')
   return l:ret
 endfunction
@@ -195,8 +196,9 @@ let g:conjure#log#hud#height = 0.5
 let g:gitgutter_sign_priority = 50
 
 if has('nvim-0.5')
-  lua require('lsp_config')
-  lua require('telescope_config')
+  lua require('lsp')
+  lua require('tscope')
+  lua require('tsitter')
 else
   let g:deoplete#enable_at_startup = 1
   let g:float_preview#docked = 0
@@ -219,14 +221,6 @@ nnoremap <silent> <leader> <cmd>WhichKey '<leader>'<CR>
 vnoremap <silent> <leader> <cmd>WhichKeyVisual '<leader>'<CR>
 nnoremap <silent> <localleader> <cmd>WhichKey '<localleader>'<CR>
 vnoremap <silent> <localleader> <cmd>WhichKeyVisual '<localleader>'<CR>
-
-"Plug
-nmap <silent> <leader>pc <cmd>PlugClean<CR>
-nmap <silent> <leader>pd <cmd>PlugDiff<CR>
-nmap <silent> <leader>pi <cmd>PlugInstall<CR>
-nmap <silent> <leader>ps <cmd>PlugStatus<CR>
-nmap <silent> <leader>pu <cmd>PlugUpdate<CR>
-nmap <silent> <leader>pU <cmd>PlugUpgrade<CR>
 
 " FZF
 nmap <leader>fm <cmd>Maps<CR>
@@ -276,12 +270,6 @@ xmap gs <plug>(GrepperOperator)
 
 " Undo
 nmap <silent> <leader>u <cmd>MundoToggle<CR>
-
-" Targets
-" Seek next and last text objects
-let g:targets_nl = 'nN'
-" Only consider targets around cursor
-let g:targets_seekRanges = 'cc cr cb cB lc ac Ac lr lb ar ab lB Ar aB Ab AB'
 
 " Sandwich
 " Use vim surround like bindings
