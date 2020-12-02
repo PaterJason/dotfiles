@@ -51,6 +51,7 @@ set winwidth=90
 
 " Gutter
 set updatetime=100
+set signcolumn=auto:2
 
 " Completion
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -72,8 +73,6 @@ Plug 'simnalamburt/vim-mundo'
 " Key binds
 Plug 'tpope/vim-unimpaired'
 Plug 'liuchengxu/vim-which-key'
-
-" Tmux
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 
@@ -105,13 +104,14 @@ Plug 'hrsh7th/vim-vsnip-integ'
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
   Plug 'nvim-lua/completion-nvim'
-  Plug 'm00qek/completion-conjure'
 
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-lua/telescope.nvim'
+  Plug 'nvim-telescope/telescope.nvim'
 
-  Plug 'nvim-treesitter/nvim-treesitter'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/completion-treesitter'
+  Plug 'nvim-treesitter/nvim-treesitter-refactor'
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 else
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -196,6 +196,7 @@ let g:conjure#log#hud#height = 0.5
 let g:gitgutter_sign_priority = 50
 
 if has('nvim-0.5')
+  lua require('completion-config')
   lua require('lsp')
   lua require('tscope')
   lua require('tsitter')

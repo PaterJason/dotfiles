@@ -1,26 +1,5 @@
-local lspconfig = require 'lspconfig'
+local config = require 'lspconfig'
 local util = require'util'
-
-vim.cmd("autocmd BufEnter * lua require'completion'.on_attach()")
-
-vim.g.diagnostic_enable_virtual_text = 1
-vim.g.diagnostic_auto_popup_while_jump = 0
-
-vim.g.completion_sorting = 'length'
-vim.g.completion_auto_change_source = 1
-vim.g.completion_enable_snippet = 'vim-vsnip'
-vim.g.completion_chain_complete_list = {
-  default = {
-    {complete_items = {'lsp', 'snippet'}},
-    {mode = '<c-p>'},
-    {mode = '<c-n>'},
-  },
-  clojure = {
-    {complete_items = {'conjure', 'lsp', 'snippet'}},
-    {mode = '<c-p>'},
-    {mode = '<c-n>'},
-  },
-}
 
 local clj_map = function(bufnr)
   local mappings = {
@@ -53,27 +32,37 @@ local on_attach = function(client, bufnr)
   util.buf_set_maps(bufnr, {
       {'n', '[g', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
       {'n', ']g', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
-      {'n', '<leader>dd', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>'},
-      {'n', '<leader>dl', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>'},
+      {'n', '<leader>ldl', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>'},
     })
 
   local capability_mappings = {
     code_action = {
       {'n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<CR>'},
       {'v', '<leader>la', '<cmd>lua vim.lsp.buf.range_code_action()<CR>'},
+      {'n', '<leader>tla', '<cmd>Telescope lsp_code_actions<CR>'},
+      {'v', '<leader>tla', '<cmd>Telescope lsp_range_code_actions<CR>'},
     },
-    declaration = {{'n', '<leader>lD', '<cmd>lua vim.lsp.buf.declaration()<CR>'}},
+    declaration = {{'n', '<leader>lgd', '<cmd>lua vim.lsp.buf.declaration()<CR>'}},
     document_formatting = {{'n', '<leader>l=', '<cmd>lua vim.lsp.buf.formatting()<CR>'}},
     document_range_formatting = {{'v', '<leader>l=', '<cmd>lua vim.lsp.buf.range_formatting()<CR>'}},
-    document_symbol = {{'n', '<leader>ld', '<cmd>lua vim.lsp.buf.document_symbol()<CR>'}},
-    find_references = {{'n', '<leader>lr', '<cmd>lua vim.lsp.buf.references()<CR>'}},
+    document_symbol = {
+      {'n', '<leader>lld', '<cmd>lua vim.lsp.buf.document_symbol()<CR>'},
+      {'n', '<leader>tld', '<cmd>Telescope lsp_document_symbols<CR>'},
+    },
+    find_references = {
+      {'n', '<leader>llr', '<cmd>lua vim.lsp.buf.references()<CR>'},
+      {'n', '<leader>tlr', '<cmd>Telescope lsp_references<CR>'},
+    },
     goto_definition = {{'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>'}},
     hover = {{'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>'}},
-    implementation = {{'n', '<leader>li', '<cmd>lua vim.lsp.buf.implementation()<CR>'}},
-    rename = {{'n', '<leader>lR', '<cmd>lua vim.lsp.buf.rename()<CR>'}},
+    implementation = {{'n', '<leader>lli', '<cmd>lua vim.lsp.buf.implementation()<CR>'}},
+    rename = {{'n', '<leader>lr', '<cmd>lua vim.lsp.buf.rename()<CR>'}},
     signature_help = {{'n', '<leader>ls', '<cmd>lua vim.lsp.buf.signature_help()<CR>'}},
-    type_definition = {{'n', '<leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<CR>'}},
-    workspace_symbol = {{'n', '<leader>lw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>'}},
+    type_definition = {{'n', '<leader>lgt', '<cmd>lua vim.lsp.buf.type_definition()<CR>'}},
+    workspace_symbol = {
+      {'n', '<leader>llw', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>'},
+      {'n', '<leader>tlw', '<cmd>Telescope lsp_workspace_symbols<CR>'},
+    },
   }
 
   for capability, maps_args in pairs(capability_mappings) do
@@ -102,6 +91,7 @@ local servers = {
     settings = {
       Lua = {
         diagnostics = {
+          enable = true,
           globals = {"vim"}
         },
         workspace = {
@@ -110,12 +100,11 @@ local servers = {
       }
     }
   },
-  r_language_server = {},
   texlab = {},
   tsserver = {},
   vimls = {},
 }
 
-for name, config in pairs(servers) do
-  lspconfig[name].setup(vim.tbl_extend('keep', config, {on_attach = on_attach}))
+for name, cfg in pairs(servers) do
+  config[name].setup(vim.tbl_extend('keep', cfg, {on_attach = on_attach}))
 end
