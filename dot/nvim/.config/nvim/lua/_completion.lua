@@ -7,7 +7,6 @@ vim.g.diagnostic_auto_popup_while_jump = 0
 
 vim.g.completion_sorting = 'length'
 vim.g.completion_auto_change_source = 1
-vim.g.completion_enable_snippet = 'vim-vsnip'
 vim.g.completion_chain_complete_list = {
   default = {
     {complete_items = {'lsp'}},

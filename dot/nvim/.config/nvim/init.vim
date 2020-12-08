@@ -79,7 +79,6 @@ Plug 'tmux-plugins/vim-tmux-focus-events'
 " Navigation
 Plug 'justinmk/vim-sneak'
 Plug 'mhinz/vim-grepper'
-Plug 'junegunn/fzf.vim'
 
 " Edit
 Plug 'tpope/vim-abolish'
@@ -99,27 +98,17 @@ Plug 'Olical/conjure', { 'tag': '*' }
 Plug 'clojure-vim/vim-jack-in'
 
 " IDE
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-if has('nvim-0.5')
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'nvim-lua/completion-nvim'
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
 
-  Plug 'nvim-lua/popup.nvim'
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'nvim-treesitter/completion-treesitter'
-  Plug 'nvim-treesitter/nvim-treesitter-refactor'
-  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-else
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'ncm2/float-preview.nvim'
-  Plug 'dense-analysis/ale'
-  " Fix for deoplete and gitgutter conflict
-  Plug 'antoinemadec/FixCursorHold.nvim'
-endif
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/completion-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter-refactor'
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
@@ -165,28 +154,6 @@ function! WhichKeyFormat(mapping) abort
 endfunction
 let g:WhichKeyFormatFunc = function('WhichKeyFormat')
 
-" FZF
-let g:fzf_colors = {
-      \ 'fg':      ['fg', 'Normal'],
-      \ 'bg':      ['bg', 'Normal'],
-      \ 'hl':      ['fg', 'Comment'],
-      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-      \ 'hl+':     ['fg', 'Statement'],
-      \ 'info':    ['fg', 'PreProc'],
-      \ 'border':  ['fg', 'Ignore'],
-      \ 'prompt':  ['fg', 'Conditional'],
-      \ 'pointer': ['fg', 'Exception'],
-      \ 'marker':  ['fg', 'Keyword'],
-      \ 'spinner': ['fg', 'Label'],
-      \ 'header':  ['fg', 'Comment']
-      \ }
-let g:fzf_layout = { 'window': { 'width': 0.8, 'height': 0.8 , 'border': 'sharp'} }
-let g:fzf_action = {
-      \ 'ctrl-t': 'tab split',
-      \ 'ctrl-s': 'split',
-      \ 'ctrl-v': 'vsplit' }
-
 " Conjure
 let g:conjure#mapping#doc_word = 'K'
 let g:conjure#log#hud#width = 0.5
@@ -195,26 +162,10 @@ let g:conjure#log#hud#height = 0.5
 " IDE
 let g:gitgutter_sign_priority = 50
 
-if has('nvim-0.5')
-  lua require('completion-config')
-  lua require('lsp')
-  lua require('tscope')
-  lua require('tsitter')
-else
-  let g:deoplete#enable_at_startup = 1
-  let g:float_preview#docked = 0
-  call deoplete#custom#option({
-        \ 'ignore_sources': {'_': ['around', 'buffer']},
-        \ 'min_pattern_length': 1,
-        \ })
-  call deoplete#custom#source('conjure', 'rank', 600)
-
-  let g:ale_disable_lsp = 1
-  let g:ale_virtualtext_cursor = 1
-  " Use `[g` and `]g` to navigate diagnostics
-  nmap <silent> [g <Plug>(ale_previous)
-  nmap <silent> ]g <Plug>(ale_next)
-endif
+lua require('_completion')
+lua require('_lsp')
+lua require('_telescope')
+lua require('_treesitter')
 " }}}
 " PLUGIN MAPPINGS {{{
 " Which Key
@@ -222,37 +173,6 @@ nnoremap <silent> <leader> <cmd>WhichKey '<leader>'<CR>
 vnoremap <silent> <leader> <cmd>WhichKeyVisual '<leader>'<CR>
 nnoremap <silent> <localleader> <cmd>WhichKey '<localleader>'<CR>
 vnoremap <silent> <localleader> <cmd>WhichKeyVisual '<localleader>'<CR>
-
-" FZF
-nmap <leader>fm <cmd>Maps<CR>
-xmap <leader>fm <plug>(fzf-maps-x)
-omap <leader>fm <plug>(fzf-maps-o)
-
-nmap <silent> <leader>f: <cmd>Commands<CR>
-nmap <silent> <leader>fb <cmd>Buffers<CR>
-nmap <silent> <leader>ff <cmd>Files<CR>
-nmap <silent> <leader>fF <cmd>Filetypes<CR>
-nmap <silent> <leader>fgC <cmd>BCommits<CR>
-nmap <silent> <leader>fgc <cmd>Commits<CR>
-nmap <silent> <leader>fgf <cmd>GFiles<CR>
-nmap <silent> <leader>fgs <cmd>GFiles?<CR>
-nmap <silent> <leader>fh/ <cmd>History/<CR>
-nmap <silent> <leader>fh: <cmd>History:<CR>
-nmap <silent> <leader>fhf <cmd>History<CR>
-nmap <silent> <leader>fH <cmd>Helptags<CR>
-nmap <silent> <leader>fl <cmd>BLines<CR>
-nmap <silent> <leader>fL <cmd>Lines<CR>
-nmap <silent> <leader>fr <cmd>Rg<CR>
-nmap <silent> <leader>fs <cmd>Snippets<CR>
-nmap <silent> <leader>ft <cmd>BTags<CR>
-nmap <silent> <leader>fT <cmd>Tags<CR>
-nmap <silent> <leader>fw <cmd>Windows<CR>
-
-" vsnip
-imap <expr> <C-l> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-l>'
-smap <expr> <C-l> vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<C-l>'
-imap <expr> <C-h> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-h>'
-smap <expr> <C-h> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-h>'
 
 " Git
 nmap <leader>g<Space> :Git<Space>
