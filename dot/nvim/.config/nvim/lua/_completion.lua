@@ -1,6 +1,6 @@
 local completion = require'completion'
 
-vim.cmd("autocmd BufEnter * lua require'completion'.on_attach()")
+vim.cmd([[autocmd BufEnter * lua require'completion'.on_attach()]])
 
 vim.g.diagnostic_enable_virtual_text = 1
 vim.g.diagnostic_auto_popup_while_jump = 0
@@ -17,6 +17,7 @@ vim.g.completion_chain_complete_list = {
   clojure = {
     {complete_items = {'conjure'}},
     {complete_items = {'lsp'}},
+    {complete_items = {'ts'}},
     {mode = '<c-p>'},
     {mode = '<c-n>'},
   },
@@ -28,7 +29,7 @@ local conjure_source = {
       function (item)
         return vim.tbl_extend('keep', item, { user_data = { hover = item.info } })
       end,
-      require'conjure.eval'["completions-sync"](prefix))
+      require'conjure.eval'['completions-sync'](prefix))
   end
 }
 

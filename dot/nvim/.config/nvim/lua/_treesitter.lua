@@ -35,10 +35,10 @@ config.setup {
     swap = {
       enable = true,
       swap_next = {
-        ["<leader>sa"] = "@parameter.inner",
+        ['<leader>sa'] = '@parameter.inner',
       },
       swap_previous = {
-        ["<leader>Sa"] = "@parameter.inner",
+        ['<leader>Sa'] = '@parameter.inner',
       },
     },
     move = {
@@ -91,8 +91,8 @@ config.setup {
     lsp_interop = {
       enable = true,
       peek_definition_code = {
-        ["<leader>df"] = "@function.outer",
-        ["<leader>dF"] = "@class.outer",
+        ['<leader>df'] = '@function.outer',
+        ['<leader>dF'] = '@class.outer',
       },
     },
   },

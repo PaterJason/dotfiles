@@ -1,19 +1,25 @@
 local telescope = require 'telescope'
 local actions = require 'telescope.actions'
+local previewers = require'telescope.previewers'
 local util = require'util'
+
+telescope.load_extension('fzy_native')
 
 telescope.setup {
   defaults = {
     mappings = {
       n = {
-        ["<C-x>"] = false,
-        ["<C-s>"] = actions.goto_file_selection_split,
+        ['<C-x>'] = false,
+        ['<C-s>'] = actions.goto_file_selection_split,
       },
       i = {
-        ["<C-x>"] = false,
-        ["<C-s>"] = actions.goto_file_selection_split,
+        ['<C-x>'] = false,
+        ['<C-s>'] = actions.goto_file_selection_split,
       },
     },
+  file_previewer = previewers.vim_buffer_cat.new,
+  grep_previewer = previewers.vim_buffer_vimgrep.new,
+  qflist_previewer = previewers.vim_buffer_qflist.new,
   }
 }
 
@@ -28,7 +34,7 @@ local mappings = {
   ['<leader>tgf'] = 'git_files',
   ['<leader>tgs'] = 'git_status',
   ['<leader>th'] = 'help_tags',
-  ['<leader>tL'] = 'loclist',
+  ['<leader>tl'] = 'loclist',
   ['<leader>tq'] = 'quickfix',
   ['<leader>tr'] = 'live_grep',
   ['<leader>tR'] = 'grep_string',
@@ -37,5 +43,5 @@ local mappings = {
 
 
 for lhs, args in pairs(mappings) do
-  util.set_keymap('n', lhs, "<cmd>Telescope " .. args .."<CR>")
+  util.set_keymap('n', lhs, '<cmd>Telescope ' .. args ..'<CR>')
 end
