@@ -10,7 +10,7 @@ require'colorizer'.setup{
   '!vim-plug';
   '!fugitive';
 }
-require('_completion')
-require('_lsp')
-require('_telescope')
-require('_treesitter')
+require'config.lsp'
+require'config.telescope'
+require'config.treesitter'
+require'config.compe'

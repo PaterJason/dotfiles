@@ -39,24 +39,22 @@ Plug 'tpope/vim-sexp-mappings-for-regular-people'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" Clojure
-Plug 'Olical/conjure'
-Plug 'clojure-vim/vim-jack-in'
-
 " IDE
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
+Plug 'hrsh7th/nvim-compe'
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
 
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/completion-treesitter'
-Plug 'nvim-treesitter/nvim-treesitter-refactor'
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+
+" Clojure
+Plug 'Olical/conjure'
+Plug 'tami5/compe-conjure'
+Plug 'clojure-vim/vim-jack-in'
 
 " Pretty
 Plug 'arcticicestudio/nord-vim'
@@ -70,7 +68,7 @@ if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
   PlugInstall --sync | runtime plugins.vim
 else
 
-" PLUGIN CONFIG {{{
+" PLUGIN CONFIG
 " Nord
 let g:nord_italic = 1
 let g:nord_italic_comments = 1
@@ -81,8 +79,8 @@ let g:lightline = {
       \ }
 
 " Sneak
-highlight Sneak guifg=#3B4252 guibg=#8FBCBB ctermfg=0 ctermbg=14
-highlight SneakScope guifg=#3B4252 guibg=#8FBCBB ctermfg=0 ctermbg=14
+highlight link Sneak Search
+highlight link SneakScope Comment
 
 " Target
 let g:targets_nl = 'nN'
@@ -104,15 +102,8 @@ let g:WhichKeyFormatFunc = function('WhichKeyFormat')
 
 " Conjure
 let g:conjure#mapping#doc_word = 'K'
-let g:conjure#log#hud#width = 0.5
-let g:conjure#log#hud#height = 0.5
 
-let g:gitgutter_sign_priority = 50
-
-lua require('init')
-
-" }}}
-" PLUGIN MAPPINGS {{{
+" PLUGIN MAPPINGS
 " Which Key
 nnoremap <silent> <leader> <cmd>WhichKey '<leader>'<CR>
 vnoremap <silent> <leader> <cmd>WhichKeyVisual '<leader>'<CR>
@@ -131,8 +122,8 @@ vmap <leader>gs <Plug>(GitGutterStageHunk)
 
 " Grepper
 nmap <leader>G <cmd>Grepper<CR>
-nmap gs <plug>(GrepperOperator)
-xmap gs <plug>(GrepperOperator)
+nmap <leader>r <plug>(GrepperOperator)
+xmap <leader>r <plug>(GrepperOperator)
 
 " Undo
 nmap <silent> <leader>u <cmd>MundoToggle<CR>
@@ -140,5 +131,7 @@ nmap <silent> <leader>u <cmd>MundoToggle<CR>
 " Sandwich
 " Use vim surround like bindings
 runtime macros/sandwich/keymap/surround.vim
-" PLUGIN MAPPINGS }}}
+
+" lua config
+lua require('config')
 endif

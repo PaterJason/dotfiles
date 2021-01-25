@@ -3,8 +3,8 @@ set noswapfile
 set spelllang=en
 
 " Leader
-let mapleader = ' '
-let maplocalleader = ','
+let g:mapleader = ' '
+let g:maplocalleader = ','
 
 " Mouse
 set mouse=a

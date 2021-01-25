@@ -9,4 +9,4 @@ fun! CompleteEmpty(findstart, base)
     return []
   endif
 endfun
-let g:conjure#completion#fallback="CompleteEmpty"
+let g:conjure#completion#fallback = 'CompleteEmpty'

@@ -13,3 +13,5 @@ curl -fLo ${DST_FILE} --create-dirs ${URL}
 tar -xf ${DST_FILE} -C ${DST_DIR}
 
 rm ${DST_FILE}
+
+ln -s "~/.local/share/Steam/compatibilitytools.d/Proton-${VER}/dist/" "~/.local/share/lutris/runners/wine/Proton-latest"

@@ -1,9 +1,7 @@
 local telescope = require 'telescope'
 local actions = require 'telescope.actions'
 local previewers = require'telescope.previewers'
-local util = require'util'
-
-telescope.load_extension('fzy_native')
+local util = require'config.util'
 
 telescope.setup {
   defaults = {
@@ -24,21 +22,21 @@ telescope.setup {
 }
 
 local mappings = {
-  ['<leader>T'] = 'builtin',
-  ['<leader>tb'] = 'buffers',
-  ['<leader>tc'] = 'current_buffer_fuzzy_find',
-  ['<leader>tf'] = 'find_files',
-  ['<leader>tgb'] = 'git_branches',
-  ['<leader>tgc'] = 'git_commits',
-  ['<leader>tgC'] = 'git_bcommits',
-  ['<leader>tgf'] = 'git_files',
-  ['<leader>tgs'] = 'git_status',
-  ['<leader>th'] = 'help_tags',
-  ['<leader>tl'] = 'loclist',
-  ['<leader>tq'] = 'quickfix',
-  ['<leader>tr'] = 'live_grep',
-  ['<leader>tR'] = 'grep_string',
-  ['<leader>tt'] = 'treesitter',
+  ['<leader>F'] = 'builtin',
+  ['<leader>fb'] = 'buffers',
+  ['<leader>fc'] = 'current_buffer_fuzzy_find',
+  ['<leader>ff'] = 'find_files',
+  ['<leader>fgb'] = 'git_branches',
+  ['<leader>fgc'] = 'git_commits',
+  ['<leader>fgC'] = 'git_bcommits',
+  ['<leader>fgf'] = 'git_files',
+  ['<leader>fgs'] = 'git_status',
+  ['<leader>fh'] = 'help_tags',
+  ['<leader>fl'] = 'loclist',
+  ['<leader>fq'] = 'quickfix',
+  ['<leader>fr'] = 'live_grep',
+  ['<leader>fR'] = 'grep_string',
+  ['<leader>ft'] = 'treesitter',
 }
 
 
