@@ -24,17 +24,4 @@ M.buf_set_maps = function(bufnr, maps_args)
   end
 end
 
-M.clj_lsp_cmd = function(cmd, prompt)
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local args = {vim.uri_from_bufnr(0) , cursor[1] - 1, cursor[2]}
-  if prompt then
-    local input = vim.fn.input(prompt)
-    table.insert(args, input)
-  end
-  vim.lsp.buf.execute_command({
-      command = cmd,
-      arguments = args,
-    })
-end
-
 return M

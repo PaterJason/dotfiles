@@ -51,8 +51,6 @@ set updatetime=100
 set signcolumn=auto:2
 
 " Completion
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-set completeopt=menuone,noinsert,noselect
+set completeopt=menuone,noselect
 
 runtime plugins.vim

@@ -37,19 +37,20 @@ Plug 'tpope/vim-sexp-mappings-for-regular-people'
 
 " Git
 Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+Plug 'mhinz/vim-signify'
 
 " IDE
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
+Plug 'hrsh7th/vim-vsnip'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-symbols.nvim'
-
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 
 " Clojure
 Plug 'Olical/conjure'
@@ -113,17 +114,18 @@ vnoremap <silent> <localleader> <cmd>WhichKeyVisual '<localleader>'<CR>
 " Git
 nmap <leader>g<Space> :Git<Space>
 nmap <silent> <leader>gb <cmd>Git blame<CR>
-nmap <silent> <leader>gd <cmd>Gdiffsplit!<CR>
+nmap <silent> <leader>gd <cmd>SignifyDiff<CR>
 nmap <silent> <leader>gg <cmd>Git<CR>
-nmap <leader>gp <Plug>(GitGutterPreviewHunk)
-nmap <leader>gs <Plug>(GitGutterStageHunk)
-nmap <leader>gu <Plug>(GitGutterUndoHunk)
-vmap <leader>gs <Plug>(GitGutterStageHunk)
+nmap <leader>gp <cmd>SignifyHunkDiff<CR>
+nmap <leader>gu <cmd>SignifyHunkUndo<CR>
+omap ic <plug>(signify-motion-inner-pending)
+xmap ic <plug>(signify-motion-inner-visual)
+omap ac <plug>(signify-motion-outer-pending)
+xmap ac <plug>(signify-motion-outer-visual)
 
 " Grepper
 nmap <leader>G <cmd>Grepper<CR>
-nmap <leader>r <plug>(GrepperOperator)
-xmap <leader>r <plug>(GrepperOperator)
+xmap <leader>G <plug>(GrepperOperator)
 
 " Undo
 nmap <silent> <leader>u <cmd>MundoToggle<CR>

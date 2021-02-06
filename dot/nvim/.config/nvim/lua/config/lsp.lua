@@ -10,7 +10,7 @@ vim.tbl_map(
     local hl = get_fg('cterm') .. get_fg('gui')
     vim.cmd('hi LspDiagnosticsDefault' .. d .. hl)
     vim.cmd('hi LspDiagnosticsUnderline' .. d .. hl)
-    vim.fn.sign_define("LspDiagnosticsSign" .. d, {text = "", numhl = "LspDiagnosticsDefault" .. d})
+    vim.fn.sign_define('LspDiagnosticsSign' .. d, {text = '', numhl = 'LspDiagnosticsDefault' .. d})
   end,
   {'Hint', 'Error', 'Warning', 'Information'})
 
@@ -35,17 +35,15 @@ local clj_map = function(bufnr)
     ['<leader>rcp'] = [['cycle-privacy']],
     ['<leader>ris'] = [['inline-symbol']],
     ['<leader>ref'] = [['extract-function', 'Function name: ']],
+    ['<leader>rai'] = [['add-import-to-namespace', 'Import name: ']],
   }
 
   for lhs, args in pairs(mappings) do
-    util.buf_set_keymap(bufnr, 'n', lhs, [[<cmd>lua require'util'.clj_lsp_cmd(]] .. args ..')<CR>')
+    util.buf_set_keymap(bufnr, 'n', lhs, [[<cmd>lua require'call'.clj_lsp_cmd(]] .. args ..')<CR>')
   end
 end
 
 local on_attach = function(client, bufnr)
-  local name = client.name
-  print(name .. ' attached')
-
   util.buf_set_maps(bufnr, {
       {'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
       {'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
@@ -89,6 +87,7 @@ local on_attach = function(client, bufnr)
     vim.cmd('autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
+  print(client.name .. ' attached')
 end
 
 local sumneko_root_path = vim.fn.expand('~/src/lua-language-server')
@@ -98,8 +97,8 @@ local servers = {
   bashls = {},
   clojure_lsp = {
     on_attach = function(client, bufnr)
-      on_attach(client, bufnr)
       clj_map(bufnr)
+      on_attach(client, bufnr)
     end,
     init_options = {
       ['ignore-classpath-directories'] = true,
@@ -110,7 +109,7 @@ local servers = {
   html = {},
   jsonls = {},
   sumneko_lua = {
-    cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"};
+    cmd = {'lua-language-server'};
     settings = {
       Lua = {
         runtime = {
@@ -134,6 +133,9 @@ local servers = {
   vimls = {},
 }
 
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
 for name, config in pairs(servers) do
-  lsp[name].setup(vim.tbl_extend('keep', config, {on_attach = on_attach}))
+  lsp[name].setup(vim.tbl_extend('keep', config, {on_attach = on_attach, capabilities = capabilities}))
 end

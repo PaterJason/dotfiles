@@ -15,10 +15,6 @@ if type -q nvim
   set -gx VISUAL nvim
 end
 
-if test -d ~/bin
-  set -gx PATH ~/bin $PATH
-end
-
 set -gx NPM_PACKAGES "$HOME/.npm-packages"
 set -gx PATH $PATH $NPM_PACKAGES/bin
-set -gx MANPATH $NPM_PACKAGES/share/man $MANPATH
+# set -gx MANPATH $NPM_PACKAGES/share/man $MANPATH

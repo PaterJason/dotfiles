@@ -3,10 +3,4 @@ npm install -g all-the-package-names vscode-css-languageserver-bin vscode-html-l
 
 sudo pacman -S --needed bash-language-server texlab
 
-DST_DIR=${HOME}/bin
-# Clojure lsp
-URL="https://github.com/snoe/clojure-lsp/releases/latest/download/clojure-lsp"
-CLJ_LSP="${DST_DIR}/clojure-lsp"
-
-curl -fLo ${CLJ_LSP} --create-dirs ${URL}
-chmod 755 ${CLJ_LSP}
+yay -S clojure-lsp-bin lua-language-server-git
