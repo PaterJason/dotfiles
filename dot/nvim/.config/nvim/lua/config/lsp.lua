@@ -91,7 +91,7 @@ local on_attach = function(client, bufnr)
 end
 
 local sumneko_root_path = vim.fn.expand('~/src/lua-language-server')
-local sumneko_binary = sumneko_root_path.."/bin/Linux/lua-language-server"
+local sumneko_binary = sumneko_root_path..'/bin/Linux/lua-language-server'
 
 local servers = {
   bashls = {},
@@ -109,7 +109,7 @@ local servers = {
   html = {},
   jsonls = {},
   sumneko_lua = {
-    cmd = {'lua-language-server'};
+    cmd = {sumneko_binary, '-E', sumneko_root_path .. '/main.lua'};
     settings = {
       Lua = {
         runtime = {
