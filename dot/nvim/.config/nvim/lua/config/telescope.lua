@@ -1,28 +1,25 @@
-local telescope = require 'telescope'
-local actions = require 'telescope.actions'
-local previewers = require'telescope.previewers'
-local util = require'config.util'
+local telescope = require'telescope'
+local actions = require'telescope.actions'
+local util = require'util'
 
 telescope.setup {
   defaults = {
     mappings = {
       n = {
         ['<C-x>'] = false,
-        ['<C-s>'] = actions.goto_file_selection_split,
+        ['<C-s>'] = actions.select_horizontal,
       },
       i = {
         ['<C-x>'] = false,
-        ['<C-s>'] = actions.goto_file_selection_split,
+        ['<C-s>'] = actions.select_horizontal,
       },
     },
-  file_previewer = previewers.vim_buffer_cat.new,
-  grep_previewer = previewers.vim_buffer_vimgrep.new,
-  qflist_previewer = previewers.vim_buffer_qflist.new,
   }
 }
 
 local mappings = {
   ['<leader>F'] = 'builtin',
+  ['<leader>f:'] = 'commands',
   ['<leader>fb'] = 'buffers',
   ['<leader>fc'] = 'current_buffer_fuzzy_find',
   ['<leader>ff'] = 'find_files',
@@ -31,15 +28,15 @@ local mappings = {
   ['<leader>fgC'] = 'git_bcommits',
   ['<leader>fgf'] = 'git_files',
   ['<leader>fgs'] = 'git_status',
+  ['<leader>fG'] = 'live_grep',
   ['<leader>fh'] = 'help_tags',
   ['<leader>fl'] = 'loclist',
   ['<leader>fq'] = 'quickfix',
-  ['<leader>fr'] = 'live_grep',
-  ['<leader>fR'] = 'grep_string',
   ['<leader>ft'] = 'treesitter',
 }
-
 
 for lhs, args in pairs(mappings) do
   util.set_keymap('n', lhs, '<cmd>Telescope ' .. args ..'<CR>')
 end
+
+telescope.load_extension('fzy_native')

@@ -3,14 +3,4 @@ function _G.dump(...)
     print(unpack(objects))
 end
 
-require'colorizer'.setup{
-  '*';
-  css = { css = true; };
-  scss = { css = true; };
-  '!vim-plug';
-  '!fugitive';
-}
-require'config.lsp'
-require'config.telescope'
-require'config.treesitter'
-require'config.compe'
+require'config.plugins'

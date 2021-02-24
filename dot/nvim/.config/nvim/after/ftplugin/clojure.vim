@@ -4,7 +4,7 @@ let g:clojure_align_subforms = 1
 " Conjure
 fun! CompleteEmpty(findstart, base)
   if a:findstart
-    return 1
+    return -2
   else
     return []
   endif

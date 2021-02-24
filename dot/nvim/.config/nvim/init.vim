@@ -40,7 +40,7 @@ set linebreak
 set showbreak=↩
 
 " Diff
-set diffopt=filler,vertical,algorithm:histogram,indent-heuristic
+set diffopt+=vertical
 
 " Splits
 set splitright splitbelow
@@ -53,4 +53,5 @@ set signcolumn=auto:2
 " Completion
 set completeopt=menuone,noselect
 
-runtime plugins.vim
+" Lua config
+lua require('config')
