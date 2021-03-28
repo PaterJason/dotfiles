@@ -43,7 +43,7 @@ local on_attach = function(client, bufnr)
   util.buf_set_keymaps(bufnr, {
     {'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
     {'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
-    {'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>'},
+    {'n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>'},
     {'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>'},
     {'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>'},
     {'n', '<space>wl', '<cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>'},
@@ -90,8 +90,13 @@ local on_attach = function(client, bufnr)
   end
 
   if client.resolved_capabilities.document_highlight then
-    vim.cmd('autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()')
-    vim.cmd('autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
+    vim.api.nvim_exec([[
+      augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
+    ]], false)
   end
 
   print(client.name .. ' attached')
@@ -104,9 +109,6 @@ local servers = {
       clj_map(bufnr)
       on_attach(client, bufnr)
     end,
-    init_options = {
-      ['ignore-classpath-directories'] = true,
-    }
   },
   clangd = {},
   cssls = {},
@@ -132,7 +134,21 @@ local servers = {
       }
     }
   },
-  texlab = {},
+  texlab = {
+    settings = {
+      latex = {
+        build = {
+          onSave = true
+        },
+        forwardSearch = {
+          onSave = true
+        },
+        lint = {
+          onChange = true
+        },
+      }
+    }
+  },
   tsserver = {},
   vimls = {},
   yamlls = {},
@@ -141,8 +157,8 @@ local servers = {
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-for name, config in pairs(servers) do
-  lsp[name].setup(vim.tbl_extend('keep', config, {
+for server, config in pairs(servers) do
+  lsp[server].setup(vim.tbl_extend('keep', config, {
     on_attach = on_attach,
     capabilities = capabilities,
   }))
