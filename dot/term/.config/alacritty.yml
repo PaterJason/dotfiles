@@ -2,6 +2,10 @@ env:
   TERM: xterm-256color
 shell:
   program: /bin/tmux
+window:
+  dimensions:
+    columns: 200
+    lines: 60
 font:
   size: 10
 colors:
