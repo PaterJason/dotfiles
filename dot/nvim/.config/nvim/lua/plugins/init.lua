@@ -4,18 +4,16 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.cmd('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
 
-vim.cmd'autocmd BufWritePost */lua/config/plugins.lua PackerCompile'
+vim.cmd'autocmd BufWritePost */lua/pack/init.lua PackerCompile'
 
-return require('packer').startup(function(use)
-  use{
-    'wbthomason/packer.nvim',
-  }
+return require'packer'.startup(function(use)
+  use'wbthomason/packer.nvim'
 
   -- Pretty
   use{
     'arcticicestudio/nord-vim',
     config = function()
-      require'config.colors'
+      require'plugins.colors'
     end,
   }
   use{
@@ -59,7 +57,7 @@ return require('packer').startup(function(use)
   use'tpope/vim-dispatch'
   use'tpope/vim-repeat'
   use'tpope/vim-vinegar'
-  use'sheerun/vim-polyglot'
+  -- use'sheerun/vim-polyglot'
   use{
     'simnalamburt/vim-mundo',
     config = function()
@@ -130,21 +128,21 @@ return require('packer').startup(function(use)
   use{
     'neovim/nvim-lspconfig',
     config = function()
-      require'config.lsp'
+      require'plugins.lsp'
     end,
   }
   use{
     'hrsh7th/nvim-compe',
     requires = {'tami5/compe-conjure'},
     config = function()
-      require'config.compe'
+      require'plugins.compe'
     end,
   }
 
   use{
     'norcalli/snippets.nvim',
     config = function()
-      require'config.snippets'
+      require'plugins.snippets'
     end,
   }
 
@@ -152,11 +150,12 @@ return require('packer').startup(function(use)
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
     config = function()
-      require'config.treesitter'
+      require'plugins.treesitter'
     end,
   }
   use{
     'nvim-treesitter/nvim-treesitter-textobjects',
+    'nvim-treesitter/nvim-treesitter-refactor',
     after = 'nvim-treesitter'
   }
 
@@ -165,11 +164,9 @@ return require('packer').startup(function(use)
     requires = {
       'nvim-lua/popup.nvim',
       'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope-fzy-native.nvim',
-      'nvim-telescope/telescope-symbols.nvim',
     },
     config = function()
-      require'config.telescope'
+      require'plugins.telescope'
     end,
   }
 

@@ -10,7 +10,6 @@ compe.setup{
     nvim_lua = true,
     path = true,
     snippets_nvim = true,
-    treesitter = true
   },
 }
 

@@ -16,26 +16,26 @@ end
 
 local clj_map = function(bufnr)
   local mappings = {
-    ['<leader>rcc'] = [['cycle-coll']],
-    ['<leader>rth'] = [['thread-first']],
-    ['<leader>rtt'] = [['thread-last']],
-    ['<leader>rtf'] = [['thread-first-all']],
-    ['<leader>rtl'] = [['thread-last-all']],
-    ['<leader>ruw'] = [['unwind-thread']],
-    ['<leader>rua'] = [['unwind-all']],
-    ['<leader>rml'] = [['move-to-let', 'Binding name: ']],
-    ['<leader>ril'] = [['introduce-let', 'Binding name: ']],
-    ['<leader>rel'] = [['expand-let']],
-    ['<leader>ram'] = [['add-missing-libspec']],
-    ['<leader>rcn'] = [['clean-ns']],
-    ['<leader>rcp'] = [['cycle-privacy']],
-    ['<leader>ris'] = [['inline-symbol']],
-    ['<leader>ref'] = [['extract-function', 'Function name: ']],
-    ['<leader>rai'] = [['add-import-to-namespace', 'Import name: ']],
+    cc = [['cycle-coll']],
+    th = [['thread-first']],
+    tt = [['thread-last']],
+    tf = [['thread-first-all']],
+    tl = [['thread-last-all']],
+    uw = [['unwind-thread']],
+    ua = [['unwind-all']],
+    ml = [['move-to-let', 'Binding name: ']],
+    il = [['introduce-let', 'Binding name: ']],
+    el = [['expand-let']],
+    am = [['add-missing-libspec']],
+    cn = [['clean-ns']],
+    cp = [['cycle-privacy']],
+    is = [['inline-symbol']],
+    ef = [['extract-function', 'Function name: ']],
+    ai = [['add-import-to-namespace', 'Import name: ']],
   }
 
-  for lhs, args in pairs(mappings) do
-    util.buf_set_keymap(bufnr, 'n', lhs, '<cmd>call v:lua.clj_lsp_cmd(' .. args ..')<CR>')
+  for keys, args in pairs(mappings) do
+    util.buf_set_keymap(bufnr, 'n', '<leader>r' .. keys, '<cmd>call v:lua.clj_lsp_cmd(' .. args ..')<CR>')
   end
 end
 
@@ -43,7 +43,7 @@ local on_attach = function(client, bufnr)
   util.buf_set_keymaps(bufnr, {
     {'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
     {'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
-    {'n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>'},
+    {'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>'},
     {'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>'},
     {'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>'},
     {'n', '<space>wl', '<cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>'},

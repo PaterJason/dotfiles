@@ -3,4 +3,4 @@ function _G.dump(...)
     print(unpack(objects))
 end
 
-require'config.plugins'
+require'plugins'

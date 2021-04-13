@@ -54,4 +54,4 @@ set signcolumn=auto:2
 set completeopt=menuone,noselect
 
 " Lua config
-lua require('config')
+lua require('init')

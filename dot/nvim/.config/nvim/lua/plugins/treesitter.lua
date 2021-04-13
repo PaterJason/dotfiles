@@ -43,4 +43,18 @@ config.setup {
     move = {},
     lsp_interop = {},
   },
+  refactor = {
+    smart_rename = {
+      enable = true,
+      keymaps = {
+        smart_rename = "<leader>rn",
+      },
+    },
+    navigation = {
+      enable = true,
+      keymaps = {
+        goto_definition = "gd",
+      },
+    },
+  },
 }
