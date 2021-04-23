@@ -1,12 +1,3 @@
-# fzf
-if type -q fzf
-  fzf_key_bindings
-end
-
-if type -q bat
-  set -gx MANPAGER "sh -c 'col -bx | bat -l man --paging=always -p'"
-end
-
 eval (dircolors -c)
 
 # neovim
