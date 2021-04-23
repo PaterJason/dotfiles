@@ -52,6 +52,7 @@ set signcolumn=auto:2
 
 " Completion
 set completeopt=menuone,noselect
+set shortmess+=c
 
 " Lua config
 lua require('init')

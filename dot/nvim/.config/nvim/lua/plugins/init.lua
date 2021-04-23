@@ -41,10 +41,10 @@ return require'packer'.startup(function(use)
     'liuchengxu/vim-which-key',
     config = function()
       require'util'.set_keymaps{
-        {'n', '<leader>', [[<cmd>WhichKey '<leader>'<CR>]]},
-        {'v', '<leader>', [[<cmd>WhichKeyVisual '<leader>'<CR>]]},
-        {'n', '<localleader>', [[<cmd>WhichKey '<localleader>'<CR>]]},
-        {'v', '<localleader>', [[<cmd>WhichKeyVisual '<localleader>'<CR>]]},
+        {'n', '<leader>', [[:<c-u>WhichKey '<Space>'<CR>]]},
+        {'v', '<leader>', [[:<c-u>WhichKeyVisual '<Space>'<CR>]]},
+        {'n', '<localleader>', [[:<c-u>WhichKey ','<CR>]]},
+        {'v', '<localleader>', [[:<c-u>WhichKeyVisual ','<CR>]]},
       }
     end,
   }
@@ -57,7 +57,7 @@ return require'packer'.startup(function(use)
   use'tpope/vim-dispatch'
   use'tpope/vim-repeat'
   use'tpope/vim-vinegar'
-  -- use'sheerun/vim-polyglot'
+  use'sheerun/vim-polyglot'
   use{
     'simnalamburt/vim-mundo',
     config = function()
@@ -96,7 +96,7 @@ return require'packer'.startup(function(use)
   }
   use{
     'guns/vim-sexp',
-    requires = {'tpope/vim-sexp-mappings-for-regular-people'}
+    requires = {'tpope/vim-sexp-mappings-for-regular-people'},
   }
 
   -- Git
@@ -133,16 +133,9 @@ return require'packer'.startup(function(use)
   }
   use{
     'hrsh7th/nvim-compe',
-    requires = {'tami5/compe-conjure'},
+    requires = {'tami5/compe-conjure', 'hrsh7th/vim-vsnip'},
     config = function()
       require'plugins.compe'
-    end,
-  }
-
-  use{
-    'norcalli/snippets.nvim',
-    config = function()
-      require'plugins.snippets'
     end,
   }
 
