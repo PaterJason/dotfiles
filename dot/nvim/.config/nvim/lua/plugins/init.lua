@@ -4,7 +4,7 @@ if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.cmd('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
 
-vim.cmd'autocmd BufWritePost */lua/pack/init.lua PackerCompile'
+vim.cmd'autocmd BufWritePost */plugins/init.lua PackerCompile'
 
 return require'packer'.startup(function(use)
   use'wbthomason/packer.nvim'
@@ -49,8 +49,7 @@ return require'packer'.startup(function(use)
     end,
   }
   use{
-    'tmux-plugins/vim-tmux-focus-events',
-    requires = {'christoomey/vim-tmux-navigator'},
+    'christoomey/vim-tmux-navigator',
   }
 
   -- Util
@@ -85,7 +84,7 @@ return require'packer'.startup(function(use)
 
   -- Edit
   use'tpope/vim-abolish'
-  use'tpope/vim-commentary'
+  use'b3nj5m1n/kommentary'
 
   -- Parens
   use{
@@ -98,30 +97,36 @@ return require'packer'.startup(function(use)
     'guns/vim-sexp',
     requires = {'tpope/vim-sexp-mappings-for-regular-people'},
   }
-
-  -- Git
   use{
-    'tpope/vim-fugitive',
+    'windwp/nvim-autopairs',
     config = function()
-      require'util'.set_keymaps{
-        {'n', '<leader>gb', '<cmd>Git blame<CR>'},
-        {'n', '<leader>gg', '<cmd>Git<CR>'},
-      }
+      require'nvim-autopairs'.setup()
     end,
   }
-  use{
-    'mhinz/vim-signify',
+
+  -- Git
+  use'tpope/vim-fugitive'
+  use {
+    'lewis6991/gitsigns.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
     config = function()
-      require'util'.set_keymaps{
-        {'n', '<leader>gd', '<cmd>SignifyDiff<CR>'},
-        {'n', '<leader>gp', '<cmd>SignifyHunkDiff<CR>'},
-        {'n', '<leader>gu', '<cmd>SignifyHunkUndo<CR>'},
-        {'o', 'ic', '<plug>(signify-motion-inner-pending)'},
-        {'x', 'ic', '<plug>(signify-motion-inner-visual)'},
-        {'o', 'ac', '<plug>(signify-motion-outer-pending)'},
-        {'x', 'ac', '<plug>(signify-motion-outer-visual)'},
+      require('gitsigns').setup()
+    end,
+    after = 'nord-vim',
+  }
+  use {
+    'TimUntersberger/neogit',
+    requires = {
+      'nvim-lua/plenary.nvim'
+    },
+    config = function()
+      require('neogit').setup{
+        disable_context_highlighting = true
       }
-    end
+      require'util'.set_keymap('n', '<leader>g', '<cmd>Neogit<CR>')
+    end,
   }
 
   -- IDE

@@ -44,6 +44,8 @@ local on_attach = function(client, bufnr)
     {'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>'},
     {'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>'},
     {'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>'},
+    {'n', '<leader>fd', '<cmd>Telescope lsp_document_diagnostics<CR>'},
+    {'n', '<leader>fD', '<cmd>Telescope lsp_workspace_diagnostics<CR>'},
     {'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>'},
     {'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>'},
     {'n', '<space>wl', '<cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>'},
