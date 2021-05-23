@@ -12,6 +12,7 @@ return require'packer'.startup(function(use)
   -- Pretty
   use{
     'arcticicestudio/nord-vim',
+    requires = {'folke/lsp-colors.nvim'},
     config = function()
       require'plugins.colors'
     end,
@@ -37,30 +38,24 @@ return require'packer'.startup(function(use)
 
   -- Key binds
   use'tpope/vim-unimpaired'
-  use{
-    'liuchengxu/vim-which-key',
+  use'christoomey/vim-tmux-navigator'
+  use {
+    'folke/which-key.nvim',
     config = function()
-      require'util'.set_keymaps{
-        {'n', '<leader>', [[:<c-u>WhichKey '<Space>'<CR>]]},
-        {'v', '<leader>', [[:<c-u>WhichKeyVisual '<Space>'<CR>]]},
-        {'n', '<localleader>', [[:<c-u>WhichKey ','<CR>]]},
-        {'v', '<localleader>', [[:<c-u>WhichKeyVisual ','<CR>]]},
-      }
+      local wk = require'which-key'
+      wk.setup{}
+      wk.register({}, {prefix = '<localleader>'})
     end,
-  }
-  use{
-    'christoomey/vim-tmux-navigator',
   }
 
   -- Util
   use'tpope/vim-dispatch'
   use'tpope/vim-repeat'
   use'tpope/vim-vinegar'
-  use'sheerun/vim-polyglot'
   use{
-    'simnalamburt/vim-mundo',
+    'mbbill/undotree',
     config = function()
-      require'util'.set_keymap('n', '<leader>u', '<cmd>MundoToggle<CR>')
+      require'util'.set_keymap('n', '<leader>u', '<cmd>UndotreeToggle<CR>')
     end
   }
 
@@ -70,15 +65,6 @@ return require'packer'.startup(function(use)
     config = function()
       vim.cmd'hi link Sneak Search'
       vim.cmd'hi link SneakScope Comment'
-    end,
-  }
-  use{
-    'mhinz/vim-grepper',
-    config = function()
-      require'util'.set_keymaps{
-        {'n', '<leader>G', '<cmd>Grepper<CR>'},
-        {'x', '<leader>G', '<plug>(GrepperOperator)'},
-      }
     end,
   }
 
@@ -108,30 +94,17 @@ return require'packer'.startup(function(use)
   use'tpope/vim-fugitive'
   use {
     'lewis6991/gitsigns.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim'
-    },
+    requires = {'nvim-lua/plenary.nvim'},
     config = function()
       require('gitsigns').setup()
     end,
     after = 'nord-vim',
   }
-  use {
-    'TimUntersberger/neogit',
-    requires = {
-      'nvim-lua/plenary.nvim'
-    },
-    config = function()
-      require('neogit').setup{
-        disable_context_highlighting = true
-      }
-      require'util'.set_keymap('n', '<leader>g', '<cmd>Neogit<CR>')
-    end,
-  }
 
   -- IDE
   use{
     'neovim/nvim-lspconfig',
+    requires = {'kabouzeid/nvim-lspinstall'},
     config = function()
       require'plugins.lsp'
     end,
@@ -162,6 +135,7 @@ return require'packer'.startup(function(use)
     requires = {
       'nvim-lua/popup.nvim',
       'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope-symbols.nvim',
     },
     config = function()
       require'plugins.telescope'
@@ -175,5 +149,9 @@ return require'packer'.startup(function(use)
       vim.g['conjure#mapping#doc_word'] = 'K'
     end,
   }
-  use'clojure-vim/vim-jack-in'
+  use{
+    'clojure-vim/clojure.vim',
+    'clojure-vim/vim-jack-in',
+    ft = 'clojure',
+  }
 end)

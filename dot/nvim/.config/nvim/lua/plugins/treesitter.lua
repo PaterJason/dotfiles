@@ -15,7 +15,7 @@ config.setup {
     },
   },
   indent = {
-    enable = true,
+    enable = false,
   },
   textobjects = {
     select = {

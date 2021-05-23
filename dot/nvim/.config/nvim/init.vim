@@ -1,3 +1,5 @@
+set shell=/bin/bash
+
 set hidden
 set noswapfile
 set spelllang=en
