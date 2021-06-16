@@ -89,11 +89,18 @@ local on_attach = function(client, bufnr)
     ]], false)
   end
 
+  if client.resolved_capabilities.code_lens then
+    vim.api.nvim_exec([[
+    autocmd BufEnter,BufWritePost <buffer> lua vim.lsp.codelens.refresh()
+    ]], false)
+    vim.lsp.codelens.refresh()
+  end
+
   print(client.name .. ' attached')
 end
 
 local server_config = {
-  clojure_lsp = {
+  clojure = {
     init_options = {
       ['ignore-classpath-directories'] = true,
     },
@@ -140,8 +147,6 @@ local server_config = {
 
 local servers = install.installed_servers()
 table.insert(servers, 'clangd')
-table.insert(servers, 'clojure_lsp')
-table.insert(servers, 'sqls')
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true

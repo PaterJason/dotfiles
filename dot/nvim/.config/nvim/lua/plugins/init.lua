@@ -12,7 +12,6 @@ return require'packer'.startup(function(use)
   -- Pretty
   use{
     'arcticicestudio/nord-vim',
-    requires = {'folke/lsp-colors.nvim'},
     config = function()
       require'plugins.colors'
     end,
@@ -59,18 +58,9 @@ return require'packer'.startup(function(use)
     end
   }
 
-  -- Navigation
-  use{
-    'justinmk/vim-sneak',
-    config = function()
-      vim.cmd'hi link Sneak Search'
-      vim.cmd'hi link SneakScope Comment'
-    end,
-  }
-
   -- Edit
   use'tpope/vim-abolish'
-  use'b3nj5m1n/kommentary'
+  use'tpope/vim-commentary'
 
   -- Parens
   use{
@@ -82,6 +72,9 @@ return require'packer'.startup(function(use)
   use{
     'guns/vim-sexp',
     requires = {'tpope/vim-sexp-mappings-for-regular-people'},
+    config = function ()
+      vim.g.sexp_enable_insert_mode_mappings = 0
+    end
   }
   use{
     'windwp/nvim-autopairs',
@@ -101,14 +94,7 @@ return require'packer'.startup(function(use)
     after = 'nord-vim',
   }
 
-  -- IDE
-  use{
-    'neovim/nvim-lspconfig',
-    requires = {'kabouzeid/nvim-lspinstall'},
-    config = function()
-      require'plugins.lsp'
-    end,
-  }
+  -- Completion
   use{
     'hrsh7th/nvim-compe',
     requires = {'tami5/compe-conjure', 'hrsh7th/vim-vsnip'},
@@ -117,6 +103,16 @@ return require'packer'.startup(function(use)
     end,
   }
 
+  -- LSP
+  use{
+    'neovim/nvim-lspconfig',
+    requires = {'kabouzeid/nvim-lspinstall'},
+    config = function()
+      require'plugins.lsp'
+    end,
+  }
+
+  -- Tree-sitter
   use{
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
@@ -127,9 +123,9 @@ return require'packer'.startup(function(use)
   use{
     'nvim-treesitter/nvim-treesitter-textobjects',
     'nvim-treesitter/nvim-treesitter-refactor',
-    after = 'nvim-treesitter'
   }
 
+  -- Telescope
   use{
     'nvim-telescope/telescope.nvim',
     requires = {
