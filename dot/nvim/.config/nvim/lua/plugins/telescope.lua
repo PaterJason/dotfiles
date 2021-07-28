@@ -27,6 +27,7 @@ local mappings = {
   h = 'help_tags',
   l = 'loclist',
   q = 'quickfix',
+  s = 'spell_suggest',
 }
 
 for keys, args in pairs(mappings) do

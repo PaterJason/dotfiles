@@ -38,7 +38,7 @@ return require'packer'.startup(function(use)
   -- Key binds
   use'tpope/vim-unimpaired'
   use'christoomey/vim-tmux-navigator'
-  use {
+  use{
     'folke/which-key.nvim',
     config = function()
       local wk = require'which-key'
@@ -72,32 +72,37 @@ return require'packer'.startup(function(use)
   use{
     'guns/vim-sexp',
     requires = {'tpope/vim-sexp-mappings-for-regular-people'},
-    config = function ()
-      vim.g.sexp_enable_insert_mode_mappings = 0
-    end
-  }
-  use{
-    'windwp/nvim-autopairs',
-    config = function()
-      require'nvim-autopairs'.setup()
-    end,
   }
 
   -- Git
   use'tpope/vim-fugitive'
   use {
+    'TimUntersberger/neogit',
+    requires = {'nvim-lua/plenary.nvim'},
+    config = function ()
+      require'util'.set_keymap('n', '<leader>g', '<cmd>Neogit<CR>')
+      require'neogit'.setup{
+        disable_context_highlighting = true,
+      }
+    end
+  }
+  use{
     'lewis6991/gitsigns.nvim',
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
-      require('gitsigns').setup()
+      require'gitsigns'.setup{
+        preview_config = {border = 'none'},
+      }
     end,
-    after = 'nord-vim',
   }
 
   -- Completion
   use{
     'hrsh7th/nvim-compe',
-    requires = {'tami5/compe-conjure', 'hrsh7th/vim-vsnip'},
+    requires = {
+      'tami5/compe-conjure',
+      'hrsh7th/vim-vsnip',
+    },
     config = function()
       require'plugins.compe'
     end,
@@ -121,7 +126,7 @@ return require'packer'.startup(function(use)
     end,
   }
   use{
-    'nvim-treesitter/nvim-treesitter-textobjects',
+    -- 'nvim-treesitter/nvim-treesitter-textobjects',
     'nvim-treesitter/nvim-treesitter-refactor',
   }
 
@@ -143,10 +148,10 @@ return require'packer'.startup(function(use)
     'Olical/conjure',
     config = function()
       vim.g['conjure#mapping#doc_word'] = 'K'
+      vim.g['conjure#log#hud#border'] = 'none'
     end,
   }
   use{
-    'clojure-vim/clojure.vim',
     'clojure-vim/vim-jack-in',
     ft = 'clojure',
   }

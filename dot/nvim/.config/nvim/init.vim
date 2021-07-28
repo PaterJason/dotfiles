@@ -2,7 +2,7 @@ set shell=/bin/bash
 
 set hidden
 set noswapfile
-set spelllang=en
+set spelllang=en_gb
 
 " Leader
 let g:mapleader = ' '

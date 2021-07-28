@@ -17,32 +17,6 @@ config.setup {
   indent = {
     enable = false,
   },
-  textobjects = {
-    select = {
-      enable = true,
-      keymaps = {
-        ['ib'] = '@block.inner',
-        ['ab'] = '@block.outer',
-        ['im'] = '@call.inner',
-        ['am'] = '@call.outer',
-        ['iC'] = '@class.inner',
-        ['aC'] = '@class.outer',
-        ['ad'] = '@comment.outer',
-        ['ic'] = '@conditional.inner',
-        ['ac'] = '@conditional.outer',
-        ['if'] = '@function.inner',
-        ['af'] = '@function.outer',
-        ['il'] = '@loop.inner',
-        ['al'] = '@loop.outer',
-        ['ia'] = '@parameter.inner',
-        ['aa'] = '@parameter.outer',
-        ['as'] = '@statement.outer',
-      },
-    },
-    swap = {},
-    move = {},
-    lsp_interop = {},
-  },
   refactor = {
     smart_rename = {
       enable = true,
