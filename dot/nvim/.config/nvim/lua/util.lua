@@ -24,4 +24,8 @@ M.buf_set_keymaps = function(bufnr, maps_args)
   end
 end
 
+M.replace_termcodes = function(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
 return M

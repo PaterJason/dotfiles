@@ -1,6 +1,6 @@
 local lsp = require'lspconfig'
-local util = require'util'
 local install = require'lspinstall'
+local util = require'util'
 
 function _G.clj_lsp_cmd (cmd, prompt)
   local params = vim.lsp.util.make_position_params()
@@ -80,13 +80,8 @@ local on_attach = function(client, bufnr)
   end
 
   if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
-    ]], false)
+    vim.api.nvim_command [[autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()]]
+    vim.api.nvim_command [[autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()]]
   end
 
   if client.resolved_capabilities.code_lens then
@@ -149,14 +144,7 @@ local servers = install.installed_servers()
 table.insert(servers, 'clangd')
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities.textDocument.completion.completionItem.resolveSupport = {
-  properties = {
-    'documentation',
-    'detail',
-    'additionalTextEdits',
-  }
-}
+capabilities = require'cmp_nvim_lsp'.update_capabilities(capabilities)
 
 install.setup()
 

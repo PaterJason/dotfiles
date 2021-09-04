@@ -1,10 +1,7 @@
 local install_path = vim.fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.cmd('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
-
-vim.cmd'autocmd BufWritePost */plugins/init.lua PackerCompile'
 
 return require'packer'.startup(function(use)
   use'wbthomason/packer.nvim'
@@ -13,7 +10,7 @@ return require'packer'.startup(function(use)
   use{
     'arcticicestudio/nord-vim',
     config = function()
-      require'plugins.colors'
+      require'pack.colors'
     end,
   }
   use{
@@ -28,7 +25,7 @@ return require'packer'.startup(function(use)
       require'colorizer'.setup{
         '*',
         css = {css = true},
-        scss = { css = true},
+        scss = {css = true},
         '!fugitive',
         '!packer',
       }
@@ -61,14 +58,18 @@ return require'packer'.startup(function(use)
   -- Edit
   use'tpope/vim-abolish'
   use'tpope/vim-commentary'
+  use{
+    'junegunn/vim-easy-align',
+    config = function()
+      require'util'.set_keymaps{
+        {'x', 'ga', '<Plug>(EasyAlign)', {}},
+        {'n', 'ga', '<Plug>(EasyAlign)', {}},
+      }
+    end
+  }
 
   -- Parens
-  use{
-    'machakann/vim-sandwich',
-    config = function()
-      vim.cmd'runtime macros/sandwich/keymap/surround.vim'
-    end,
-  }
+  use'tpope/vim-surround'
   use{
     'guns/vim-sexp',
     requires = {'tpope/vim-sexp-mappings-for-regular-people'},
@@ -76,16 +77,6 @@ return require'packer'.startup(function(use)
 
   -- Git
   use'tpope/vim-fugitive'
-  use {
-    'TimUntersberger/neogit',
-    requires = {'nvim-lua/plenary.nvim'},
-    config = function ()
-      require'util'.set_keymap('n', '<leader>g', '<cmd>Neogit<CR>')
-      require'neogit'.setup{
-        disable_context_highlighting = true,
-      }
-    end
-  }
   use{
     'lewis6991/gitsigns.nvim',
     requires = {'nvim-lua/plenary.nvim'},
@@ -96,15 +87,17 @@ return require'packer'.startup(function(use)
     end,
   }
 
-  -- Completion
   use{
-    'hrsh7th/nvim-compe',
+    'hrsh7th/nvim-cmp',
     requires = {
-      'tami5/compe-conjure',
-      'hrsh7th/vim-vsnip',
+      'PaterJason/cmp-conjure',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-path',
     },
     config = function()
-      require'plugins.compe'
+      require'pack.cmp'
     end,
   }
 
@@ -113,20 +106,21 @@ return require'packer'.startup(function(use)
     'neovim/nvim-lspconfig',
     requires = {'kabouzeid/nvim-lspinstall'},
     config = function()
-      require'plugins.lsp'
+      require'pack.lsp'
     end,
   }
 
   -- Tree-sitter
   use{
     'nvim-treesitter/nvim-treesitter',
+    branch = '0.5-compat',
     run = ':TSUpdate',
     config = function()
-      require'plugins.treesitter'
+      require'pack.treesitter'
     end,
   }
   use{
-    -- 'nvim-treesitter/nvim-treesitter-textobjects',
+    'nvim-treesitter/nvim-treesitter-textobjects',
     'nvim-treesitter/nvim-treesitter-refactor',
   }
 
@@ -139,7 +133,7 @@ return require'packer'.startup(function(use)
       'nvim-telescope/telescope-symbols.nvim',
     },
     config = function()
-      require'plugins.telescope'
+      require'pack.telescope'
     end,
   }
 
