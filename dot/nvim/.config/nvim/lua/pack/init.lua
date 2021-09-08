@@ -145,8 +145,5 @@ return require'packer'.startup(function(use)
       vim.g['conjure#log#hud#border'] = 'none'
     end,
   }
-  use{
-    'clojure-vim/vim-jack-in',
-    ft = 'clojure',
-  }
+  use'clojure-vim/vim-jack-in'
 end)
