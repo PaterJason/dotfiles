@@ -8,7 +8,7 @@ cat * | sudo pacman -S --needed -
 ```
 
 ## Symlink dotfiles
-In the `dot` directory:
+In the `stow` directory:
 ```sh
 stow *
 ```
