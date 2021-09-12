@@ -1,6 +1,9 @@
 # Dotfiles
 This is a dotfiles repository
 
+## Shorcuts
+[Neovim config](stow/nvim/.config/nvim)
+
 ## Install packages
 In the `pkglists` directory:
 ```sh
