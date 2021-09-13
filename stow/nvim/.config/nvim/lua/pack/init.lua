@@ -104,7 +104,6 @@ return require'packer'.startup(function(use)
   -- LSP
   use{
     'neovim/nvim-lspconfig',
-    requires = {'kabouzeid/nvim-lspinstall'},
     config = function()
       require'pack.lsp'
     end,

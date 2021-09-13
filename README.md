@@ -7,7 +7,7 @@ This is a dotfiles repository
 ## Install packages
 In the `pkglists` directory:
 ```sh
-cat * | sudo pacman -S --needed -
+cat * | yay -S --needed -
 ```
 
 ## Symlink dotfiles

@@ -1,5 +1,4 @@
 local lsp = require'lspconfig'
-local install = require'lspinstall'
 local util = require'util'
 
 function _G.clj_lsp_cmd (cmd, prompt)
@@ -94,8 +93,25 @@ local on_attach = function(client, bufnr)
   print(client.name .. ' attached')
 end
 
-local server_config = {
-  clojure = {
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require'cmp_nvim_lsp'.update_capabilities(capabilities)
+
+local lua_runtime_path = vim.split(package.path, ';')
+table.insert(lua_runtime_path, "lua/?.lua")
+table.insert(lua_runtime_path, "lua/?/init.lua")
+
+local servers = {
+  cssls = {
+    cmd = {'vscode-css-languageserver', '--stdio'}
+  },
+  html = {
+    cmd = {'vscode-html-languageserver', '--stdio'}
+  },
+  jsonls = {
+    cmd = {'vscode-json-languageserver', '--stdio'}
+  },
+  bashls = {},
+  clojure_lsp = {
     init_options = {
       ['ignore-classpath-directories'] = true,
     },
@@ -104,26 +120,27 @@ local server_config = {
       on_attach(client, bufnr)
     end,
   },
-  lua = {
+  sumneko_lua = {
+    cmd = {'lua-language-server'};
     settings = {
       Lua = {
         runtime = {
           version = 'LuaJIT',
-          path = vim.split(package.path, ';'),
+          path = lua_runtime_path,
         },
         diagnostics = {
           globals = {'vim'},
         },
         workspace = {
-          library = {
-            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-          }
-        }
-      }
-    }
+          library = vim.api.nvim_get_runtime_file('', true),
+        },
+        telemetry = {
+          enable = false,
+        },
+      },
+    },
   },
-  latex = {
+  texlab = {
     settings = {
       latex = {
         build = {
@@ -140,22 +157,13 @@ local server_config = {
   },
 }
 
-local servers = install.installed_servers()
-table.insert(servers, 'clangd')
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require'cmp_nvim_lsp'.update_capabilities(capabilities)
-
-install.setup()
-
-for _, server in pairs(servers) do
-  lsp[server].setup(vim.tbl_extend('keep',
-  server_config[server] or {},
-  {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = {
-      debounce_text_changes = 200,
-    }
-  }))
+for server, config in pairs(servers) do
+  lsp[server].setup(vim.tbl_extend('keep', config,
+    {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      flags = {
+        debounce_text_changes = 200,
+      }
+    }))
 end
