@@ -10,3 +10,5 @@ fun! CompleteEmpty(findstart, base)
   endif
 endfun
 let g:conjure#completion#fallback = 'CompleteEmpty'
+
+highlight link clojureTSSymbol TSKeyword
