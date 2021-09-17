@@ -21,9 +21,7 @@ bootstrap('wbthomason', 'packer.nvim')
 bootstrap('Olical', 'aniseed')
 vim.g['aniseed#env'] = true
 
-local fnl_status, _ = pcall(require, 'plugins')
+local fnl_status, _ = pcall(require, 'init')
 if not fnl_status then
   print('Fennel config not loaded, try restarting')
 end
-
--- require'pack'

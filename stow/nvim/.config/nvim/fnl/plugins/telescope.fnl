@@ -19,6 +19,6 @@
                    :l "loclist"
                    :q "quickfix"
                    :s "spell_suggest"})]
-  (util.set_keymap :n (.. "<leader>f" k) (.. "<cmd>Telescope " v "<CR>")))
+  (util.set-keymap :n (.. "<leader>f" k) (.. "<cmd>Telescope " v "<CR>")))
 
-(util.set_keymap "n" "<leader>F" "<cmd>Telescope<CR>")
+(util.set-keymap "n" "<leader>F" "<cmd>Telescope<CR>")

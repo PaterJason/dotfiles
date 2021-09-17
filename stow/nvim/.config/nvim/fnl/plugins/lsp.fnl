@@ -30,13 +30,13 @@
                      :is "'inline-symbol'"
                      :ef "'extract-function', 'Function name: '"
                      :ai "'add-import-to-namespace', 'Import name: '"})]
-    (util.buf_set_keymap bufnr
+    (util.buf-set-keymap bufnr
                          :n
                          (.. "<leader>r" k)
                          (.. "<cmd>call v:lua.clj_lsp_cmd(" v ")<CR>"))))
 
 (defn- on-attach [client bufnr]
-  (util.buf_set_keymaps
+  (util.buf-set-keymaps
     bufnr
     [["n" "[d" "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>"]
      ["n" "]d" "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>"]
@@ -62,7 +62,7 @@
                      :type_definition [["n" "<leader>D" "<cmd>lua vim.lsp.buf.type_definition()<CR>"]]
                      :workspace_symbol [["n" "<leader>ws" "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>"]]})]
     (when (. client.resolved_capabilities k)
-      (util.buf_set_keymaps bufnr v)))
+      (util.buf-set-keymaps bufnr v)))
 
   (when client.resolved_capabilities.document_highlight
     (vim.cmd "autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()")
@@ -90,7 +90,7 @@
                               (on-attach client bufnr))}
    :sumneko_lua {:cmd ["lua-language-server"]
                  :settings {:Lua {:runtime {:version "LuaJIT"
-                                            :path (a.concat (vim.split package.path  ";")  "lua/?.lua"  "lua/?/init.lua")}
+                                            :path (a.concat (vim.split package.path  ";") ["lua/?.lua"  "lua/?/init.lua"])}
                                   :diagnostics {:globals ["vim"]}
                                   :workspace {:library (vim.api.nvim_get_runtime_file "" true)}
                                   :telemetry {:enable false}}}}
