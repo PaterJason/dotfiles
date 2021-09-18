@@ -9,8 +9,8 @@
     (use {1 "wbthomason/packer.nvim"
           :config (fn []
                     (let [util (require :util)]
-                      (util.set-keymaps [["n" "<leader>pc" "<cmd>PackerCompile<CR>" {}]
-                                         ["n" "<leader>ps" "<cmd>PackerSync<CR>" {}]])))})
+                      (util.keymaps [["n" "<leader>pc" "<cmd>PackerCompile<CR>" {}]
+                                     ["n" "<leader>ps" "<cmd>PackerSync<CR>" {}]])))})
 
     (use {1 "arcticicestudio/nord-vim"
           :config (fn []
@@ -52,15 +52,15 @@
     (use {1 "mbbill/undotree"
           :config (fn []
                     (let [util (require :util)]
-                      (util.set-keymap "n" "<leader>u" "<cmd>UndotreeToggle<CR>")))})
+                      (util.keymap "n" "<leader>u" "<cmd>UndotreeToggle<CR>")))})
 
     (use "tpope/vim-abolish")
     (use "tpope/vim-commentary")
     (use {1 "junegunn/vim-easy-align"
           :config (fn []
                     (let [util (require :util)]
-                      (util.set-keymaps [["x" "ga" "<Plug>(EasyAlign)" {}]
-                                         ["n" "ga" "<Plug>(EasyAlign)" {}]])))})
+                      (util.keymaps [["x" "ga" "<Plug>(EasyAlign)" {}]
+                                     ["n" "ga" "<Plug>(EasyAlign)" {}]])))})
 
 
     ; Parens
