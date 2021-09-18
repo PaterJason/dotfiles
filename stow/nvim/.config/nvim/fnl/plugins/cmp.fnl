@@ -14,17 +14,17 @@
                                           :select true})
              "<Tab>" (cmp.mapping (fn [fallback]
                                     (if (= 1 (vim.fn.pumvisible))
-                                      (vim.fn.feedkeys (util.replace_termcodes "<C-n>") "n")
-                                      (luasnip.expand_or_jumpable)
-                                      (vim.fn.feedkeys (util.replace_termcodes "<Plug>luasnip-expand-or-jump") "")
-                                      (fallback)))
+                                        (vim.fn.feedkeys (util.replace_termcodes "<C-n>") "n")
+                                        (luasnip.expand_or_jumpable)
+                                        (vim.fn.feedkeys (util.replace_termcodes "<Plug>luasnip-expand-or-jump") "")
+                                        (fallback)))
                                   ["i" "s"])
              "<S-Tab>" (cmp.mapping (fn [fallback]
                                       (if (= 1 (vim.fn.pumvisible))
-                                        (vim.fn.feedkeys (util.replace_termcodes "<C-p>") "n")
-                                        (luasnip.expand_or_jumpable)
-                                        (vim.fn.feedkeys (util.replace_termcodes "<Plug>luasnip-jump-prev") "")
-                                        (fallback)))
+                                          (vim.fn.feedkeys (util.replace_termcodes "<C-p>") "n")
+                                          (luasnip.expand_or_jumpable)
+                                          (vim.fn.feedkeys (util.replace_termcodes "<Plug>luasnip-jump-prev") "")
+                                          (fallback)))
                                     ["i" "s"])}
    :sources [{:name "conjure"}
              {:name "luasnip"}
