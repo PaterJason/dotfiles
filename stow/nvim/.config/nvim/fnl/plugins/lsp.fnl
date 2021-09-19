@@ -96,7 +96,9 @@
                                   :telemetry {:enable false}}}}
    :texlab {:settings {:latex {:build {:onSave true}
                                :forwardSearch {:onSave true}
-                               :lint {:onChange true}}}}})
+                               :lint {:onChange true}}}}
+   :tsserver {}
+   :vimls {}})
 
 (each [k v (pairs servers)]
   ((. lsp k :setup)
