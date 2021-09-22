@@ -1,13 +1,22 @@
 (module plugins.telescope
   {autoload {util util
              telescope telescope
-             actions telescope.actions}})
+             actions telescope.actions
+             themes telescope.themes}})
 
 (telescope.setup
-  {:defaults {:mappings {:n {"<C-x>" false
-                             "<C-s>" actions.select_horizontal}
-                         :i {"<C-x>" false
-                             "<C-s>" actions.select_horizontal}}}})
+  {:defaults (vim.tbl_extend
+               "keep"
+               {:mappings {:n {"<C-x>" false
+                               "<C-s>" actions.select_horizontal}
+                           :i {"<C-x>" false
+                               "<C-s>" actions.select_horizontal}}}
+               (themes.get_ivy))
+   :pickers {:lsp_code_actions {:theme "cursor"}
+             :lsp_range_code_actions {:theme "cursor"}
+             :builtin {:previewer false}}})
+
+(telescope.load_extension "fzy_native")
 
 (each [k v (pairs {":" "commands"
                    :b "buffers"

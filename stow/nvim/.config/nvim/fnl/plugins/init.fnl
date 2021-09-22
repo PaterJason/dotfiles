@@ -4,12 +4,7 @@
 (def- packages
   {"Olical/aniseed"
    {:config (fn [] (set vim.g.aniseed#env true))}
-
-   "wbthomason/packer.nvim"
-   {:config (fn []
-              (let [util (require :util)]
-                (util.keymaps [["n" "<leader>pc" "<cmd>PackerCompile<CR>" {}]
-                               ["n" "<leader>ps" "<cmd>PackerSync<CR>" {}]])))}
+   "wbthomason/packer.nvim" {}
 
    "arcticicestudio/nord-vim"
    {:config (fn []
@@ -22,7 +17,6 @@
               (vim.cmd "highlight link LspReferenceWrite Underline"))}
    "itchyny/lightline.vim"
    {:config (fn [] (set vim.g.lightline {:colorscheme "nord"}))}
-
    "norcalli/nvim-colorizer.lua"
    {:config (fn []
               (let [colorizer (require :colorizer)]
@@ -41,7 +35,6 @@
                 (wk.setup {})
                 (wk.register {} {:prefix "<localleader>"})))}
 
-
    ; Util
    "tpope/vim-dispatch" {}
    "tpope/vim-repeat" {}
@@ -59,7 +52,6 @@
               (let [util (require :util)]
                 (util.keymaps [["x" "ga" "<Plug>(EasyAlign)" {}]
                                ["n" "ga" "<Plug>(EasyAlign)" {}]])))}
-
 
    ; Parens
    "guns/vim-sexp"
@@ -101,6 +93,7 @@
    "nvim-telescope/telescope.nvim"
    {:requires ["nvim-lua/popup.nvim"
                "nvim-lua/plenary.nvim"
+               "nvim-telescope/telescope-fzy-native.nvim" 
                "nvim-telescope/telescope-symbols.nvim"]
     :config (fn [] (require :plugins.telescope))}
 

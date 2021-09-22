@@ -7,9 +7,9 @@
 (global clj_lsp_cmd
   (fn [cmd prompt]
     (let [params (vim.lsp.util.make_position_params)
-          args (a.concat [params.textDocument.uri params.position.line params.position.character]
-                         (when prompt
-                           (vim.fn.input prompt)))]
+          args [params.textDocument.uri params.position.line params.position.character]]
+      (when prompt
+        (table.insert args (vim.fn.input prompt)))
       (vim.lsp.buf.execute_command {:command cmd
                                     :arguments args}))))
 
@@ -41,26 +41,28 @@
     [["n" "[d" "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>"]
      ["n" "]d" "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>"]
      ["n" "<leader>d" "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>"]
+     ["n" "<leader>fd" "<cmd>Telescope lsp_document_diagnostics<CR>"]
+     ["n" "<leader>fD" "<cmd>Telescope lsp_workspace_diagnostics<CR>"]
      ["n" "<space>wa" "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>"]
      ["n" "<space>wr" "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>"]
      ["n" "<space>wl" "<cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>"]])
 
   (each [k v (pairs {:call_hierarchy [["n""<leader>ci"  "<cmd>lua vim.lsp.buf.incoming_calls()<CR>"]
                                       ["n""<leader>co"  "<cmd>lua vim.lsp.buf.outgoing_calls()<CR>"]]
-                     :code_action [["n" "<leader>a" "<cmd>lua vim.lsp.buf.code_action()<CR>"]
-                                   ["v" "<leader>a" "<cmd>lua vim.lsp.buf.range_code_action()<CR>"]]
+                     :code_action [["n" "<leader>a" "<cmd>Telescope lsp_code_actions<CR>"]
+                                   ["v" "<leader>a" "<cmd>Telescope lsp_range_code_actions"]]
                      :declaration [["n" "gD" "<cmd>lua vim.lsp.buf.declaration()<CR>"]]
                      :document_formatting [["n" "<leader>=" "<cmd>lua vim.lsp.buf.formatting()<CR>"]]
                      :document_range_formatting [["v" "<leader>=" "<cmd>lua vim.lsp.buf.range_formatting()<CR>"]]
-                     :document_symbol [["n" "gs" "<cmd>lua vim.lsp.buf.document_symbol()<CR>"]]
-                     :find_references [["n" "gr" "<cmd>lua vim.lsp.buf.references()<CR>"]]
-                     :goto_definition [["n" "gd" "<cmd>lua vim.lsp.buf.definition()<CR>"]]
+                     :document_symbol [["n" "gs" "<cmd>Telescope lsp_document_symbols<CR>"]]
+                     :find_references [["n" "gr" "<cmd>Telescope lsp_references<CR>"]]
+                     :goto_definition [["n" "gd" "<cmd>Telescope lsp_definitions<CR>"]]
                      :hover [["n" "K" "<cmd>lua vim.lsp.buf.hover()<CR>"]]
-                     :implementation [["n" "gi" "<cmd>lua vim.lsp.buf.implementation()<CR>"]]
+                     :implementation [["n" "gi" "<cmd>Telescope lsp_implementations<CR>"]]
                      :rename [["n" "<space>rn" "<cmd>lua vim.lsp.buf.rename()<CR>"]]
                      :signature_help [["n" "<leader>K" "<cmd>lua vim.lsp.buf.signature_help()<CR>"]]
-                     :type_definition [["n" "<leader>D" "<cmd>lua vim.lsp.buf.type_definition()<CR>"]]
-                     :workspace_symbol [["n" "<leader>ws" "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>"]]})]
+                     :type_definition [["n" "<leader>D" "<cmd>Telescope lsp_type_definitions<CR>"]]
+                     :workspace_symbol [["n" "<leader>ws" "<cmd>Telescope lsp_workspace_symbols<CR>"]]})]
     (when (. client.resolved_capabilities k)
       (util.buf-keymaps bufnr v)))
 
