@@ -105,15 +105,14 @@
 
    "clojure-vim/vim-jack-in" {}})
 
-(packer.startup
-  (fn [use]
-    (each [name cfg (pairs packages)]
-      (tset cfg 1 name)
-      (use cfg))))
+(each [name cfg (pairs packages)]
+  (tset cfg 1 name))
 
-(when (-> (vim.fn.stdpath "config")
-          (.. "/plugin/packer_compiled.lua")
+(packer.startup {1 (vim.tbl_values packages)
+                 :config {:display {:prompt_border "none"}}})
+
+(when (-> packer.config.compile_path
           vim.fn.glob
           vim.fn.empty
           (> 0))
-  (vim.cmd "PackerSync"))
+  (packer.sync))

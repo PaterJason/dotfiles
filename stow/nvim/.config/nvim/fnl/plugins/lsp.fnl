@@ -1,6 +1,5 @@
 (module plugins.lsp
-  {autoload {a aniseed.core
-             util util
+  {autoload {util util
              lsp lspconfig
              cmp_lsp cmp_nvim_lsp}})
 
@@ -92,7 +91,8 @@
                               (on-attach client bufnr))}
    :sumneko_lua {:cmd ["lua-language-server"]
                  :settings {:Lua {:runtime {:version "LuaJIT"
-                                            :path (a.concat (vim.split package.path  ";") ["lua/?.lua"  "lua/?/init.lua"])}
+                                            :path (vim.list_extend (vim.split package.path  ";")
+                                                                   ["lua/?.lua"  "lua/?/init.lua"])}
                                   :diagnostics {:globals ["vim"]}
                                   :workspace {:library (vim.api.nvim_get_runtime_file "" true)}
                                   :telemetry {:enable false}}}}
@@ -104,7 +104,7 @@
 
 (each [k v (pairs servers)]
   ((. lsp k :setup)
-   (a.merge {:on_attach on-attach
-             :capabilities capabilities
-             :flags {:debounce_text_changes 200}}
-            v)))
+   (vim.tbl_extend "keep"
+                   v
+                   {:on_attach on-attach
+                    :flags {:debounce_text_changes 200}})))

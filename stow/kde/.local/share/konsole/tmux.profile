@@ -1,5 +1,6 @@
 [Appearance]
 ColorScheme=nord
+UseFontLineChararacters=true
 
 [General]
 Command=/bin/tmux

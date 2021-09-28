@@ -12,9 +12,10 @@
                            :i {"<C-x>" false
                                "<C-s>" actions.select_horizontal}}}
                (themes.get_ivy))
-   :pickers {:lsp_code_actions {:theme "cursor"}
-             :lsp_range_code_actions {:theme "cursor"}
-             :builtin {:previewer false}}})
+   :pickers {:builtin {:previewer false}
+             :colorscheme {:enable_preview true}
+             :lsp_code_actions {:theme "cursor"}
+             :lsp_range_code_actions {:theme "cursor"}}})
 
 (telescope.load_extension "fzy_native")
 
