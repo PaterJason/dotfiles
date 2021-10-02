@@ -12,12 +12,11 @@
    :title true
    :lazyredraw true
    :colorcolumn "80"
-
    :number true
    :relativenumber true
-
    :showmode false
 
+   :joinspaces false
    :tabstop 2
    :softtabstop 2
    :shiftwidth 2
@@ -25,6 +24,11 @@
 
    :ignorecase true
    :smartcase true
+   :inccommand "split"
+
+   :list true
+   :listchars "tab:» ,trail:·,nbsp:·"
+   :fillchars "fold: ,diff: "
 
    :breakindent true
    :breakindentopt "sbr"

@@ -54,11 +54,10 @@
                                ["n" "ga" "<Plug>(EasyAlign)" {}]])))}
 
    ; Parens
+   "tpope/vim-surround" {}
    "guns/vim-sexp"
    {:requires "tpope/vim-sexp-mappings-for-regular-people"
-    :config (fn []
-              (set vim.g.sexp_filetypes "clojure,scheme,lisp,timl,fennel"))}
-   "machakann/vim-sandwich" {}
+    :config (fn [] (set vim.g.sexp_filetypes "clojure,scheme,lisp,fennel"))}
 
    ; Git
    "tpope/vim-fugitive" {}
@@ -105,10 +104,8 @@
 
    "clojure-vim/vim-jack-in" {}})
 
-(each [name cfg (pairs packages)]
-  (tset cfg 1 name))
-
-(packer.startup {1 (vim.tbl_values packages)
+(packer.startup {1 (icollect [name cfg (pairs packages)]
+                     (do (tset cfg 1 name) cfg))
                  :config {:display {:prompt_border "none"}}})
 
 (when (-> packer.config.compile_path

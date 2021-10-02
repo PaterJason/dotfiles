@@ -49,7 +49,7 @@
   (each [k v (pairs {:call_hierarchy [["n""<leader>ci"  "<cmd>lua vim.lsp.buf.incoming_calls()<CR>"]
                                       ["n""<leader>co"  "<cmd>lua vim.lsp.buf.outgoing_calls()<CR>"]]
                      :code_action [["n" "<leader>a" "<cmd>Telescope lsp_code_actions<CR>"]
-                                   ["v" "<leader>a" "<cmd>Telescope lsp_range_code_actions"]]
+                                   ["v" "<leader>a" ":Telescope lsp_range_code_actions<CR>"]]
                      :declaration [["n" "gD" "<cmd>lua vim.lsp.buf.declaration()<CR>"]]
                      :document_formatting [["n" "<leader>=" "<cmd>lua vim.lsp.buf.formatting()<CR>"]]
                      :document_range_formatting [["v" "<leader>=" "<cmd>lua vim.lsp.buf.range_formatting()<CR>"]]
