@@ -34,8 +34,8 @@ local opts = {
   completeopt = 'menu,menuone,noselect',
 }
 
-for k, v in pairs(opts) do
-  vim.o[k] = v
+for name, value in pairs(opts) do
+  vim.o[name] = value
 end
 
 vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'

@@ -20,7 +20,7 @@ telescope.setup {
 
 telescope.load_extension 'fzy_native'
 
-for k, v in pairs {
+for keymap, builtin in pairs {
   [':'] = 'commands',
   b = 'buffers',
   c = 'current_buffer_fuzzy_find',
@@ -32,7 +32,7 @@ for k, v in pairs {
   q = 'quickfix',
   s = 'spell_suggest',
 } do
-  util.keymap('n', ('<leader>f' .. k), ('<cmd>Telescope ' .. v .. '<CR>'))
+  util.keymap('n', ('<leader>f' .. keymap), ('<cmd>Telescope ' .. builtin .. '<CR>'))
 end
 
 util.keymap('n', '<leader>F', '<cmd>Telescope<CR>')

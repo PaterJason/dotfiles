@@ -13,7 +13,7 @@ function _G.clj_lsp_cmd(cmd, prompt)
 end
 
 local function map_clj(bufnr)
-  for k, v in pairs {
+  for keymap, args in pairs {
     cc = '"cycle-coll"',
     th = '"thread-first"',
     tt = '"thread-last"',
@@ -31,7 +31,7 @@ local function map_clj(bufnr)
     ef = '"extract-function", "Function name: "',
     ai = '"add-import-to-namespace", "Import name: "',
   } do
-    util.buf_keymap(bufnr, 'n', ('<leader>r' .. k), ('<cmd>call v:lua.clj_lsp_cmd(' .. v .. ')<CR>'))
+    util.buf_keymap(bufnr, 'n', ('<leader>r' .. keymap), ('<cmd>call v:lua.clj_lsp_cmd(' .. args .. ')<CR>'))
   end
 end
 
@@ -46,7 +46,7 @@ local function on_attach(client, bufnr)
     { 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>' },
     { 'n', '<space>wl', '<cmd>lua put(vim.lsp.buf.list_workspace_folders())<CR>' },
   })
-  for k, v in pairs {
+  for capability, keymaps in pairs {
     call_hierarchy = {
       { 'n', '<leader>ci', '<cmd>lua vim.lsp.buf.incoming_calls()<CR>' },
       { 'n', '<leader>co', '<cmd>lua vim.lsp.buf.outgoing_calls()<CR>' },
@@ -68,8 +68,8 @@ local function on_attach(client, bufnr)
     type_definition = { { 'n', '<leader>D', '<cmd>Telescope lsp_type_definitions<CR>' } },
     workspace_symbol = { { 'n', '<leader>ws', '<cmd>Telescope lsp_workspace_symbols<CR>' } },
   } do
-    if client.resolved_capabilities[k] then
-      util.buf_keymaps(bufnr, v)
+    if client.resolved_capabilities[capability] then
+      util.buf_keymaps(bufnr, keymaps)
     else
     end
   end
@@ -128,8 +128,8 @@ local servers = {
   hls = {},
 }
 
-for k, v in pairs(servers) do
-  lsp[k].setup(vim.tbl_extend('keep', v, {
+for server, config in pairs(servers) do
+  lsp[server].setup(vim.tbl_extend('keep', config, {
     on_attach = on_attach,
     capabilities = capabilities,
     flags = { debounce_text_changes = 200 },
