@@ -1,3 +1,12 @@
+-- Bootstrap
+local url = 'https://github.com/wbthomason/packer.nvim'
+local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
+local is_bootstrap = false
+if vim.fn.glob(install_path) == '' then
+  vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path }
+  is_bootstrap = true
+end
+
 local packer = require 'packer'
 
 packer.startup {
@@ -7,13 +16,15 @@ packer.startup {
     {
       'arcticicestudio/nord-vim',
       config = function()
-        vim.g.nord_italic = 1
-        vim.g.nord_italic_comments = 1
+        -- vim.g.nord_italic = 1
+        -- vim.g.nord_italic_comments = 1
         vim.g.nord_underline = 1
         vim.cmd 'colorscheme nord'
-        vim.cmd 'highlight link LspReferenceText Underline'
-        vim.cmd 'highlight link LspReferenceRead Underline'
-        return vim.cmd 'highlight link LspReferenceWrite Underline'
+        vim.cmd [[
+        highlight link LspReferenceText Underline
+        highlight link LspReferenceRead Underline
+        highlight link LspReferenceWrite Underline
+        ]]
       end,
     },
     {
@@ -70,10 +81,19 @@ packer.startup {
     -- Parens
     'tpope/vim-surround',
     {
+      'windwp/nvim-autopairs',
+      config = function()
+        require('nvim-autopairs').setup {
+          enable_check_bracket_line = false,
+        }
+      end,
+    },
+    {
       'guns/vim-sexp',
       requires = 'tpope/vim-sexp-mappings-for-regular-people',
       config = function()
         vim.g.sexp_filetypes = 'clojure,scheme,lisp,fennel'
+        vim.g.sexp_enable_insert_mode_mappings = 0
       end,
     },
     -- Git
@@ -89,10 +109,10 @@ packer.startup {
     {
       'hrsh7th/nvim-cmp',
       requires = {
-        'PaterJason/cmp-conjure',
-        'L3MON4D3/LuaSnip',
-        'saadparwaiz1/cmp_luasnip',
         'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-vsnip',
+        'hrsh7th/vim-vsnip',
+        'PaterJason/cmp-conjure',
         'hrsh7th/cmp-path',
       },
       config = function()
@@ -106,6 +126,14 @@ packer.startup {
         require 'plugins.lsp'
       end,
     },
+    -- DAP
+    {
+      'mfussenegger/nvim-dap',
+      requires = { 'jbyuki/one-small-step-for-vimkind' },
+      config = function()
+        require 'plugins.dap'
+      end,
+    },
     -- Treesitter
     {
       'nvim-treesitter/nvim-treesitter',
@@ -113,7 +141,7 @@ packer.startup {
       requires = {
         'nvim-treesitter/nvim-treesitter-textobjects',
         'nvim-treesitter/nvim-treesitter-refactor',
-        'nvim-treesitter/playground',
+        'nvim-telescope/telescope-dap.nvim',
       },
       run = ':TSUpdate',
       config = function()
@@ -145,3 +173,7 @@ packer.startup {
   },
   config = { display = { prompt_border = 'none' } },
 }
+
+if is_bootstrap then
+  packer.sync()
+end
