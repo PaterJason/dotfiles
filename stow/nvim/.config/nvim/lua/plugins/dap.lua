@@ -27,3 +27,5 @@ dap.adapters.nlua = function(callback, config)
 end
 
 vim.cmd 'au FileType dap-repl lua require("dap.ext.autocompl").attach()'
+
+require('dapui').setup {}

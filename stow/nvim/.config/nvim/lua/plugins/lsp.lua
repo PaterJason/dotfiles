@@ -2,6 +2,11 @@ local lsp = require 'lspconfig'
 local cmp_lsp = require 'cmp_nvim_lsp'
 local util = require 'util'
 
+local popup_opts = { border = 'single' }
+local popup_opts_str = '{ border = "single" }'
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, popup_opts)
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, popup_opts)
+
 function _G.clj_lsp_cmd(cmd, prompt)
   local params = vim.lsp.util.make_position_params()
   local args = { params.textDocument.uri, params.position.line, params.position.character }
@@ -10,6 +15,11 @@ function _G.clj_lsp_cmd(cmd, prompt)
   else
   end
   return vim.lsp.buf.execute_command { command = cmd, arguments = args }
+end
+
+function _G.lsp_formatexr()
+  vim.lsp.buf.range_formatting({}, { vim.v.lnum, 0 }, { vim.v.lnum + vim.v.count, 0 })
+  return 0
 end
 
 local function map_clj(bufnr)
@@ -37,11 +47,9 @@ end
 
 local function on_attach(client, bufnr)
   util.buf_keymaps(bufnr, {
-    { 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>' },
-    { 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>' },
-    { 'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>' },
-    { 'n', '<leader>fd', '<cmd>Telescope lsp_document_diagnostics<CR>' },
-    { 'n', '<leader>fD', '<cmd>Telescope lsp_workspace_diagnostics<CR>' },
+    { 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev { popup_opts = ' .. popup_opts_str .. ' }<CR>' },
+    { 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next { popup_opts = ' .. popup_opts_str .. ' }<CR>' },
+    { 'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics ' .. popup_opts_str .. '<CR>' },
     { 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>' },
     { 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>' },
     { 'n', '<space>wl', '<cmd>lua put(vim.lsp.buf.list_workspace_folders())<CR>' },
@@ -73,13 +81,15 @@ local function on_attach(client, bufnr)
     else
     end
   end
+  if client.resolved_capabilities.document_range_formatting then
+    vim.bo.formatexpr = 'v:lua.lsp_formatexr()'
+  end
   if client.resolved_capabilities.document_highlight then
     vim.cmd 'autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()'
     vim.cmd 'autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()'
   end
   if client.resolved_capabilities.code_lens then
-    vim.cmd 'autocmd BufEnter,BufWritePost <buffer> lua vim.lsp.codelens.refresh()'
-    vim.lsp.codelens.refresh()
+    vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
   print(client.name .. ' attached')
 end
@@ -95,7 +105,7 @@ local servers = {
     init_options = { ['ignore-classpath-directories'] = true },
     on_attach = function(client, bufnr)
       map_clj(bufnr)
-      return on_attach(client, bufnr)
+      on_attach(client, bufnr)
     end,
   },
   sumneko_lua = {

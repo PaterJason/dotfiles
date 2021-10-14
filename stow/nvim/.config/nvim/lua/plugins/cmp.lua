@@ -29,18 +29,19 @@ cmp.setup {
       elseif has_words_before() then
         cmp.complete()
       else
-        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+        fallback()
       end
     end, {
       'i',
       's',
     }),
-
-    ['<S-Tab>'] = cmp.mapping(function()
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
       elseif vim.fn['vsnip#jumpable'](-1) == 1 then
         util.feedkeys '<Plug>(vsnip-jump-prev)'
+      else
+        fallback()
       end
     end, {
       'i',

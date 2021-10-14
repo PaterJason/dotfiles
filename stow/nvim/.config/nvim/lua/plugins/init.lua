@@ -12,18 +12,13 @@ local packer = require 'packer'
 packer.startup {
   {
     'wbthomason/packer.nvim',
-    -- Visual
     {
-      'arcticicestudio/nord-vim',
+      'shaunsingh/nord.nvim',
       config = function()
-        -- vim.g.nord_italic = 1
-        -- vim.g.nord_italic_comments = 1
-        vim.g.nord_underline = 1
-        vim.cmd 'colorscheme nord'
+        vim.g.nord_borders = true
+        require('nord').set()
         vim.cmd [[
-        highlight link LspReferenceText Underline
-        highlight link LspReferenceRead Underline
-        highlight link LspReferenceWrite Underline
+        highlight link LspCodeLens Comment
         ]]
       end,
     },
@@ -63,7 +58,8 @@ packer.startup {
     -- Edit
     {
       'mbbill/undotree',
-      config = function()
+      cmd = 'UndotreeToggle',
+      setup = function()
         require('util').keymap('n', '<leader>u', '<cmd>UndotreeToggle<CR>')
       end,
     },
@@ -98,11 +94,17 @@ packer.startup {
     },
     -- Git
     'tpope/vim-fugitive',
+    'TimUntersberger/neogit',
     {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
+      cmd = 'Neogit',
+      module = 'neogit',
+      setup = function()
+        require('util').keymap('n', '<leader>g', '<cmd>Neogit<CR>')
+      end,
       config = function()
-        require('gitsigns').setup { preview_config = { border = 'none' } }
+        require('gitsigns').setup {}
       end,
     },
     -- Completion
@@ -129,7 +131,10 @@ packer.startup {
     -- DAP
     {
       'mfussenegger/nvim-dap',
-      requires = { 'jbyuki/one-small-step-for-vimkind' },
+      requires = {
+        'jbyuki/one-small-step-for-vimkind',
+        'rcarriga/nvim-dap-ui',
+      },
       config = function()
         require 'plugins.dap'
       end,
@@ -157,6 +162,11 @@ packer.startup {
         'nvim-telescope/telescope-fzy-native.nvim',
         'nvim-telescope/telescope-symbols.nvim',
       },
+      cmd = 'Telescope',
+      module = 'telescope',
+      setup = function()
+        require 'plugins.telescope_setup'
+      end,
       config = function()
         require 'plugins.telescope'
       end,
@@ -166,12 +176,17 @@ packer.startup {
       'Olical/conjure',
       config = function()
         vim.g['conjure#mapping#doc_word'] = 'K'
-        vim.g['conjure#log#hud#border'] = 'none'
       end,
     },
     'clojure-vim/vim-jack-in',
   },
-  config = { display = { prompt_border = 'none' } },
+  config = {
+    -- profile = {
+    --   enable = true,
+    --   threshold = 1,
+    -- },
+    display = { prompt_border = 'single' },
+  },
 }
 
 if is_bootstrap then

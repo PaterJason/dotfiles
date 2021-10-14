@@ -1,7 +1,7 @@
 local config = require 'nvim-treesitter.configs'
 
 return config.setup {
-  ensure_installed = 'maintained',
+  ensure_installed = 'all',
   highlight = {
     enable = true,
     custom_captures = {},
