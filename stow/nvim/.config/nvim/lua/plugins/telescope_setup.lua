@@ -12,6 +12,7 @@ for keymap, builtin in pairs {
   f = 'find_files',
   F = 'file_browser',
   g = 'live_grep',
+  G = 'grep_string',
   h = 'help_tags',
   l = 'loclist',
   q = 'quickfix',

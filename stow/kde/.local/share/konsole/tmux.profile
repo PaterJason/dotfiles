@@ -1,5 +1,5 @@
 [Appearance]
-ColorScheme=nord
+ColorScheme=dark
 UseFontLineChararacters=true
 
 [General]

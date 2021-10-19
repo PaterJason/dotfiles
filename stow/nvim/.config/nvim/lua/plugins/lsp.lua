@@ -2,10 +2,11 @@ local lsp = require 'lspconfig'
 local cmp_lsp = require 'cmp_nvim_lsp'
 local util = require 'util'
 
-local popup_opts = { border = 'single' }
-local popup_opts_str = '{ border = "single" }'
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, popup_opts)
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, popup_opts)
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    severity_sort = true
+  }
+)
 
 function _G.clj_lsp_cmd(cmd, prompt)
   local params = vim.lsp.util.make_position_params()
@@ -47,9 +48,9 @@ end
 
 local function on_attach(client, bufnr)
   util.buf_keymaps(bufnr, {
-    { 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev { popup_opts = ' .. popup_opts_str .. ' }<CR>' },
-    { 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next { popup_opts = ' .. popup_opts_str .. ' }<CR>' },
-    { 'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics ' .. popup_opts_str .. '<CR>' },
+    { 'n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>' },
+    { 'n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>' },
+    { 'n', '<leader>d', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>' },
     { 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>' },
     { 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>' },
     { 'n', '<space>wl', '<cmd>lua put(vim.lsp.buf.list_workspace_folders())<CR>' },
@@ -89,7 +90,7 @@ local function on_attach(client, bufnr)
     vim.cmd 'autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()'
   end
   if client.resolved_capabilities.code_lens then
-    vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
+    vim.cmd 'autocmd BufEnter,BufModifiedSet,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
   print(client.name .. ' attached')
 end

@@ -13,19 +13,15 @@ packer.startup {
   {
     'wbthomason/packer.nvim',
     {
-      'shaunsingh/nord.nvim',
+      'projekt0n/github-nvim-theme',
       config = function()
-        vim.g.nord_borders = true
-        require('nord').set()
-        vim.cmd [[
-        highlight link LspCodeLens Comment
-        ]]
-      end,
-    },
-    {
-      'itchyny/lightline.vim',
-      config = function()
-        vim.g.lightline = { colorscheme = 'nord' }
+        require('github-theme').setup {
+          comment_style = 'NONE',
+          keyword_style = 'NONE',
+          hide_inactive_statusline = false,
+          dark_float = true,
+        }
+        vim.cmd'highlight link LspCodeLens Comment'
       end,
     },
     {
@@ -47,7 +43,7 @@ packer.startup {
       'folke/which-key.nvim',
       config = function()
         local wk = require 'which-key'
-        wk.setup {}
+        wk.setup()
         wk.register({}, { prefix = '<localleader>' })
       end,
     },
@@ -94,17 +90,16 @@ packer.startup {
     },
     -- Git
     'tpope/vim-fugitive',
-    'TimUntersberger/neogit',
     {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
-      cmd = 'Neogit',
-      module = 'neogit',
-      setup = function()
-        require('util').keymap('n', '<leader>g', '<cmd>Neogit<CR>')
-      end,
       config = function()
-        require('gitsigns').setup {}
+        require('gitsigns').setup{
+          preview_config = {
+            border = 'none',
+          },
+          sign_priority = 11,
+        }
       end,
     },
     -- Completion
@@ -133,7 +128,6 @@ packer.startup {
       'mfussenegger/nvim-dap',
       requires = {
         'jbyuki/one-small-step-for-vimkind',
-        'rcarriga/nvim-dap-ui',
       },
       config = function()
         require 'plugins.dap'
@@ -176,16 +170,17 @@ packer.startup {
       'Olical/conjure',
       config = function()
         vim.g['conjure#mapping#doc_word'] = 'K'
+        vim.g['conjure#log#hud#border'] = 'none'
       end,
     },
     'clojure-vim/vim-jack-in',
   },
   config = {
-    -- profile = {
-    --   enable = true,
-    --   threshold = 1,
-    -- },
-    display = { prompt_border = 'single' },
+    profile = {
+      enable = true,
+      threshold = 1,
+    },
+    display = { prompt_border = 'none' },
   },
 }
 

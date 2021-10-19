@@ -7,10 +7,9 @@ local opts = {
   clipboard = 'unnamedplus',
   title = true,
   lazyredraw = true,
-  colorcolumn = '80',
+  -- colorcolumn = '80',
   number = true,
   relativenumber = true,
-  showmode = false,
   joinspaces = false,
   tabstop = 2,
   softtabstop = 2,
@@ -21,7 +20,6 @@ local opts = {
   inccommand = 'split',
   list = true,
   listchars = 'tab:» ,trail:·,nbsp:·',
-  fillchars = 'fold: ,diff: ',
   breakindent = true,
   breakindentopt = 'sbr',
   linebreak = true,
@@ -39,5 +37,7 @@ for name, value in pairs(opts) do
 end
 
 vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'
+
+vim.g.netrw_liststyle = 3
 
 require 'plugins'
