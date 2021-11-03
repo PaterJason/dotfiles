@@ -22,12 +22,12 @@ function M.buf_keymaps(bufnr, keymaps)
   end
 end
 
-function M.replace_termcodes(s)
+function M.tcode(s)
   return vim.api.nvim_replace_termcodes(s, true, true, true)
 end
 
 function M.feedkeys(s)
-  vim.api.nvim_feedkeys(M.replace_termcodes(s), '', true)
+  vim.api.nvim_feedkeys(M.tcode(s), '', true)
 end
 
 return M

@@ -13,15 +13,33 @@ packer.startup {
   {
     'wbthomason/packer.nvim',
     {
+      'nvim-lualine/lualine.nvim',
+      config = function()
+        require('lualine').setup {
+          options = {
+            theme = 'github',
+            icons_enabled = false,
+            section_separators = '',
+            component_separators = '',
+          },
+          extensions = { 'fugitive', 'quickfix' },
+        }
+      end,
+    },
+    {
       'projekt0n/github-nvim-theme',
       config = function()
         require('github-theme').setup {
+          theme_style = 'dark',
           comment_style = 'NONE',
           keyword_style = 'NONE',
           hide_inactive_statusline = false,
           dark_float = true,
         }
-        vim.cmd'highlight link LspCodeLens Comment'
+        vim.cmd [[
+        highlight link LspCodeLens Comment
+        highlight Sneak guibg=#265459
+        ]]
       end,
     },
     {
@@ -42,34 +60,23 @@ packer.startup {
     {
       'folke/which-key.nvim',
       config = function()
-        local wk = require 'which-key'
-        wk.setup()
-        wk.register({}, { prefix = '<localleader>' })
+        require 'plugins.which_key'
       end,
     },
     -- Util
     'tpope/vim-dispatch',
     'tpope/vim-repeat',
     'tpope/vim-vinegar',
+    'tpope/vim-eunuch',
+    'justinmk/vim-sneak',
     -- Edit
     {
       'mbbill/undotree',
       cmd = 'UndotreeToggle',
-      setup = function()
-        require('util').keymap('n', '<leader>u', '<cmd>UndotreeToggle<CR>')
-      end,
     },
     'tpope/vim-abolish',
     'tpope/vim-commentary',
-    {
-      'junegunn/vim-easy-align',
-      config = function()
-        require('util').keymaps {
-          { 'x', 'ga', '<Plug>(EasyAlign)', {} },
-          { 'n', 'ga', '<Plug>(EasyAlign)', {} },
-        }
-      end,
-    },
+    'junegunn/vim-easy-align',
     -- Parens
     'tpope/vim-surround',
     {
@@ -94,7 +101,7 @@ packer.startup {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
       config = function()
-        require('gitsigns').setup{
+        require('gitsigns').setup {
           preview_config = {
             border = 'none',
           },
@@ -107,7 +114,8 @@ packer.startup {
       'hrsh7th/nvim-cmp',
       requires = {
         'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-vsnip',
+        'L3MON4D3/LuaSnip',
+        'saadparwaiz1/cmp_luasnip',
         'hrsh7th/vim-vsnip',
         'PaterJason/cmp-conjure',
         'hrsh7th/cmp-path',
@@ -119,6 +127,9 @@ packer.startup {
     -- LSP
     {
       'neovim/nvim-lspconfig',
+      requires = {
+        'jose-elias-alvarez/null-ls.nvim',
+      },
       config = function()
         require 'plugins.lsp'
       end,
@@ -129,6 +140,10 @@ packer.startup {
       requires = {
         'jbyuki/one-small-step-for-vimkind',
       },
+      module = { 'dap' },
+      setup = function()
+        require 'plugins.dap_setup'
+      end,
       config = function()
         require 'plugins.dap'
       end,
@@ -138,9 +153,8 @@ packer.startup {
       'nvim-treesitter/nvim-treesitter',
       branch = '0.5-compat',
       requires = {
-        'nvim-treesitter/nvim-treesitter-textobjects',
+        { 'nvim-treesitter/nvim-treesitter-textobjects', branch = '0.5-compat' },
         'nvim-treesitter/nvim-treesitter-refactor',
-        'nvim-telescope/telescope-dap.nvim',
       },
       run = ':TSUpdate',
       config = function()
@@ -155,12 +169,10 @@ packer.startup {
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzy-native.nvim',
         'nvim-telescope/telescope-symbols.nvim',
+        'nvim-telescope/telescope-dap.nvim',
       },
       cmd = 'Telescope',
       module = 'telescope',
-      setup = function()
-        require 'plugins.telescope_setup'
-      end,
       config = function()
         require 'plugins.telescope'
       end,
@@ -171,6 +183,7 @@ packer.startup {
       config = function()
         vim.g['conjure#mapping#doc_word'] = 'K'
         vim.g['conjure#log#hud#border'] = 'none'
+        vim.g['conjure#completion#omnifunc'] = nil
       end,
     },
     'clojure-vim/vim-jack-in',
