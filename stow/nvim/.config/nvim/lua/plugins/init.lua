@@ -189,10 +189,9 @@ packer.startup {
     'clojure-vim/vim-jack-in',
   },
   config = {
-    profile = {
-      enable = true,
-      threshold = 1,
-    },
+    -- profile = {
+    --   enable = true,
+    -- },
     display = { prompt_border = 'none' },
   },
 }
