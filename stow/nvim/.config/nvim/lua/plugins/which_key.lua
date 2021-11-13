@@ -14,19 +14,15 @@ wk.setup {
 
 wk.register({
   F = { '<cmd>Telescope builtin<CR>', 'Telescope builtins' },
-  f = {
+  ['<space>'] = { '<cmd>Telescope builtin<CR>', 'Telescope builtins' },
+  s = {
     name = 'Telescope',
-    [':'] = { '<cmd>Telescope commands<CR>', 'Commands' },
-    b = { '<cmd>Telescope buffers<CR>', 'Buffers' },
-    c = { '<cmd>Telescope current_buffer_fuzzy_find<CR>', 'Current buffer' },
     f = { '<cmd>Telescope find_files<CR>', 'Files' },
-    F = { '<cmd>Telescope file_browser<CR>', 'File browser' },
-    g = { '<cmd>Telescope live_grep<CR>', 'Grep' },
-    G = { '<cmd>Telescope grep_string<CR>', 'Grep string' },
+    b = { '<cmd>Telescope current_buffer_fuzzy_find<CR>', 'Current buffer' },
     h = { '<cmd>Telescope help_tags<CR>', 'Help' },
-    l = { '<cmd>Telescope loclist<CR>', 'Loclist' },
-    q = { '<cmd>Telescope quickfix<CR>', 'Quickfix' },
-    s = { '<cmd>Telescope spell_suggest<CR>', 'Spell' },
+    d = { '<cmd>Telescope grep_string<CR>', 'Grep string' },
+    p = { '<cmd>Telescope live_grep<CR>', 'Grep' },
+    o = { '<cmd>Telescope treesitter<CR>', 'Treesitter' },
   },
   u = { '<cmd>UndotreeToggle<CR>', 'Undotree' },
 }, {

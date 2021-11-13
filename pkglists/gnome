@@ -1,6 +1,3 @@
-alacritty
-chromium
-firefox
 gnome
 gnome-tweaks
 gst-libav
@@ -10,7 +7,6 @@ inter-font
 kvantum-qt5
 libva-mesa-driver
 mesa-vdpau
-mpv
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
@@ -18,5 +14,3 @@ pipewire-alsa
 pipewire-jack
 pipewire-pulse
 qt5ct
-ttf-fira-code
-youtube-dl

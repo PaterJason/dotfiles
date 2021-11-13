@@ -1,5 +1,6 @@
 local lsp = require 'lspconfig'
 local cmp_lsp = require 'cmp_nvim_lsp'
+local null_ls = require 'null-ls'
 
 vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics,
@@ -54,7 +55,8 @@ local function on_attach(client, bufnr)
   wk.register({
     ['[d'] = { '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', 'Prev diagnostic' },
     [']d'] = { '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', 'Next diagnostic' },
-    ['<leader>d'] = { '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', 'Show diagnostics' },
+    ['<leader>e'] = { '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', 'Show diagnostics' },
+    ['<leader>q'] = { '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', 'Diagnostics loclist' },
     ['<space>w'] = {
       name = 'Workspace',
       a = { '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', 'Add folder' },
@@ -67,14 +69,13 @@ local function on_attach(client, bufnr)
   for capability, mappings in pairs {
     call_hierarchy = {
       ['<leader>c'] = {
-        name = 'Calls',
-        ['i'] = { '<cmd>lua vim.lsp.buf.incoming_calls()<CR>', 'Incoming' },
-        ['o'] = { '<cmd>lua vim.lsp.buf.outgoing_calls()<CR>', 'Outgoing' },
+        ['i'] = { '<cmd>lua vim.lsp.buf.incoming_calls()<CR>', 'Incoming calls' },
+        ['o'] = { '<cmd>lua vim.lsp.buf.outgoing_calls()<CR>', 'Outgoing calls' },
       },
     },
-    code_action = { ['<leader>a'] = { '<cmd>Telescope lsp_code_actions<CR>', 'Code actions' } },
+    code_action = { ['<leader>ca'] = { '<cmd>Telescope lsp_code_actions<CR>', 'Code actions' } },
     declaration = { ['gD'] = { '<cmd>lua vim.lsp.buf.declaration()<CR>', 'Declaration' } },
-    document_symbol = { ['gs'] = { '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
+    document_symbol = { ['<leader>so'] = { '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
     find_references = { ['gr'] = { '<cmd>Telescope lsp_references<CR>', 'References' } },
     goto_definition = { ['gd'] = { '<cmd>Telescope lsp_definitions<CR>', 'Definition' } },
     hover = { ['K'] = { '<cmd>lua vim.lsp.buf.hover()<CR>', 'Hover' } },
@@ -82,7 +83,7 @@ local function on_attach(client, bufnr)
     rename = { ['<leader>rn'] = { '<cmd>lua vim.lsp.buf.rename()<CR>', 'Rename' } },
     signature_help = { ['<leader>K'] = { '<cmd>lua vim.lsp.buf.signature_help()<CR>', 'Signature help' } },
     type_definition = { ['<leader>D'] = { '<cmd>Telescope lsp_type_definitions<CR>', 'Type definitions' } },
-    workspace_symbol = { ['<leader>ws'] = { '<cmd>Telescope lsp_workspace_symbols<CR>', 'Symbols' } },
+    workspace_symbol = { ['<leader>st'] = { '<cmd>Telescope lsp_workspace_symbols<CR>', 'Workspace symbols' } },
   } do
     if client.resolved_capabilities[capability] then
       wk.register(mappings, { buffer = bufnr })
@@ -103,10 +104,21 @@ local function on_attach(client, bufnr)
   end
   print(client.name .. ' attached')
 end
+lsp.util.default_config.on_attach = on_attach
 
 local capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+lsp.util.default_config.capabilities = capabilities
 
-local servers = {
+lsp.util.default_config.flags = { debounce_text_changes = 250 }
+
+null_ls.config {
+  sources = {
+    null_ls.builtins.formatting.stylua,
+    null_ls.builtins.formatting.fish_indent,
+  },
+}
+
+for server, config in pairs {
   cssls = { cmd = { 'vscode-css-languageserver', '--stdio' } },
   html = { cmd = { 'vscode-html-languageserver', '--stdio' } },
   jsonls = { cmd = { 'vscode-json-languageserver', '--stdio' } },
@@ -134,11 +146,19 @@ local servers = {
   },
   texlab = {
     settings = {
-      latex = {
-        build = { onSave = true },
-        forwardSearch = { onSave = true },
-        lint = {
-          onChange = true,
+      texlab = {
+        build = {
+          onSave = true,
+          forwardSearchAfter = true,
+        },
+        forwardSearch = {
+          onSave = true,
+          executable = 'zathura',
+          args = { '--synctex-forward', '%l:1:%f', '%p' },
+        },
+        chktex = {
+          onEdit = true,
+          onOpenAndSave = true,
         },
       },
     },
@@ -147,21 +167,7 @@ local servers = {
   vimls = {},
   hls = {},
   ['null-ls'] = {},
-}
-
-local null_ls = require 'null-ls'
-
-null_ls.config {
-  sources = {
-    null_ls.builtins.formatting.stylua,
-    null_ls.builtins.formatting.fish_indent,
-  },
-}
-
-for server, config in pairs(servers) do
-  lsp[server].setup(vim.tbl_extend('keep', config, {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = { debounce_text_changes = 250 },
-  }))
+  pyright = {},
+} do
+  lsp[server].setup(config)
 end

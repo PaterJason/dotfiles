@@ -16,7 +16,9 @@ config.setup {
       node_decremental = 'grm',
     },
   },
-  indent = { enable = true },
+  indent = {
+    enable = true,
+  },
   refactor = {
     smart_rename = {
       enable = true,
@@ -26,7 +28,7 @@ config.setup {
       enable = true,
       keymaps = {
         goto_definition = 'gd',
-        list_definitions = 'gs',
+        list_definitions_toc = "gO",
         goto_next_usage = 'gnu',
         goto_previous_usage = 'gnU',
       },

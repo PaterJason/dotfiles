@@ -25,6 +25,7 @@ local opts = {
   hlsearch = false,
   list = true,
   listchars = 'tab:» ,trail:·,nbsp:·',
+  fillchars = 'fold: ,diff: ',
   breakindent = true,
   breakindentopt = 'sbr',
   linebreak = true,
@@ -34,7 +35,7 @@ local opts = {
   winwidth = 90,
   updatetime = 250,
   signcolumn = 'auto:3',
-  completeopt = 'menu,menuone,noselect',
+  completeopt = 'menuone,noselect',
 }
 
 for name, value in pairs(opts) do

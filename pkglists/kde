@@ -1,8 +1,6 @@
 ark
-chromium
 ffmpegthumbs
 filelight
-firefox
 gwenview
 hunspell
 hunspell-en_gb
@@ -12,7 +10,6 @@ kdegraphics-thumbnailers
 konsole
 libva-mesa-driver
 mesa-vdpau
-mpv
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
@@ -22,6 +19,4 @@ pipewire-pulse
 plasma-meta
 plasma-wayland-session
 spectacle
-ttf-fira-code
 xdg-desktop-portal
-youtube-dl

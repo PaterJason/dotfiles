@@ -77,7 +77,7 @@ packer.startup {
     'tpope/vim-abolish',
     'tpope/vim-commentary',
     'junegunn/vim-easy-align',
-    -- Parens
+    -- Parentheses
     'tpope/vim-surround',
     {
       'windwp/nvim-autopairs',
@@ -159,6 +159,12 @@ packer.startup {
       run = ':TSUpdate',
       config = function()
         require 'plugins.treesitter'
+      end,
+    },
+    {
+      'lewis6991/spellsitter.nvim',
+      config = function()
+        require('spellsitter').setup()
       end,
     },
     -- Telescope
