@@ -26,6 +26,7 @@ telescope.setup {
     colorscheme = { enable_preview = true },
     current_buffer_fuzzy_find = { skip_empty_lines = true },
     file_browser = { hidden = true, dir_icon = '📁' },
+    find_files = {hidden = true},
     lsp_code_actions = { theme = 'cursor' },
     lsp_range_code_actions = { theme = 'cursor' },
     spell_suggest = { theme = 'cursor' },

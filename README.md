@@ -2,7 +2,7 @@
 This is a dotfiles repository
 
 ## Shorcuts
-[Neovim config](stow/nvim/.config/nvim)
+[Neovim config](stowed/.config/nvim)
 
 ## Install packages
 In the `pkglists` directory:

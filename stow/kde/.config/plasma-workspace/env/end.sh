@@ -1,2 +1,0 @@
-BROWSER=/usr/bin/firefox
-MOZ_ENABLE_WAYLAND=1
