@@ -13,7 +13,6 @@ wk.setup {
 }
 
 wk.register({
-  F = { '<cmd>Telescope builtin<CR>', 'Telescope builtins' },
   ['<space>'] = { '<cmd>Telescope builtin<CR>', 'Telescope builtins' },
   s = {
     name = 'Telescope',

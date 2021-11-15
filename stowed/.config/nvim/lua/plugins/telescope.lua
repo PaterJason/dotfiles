@@ -30,6 +30,7 @@ telescope.setup {
     lsp_code_actions = { theme = 'cursor' },
     lsp_range_code_actions = { theme = 'cursor' },
     spell_suggest = { theme = 'cursor' },
+    symbols = { sources = {'emoji', 'latex'}},
   },
 }
 
