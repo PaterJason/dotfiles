@@ -1,3 +1,8 @@
+pcall(require, 'impatient')
+
+require 'init'
+require 'plugins'
+
 function _G.put(...)
   local objects = {}
   for i = 1, select('#', ...) do
@@ -8,6 +13,3 @@ function _G.put(...)
   print(table.concat(objects, '\n'))
   return ...
 end
-
-require 'init'
-require 'plugins'

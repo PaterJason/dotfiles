@@ -1,7 +1,8 @@
 local config = require 'nvim-treesitter.configs'
 
 config.setup {
-  ensure_installed = 'all',
+  ensure_installed = 'maintained',
+  sync_install = true,
   highlight = {
     enable = true,
     custom_captures = {},
@@ -22,13 +23,13 @@ config.setup {
   refactor = {
     smart_rename = {
       enable = true,
-      keymaps = { smart_rename = '<leader>rn' },
+      keymaps = { smart_rename = 'gnr' },
     },
     navigation = {
       enable = true,
       keymaps = {
         goto_definition = 'gd',
-        list_definitions_toc = "gO",
+        list_definitions_toc = 'gO',
         goto_next_usage = 'gnu',
         goto_previous_usage = 'gnU',
       },

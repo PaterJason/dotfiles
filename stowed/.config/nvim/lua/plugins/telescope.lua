@@ -25,14 +25,20 @@ telescope.setup {
     builtin = { previewer = false },
     colorscheme = { enable_preview = true },
     current_buffer_fuzzy_find = { skip_empty_lines = true },
-    file_browser = { hidden = true, dir_icon = '📁' },
-    find_files = {hidden = true},
     lsp_code_actions = { theme = 'cursor' },
     lsp_range_code_actions = { theme = 'cursor' },
     spell_suggest = { theme = 'cursor' },
-    symbols = { sources = {'emoji', 'latex'}},
+    symbols = { sources = { 'emoji', 'latex' } },
+  },
+  extensions = {
+    file_browser = {},
+    ['ui-select'] = {
+      require('telescope.themes').get_cursor {},
+    },
   },
 }
 
 telescope.load_extension 'fzy_native'
+telescope.load_extension 'ui-select'
 telescope.load_extension 'dap'
+telescope.load_extension 'file_browser'

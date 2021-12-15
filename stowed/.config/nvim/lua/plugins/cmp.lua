@@ -47,13 +47,32 @@ cmp.setup {
       's',
     }),
   },
-  sources = {
-    { name = 'conjure' },
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp_signature_help' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+  }, {
+    { name = 'conjure' },
+  }, {
     { name = 'path' },
-  },
+  }, {
+    { name = 'buffer' },
+  }),
 }
+
+cmp.setup.cmdline('/', {
+  sources = {
+    { name = 'buffer' },
+  },
+})
+
+cmp.setup.cmdline(':', {
+  sources = cmp.config.sources({
+    { name = 'path' },
+  }, {
+    { name = 'cmdline' },
+  }),
+})
 
 local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
 cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())

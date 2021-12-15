@@ -1,43 +1,34 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = [[\]]
 
-local opts = {
-  termguicolors = true,
-  shell = '/bin/bash',
-  hidden = true,
-  swapfile = false,
-  spelllang = 'en_gb',
-  mouse = 'a',
-  clipboard = 'unnamedplus',
-  title = true,
-  lazyredraw = true,
-  number = true,
-  relativenumber = true,
-  joinspaces = false,
-  tabstop = 2,
-  softtabstop = 2,
-  shiftwidth = 2,
-  expandtab = true,
-  ignorecase = true,
-  smartcase = true,
-  inccommand = 'nosplit',
-  list = true,
-  listchars = 'tab:» ,trail:·,nbsp:·',
-  fillchars = 'fold: ,diff: ',
-  breakindent = true,
-  breakindentopt = 'sbr',
-  linebreak = true,
-  showbreak = '↩',
-  splitright = true,
-  splitbelow = true,
-  winwidth = 90,
-  updatetime = 250,
-  signcolumn = 'auto:3',
-  completeopt = 'menuone,noselect',
-}
-
-for name, value in pairs(opts) do
-  vim.o[name] = value
-end
+vim.o.termguicolors = true
+vim.o.shell = '/bin/bash'
+vim.o.swapfile = false
+vim.o.spelllang = 'en_gb'
+vim.o.mouse = 'a'
+vim.o.clipboard = 'unnamedplus'
+vim.o.title = true
+vim.o.lazyredraw = true
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.list = true
+vim.o.listchars = 'tab:» ,trail:·,nbsp:·'
+vim.o.fillchars = 'fold: ,diff: '
+vim.o.breakindent = true
+vim.o.breakindentopt = 'sbr'
+vim.o.linebreak = true
+vim.o.showbreak = '↩'
+vim.o.splitright = true
+vim.o.splitbelow = true
+vim.o.winwidth = 90
+vim.o.updatetime = 250
+vim.o.signcolumn = 'auto'
+vim.o.completeopt = 'menuone,noselect'
 
 vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'

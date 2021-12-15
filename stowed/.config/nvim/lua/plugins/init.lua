@@ -1,23 +1,23 @@
 -- Bootstrap
-local url = 'https://github.com/wbthomason/packer.nvim'
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
-local is_bootstrap = false
 if vim.fn.glob(install_path) == '' then
+  local url = 'https://github.com/wbthomason/packer.nvim'
   vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path }
-  is_bootstrap = true
+  return
 end
 
 local packer = require 'packer'
 
 packer.startup {
   {
+    'lewis6991/impatient.nvim',
     'wbthomason/packer.nvim',
     {
       'nvim-lualine/lualine.nvim',
       config = function()
         require('lualine').setup {
           options = {
-            theme = 'github',
+            theme = 'tokyonight',
             icons_enabled = false,
             section_separators = '',
             component_separators = '',
@@ -27,19 +27,10 @@ packer.startup {
       end,
     },
     {
-      'projekt0n/github-nvim-theme',
+      'folke/tokyonight.nvim',
       config = function()
-        require('github-theme').setup {
-          theme_style = 'dark',
-          comment_style = 'NONE',
-          keyword_style = 'NONE',
-          hide_inactive_statusline = false,
-          dark_float = true,
-        }
-        vim.cmd [[
-        highlight link LspCodeLens Comment
-        highlight Sneak guibg=#265459
-        ]]
+        vim.g.tokyonight_style = 'night'
+        vim.cmd 'colorscheme tokyonight'
       end,
     },
     {
@@ -72,7 +63,6 @@ packer.startup {
     -- Edit
     {
       'mbbill/undotree',
-      cmd = 'UndotreeToggle',
     },
     'tpope/vim-abolish',
     'tpope/vim-commentary',
@@ -105,7 +95,8 @@ packer.startup {
           preview_config = {
             border = 'none',
           },
-          sign_priority = 11,
+          signcolumn = false,
+          numhl = true,
         }
       end,
     },
@@ -114,11 +105,14 @@ packer.startup {
       'hrsh7th/nvim-cmp',
       requires = {
         'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-nvim-lsp-signature-help',
+        'hrsh7th/cmp-cmdline',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-omni',
         'L3MON4D3/LuaSnip',
         'saadparwaiz1/cmp_luasnip',
-        'hrsh7th/vim-vsnip',
         'PaterJason/cmp-conjure',
-        'hrsh7th/cmp-path',
       },
       config = function()
         require 'plugins.cmp'
@@ -127,9 +121,7 @@ packer.startup {
     -- LSP
     {
       'neovim/nvim-lspconfig',
-      requires = {
-        'jose-elias-alvarez/null-ls.nvim',
-      },
+      requires = { 'folke/lua-dev.nvim' },
       config = function()
         require 'plugins.lsp'
       end,
@@ -140,10 +132,6 @@ packer.startup {
       requires = {
         'jbyuki/one-small-step-for-vimkind',
       },
-      module = { 'dap' },
-      setup = function()
-        require 'plugins.dap_setup'
-      end,
       config = function()
         require 'plugins.dap'
       end,
@@ -151,15 +139,15 @@ packer.startup {
     -- Treesitter
     {
       'nvim-treesitter/nvim-treesitter',
-      branch = '0.5-compat',
-      requires = {
-        { 'nvim-treesitter/nvim-treesitter-textobjects', branch = '0.5-compat' },
-        'nvim-treesitter/nvim-treesitter-refactor',
-      },
       run = ':TSUpdate',
       config = function()
         require 'plugins.treesitter'
       end,
+    },
+    {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-refactor',
+      after = 'nvim-treesitter',
     },
     {
       'lewis6991/spellsitter.nvim',
@@ -174,13 +162,39 @@ packer.startup {
         'nvim-lua/popup.nvim',
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzy-native.nvim',
+        'nvim-telescope/telescope-ui-select.nvim',
         'nvim-telescope/telescope-symbols.nvim',
+        'nvim-telescope/telescope-file-browser.nvim',
         'nvim-telescope/telescope-dap.nvim',
       },
-      cmd = 'Telescope',
-      module = 'telescope',
       config = function()
         require 'plugins.telescope'
+      end,
+    },
+    -- Rust
+    {
+      'simrat39/rust-tools.nvim',
+      config = function()
+        require('rust-tools').setup {
+          tools = {
+            inlay_hints = {
+              show_parameter_hints = false,
+            },
+            hover_actions = {
+              border = 'none',
+            },
+          },
+          server = {
+            settings = {
+              ['rust-analyzer'] = {
+                checkOnSave = {
+                  command = 'clippy',
+                  extraArgs = { '--', '-W', 'clippy::pedantic' },
+                },
+              },
+            },
+          },
+        }
       end,
     },
     -- Clojure
@@ -198,10 +212,12 @@ packer.startup {
     -- profile = {
     --   enable = true,
     -- },
+    max_jobs = 5,
+    compile_path = vim.fn.stdpath 'config' .. '/lua/packer_compiled.lua',
     display = { prompt_border = 'none' },
   },
 }
 
-if is_bootstrap then
+if not pcall(require, 'packer_compiled') then
   packer.sync()
 end
