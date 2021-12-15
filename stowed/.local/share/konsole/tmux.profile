@@ -1,5 +1,6 @@
 [Appearance]
 ColorScheme=dark
+Font=Monospace,10,-1,5,50,0,0,0,0,0
 UseFontLineChararacters=true
 
 [General]

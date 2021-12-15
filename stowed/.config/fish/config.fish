@@ -1,10 +1,12 @@
 set -gx NPM_PACKAGES "$HOME/.npm-packages"
-set -gx PATH $PATH $NPM_PACKAGES/bin $HOME/.cargo/bin $HOME/.local/bin
-# set -gx MANPATH $NPM_PACKAGES/share/man $MANPATH
 
-set -g fish_greeting
-fish_vi_key_bindings
-set fish_cursor_default block
-set fish_cursor_insert line
-set fish_cursor_replace_one underscore
-set fish_cursor_visual block
+fish_add_path ~/.npm-packages/bin
+fish_add_path ~/.cargo/bin
+fish_add_path ~/.local/bin
+
+# set -gx MANPATH $NPM_PACKAGES/share/man $MANPATH
+if status --is-interactive;
+  source ~/.local/share/nvim/site/pack/packer/start/tokyonight.nvim/extras/fish_tokyonight_night.fish
+
+  set -g fish_greeting
+end
