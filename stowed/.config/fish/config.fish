@@ -5,8 +5,7 @@ fish_add_path ~/.cargo/bin
 fish_add_path ~/.local/bin
 
 # set -gx MANPATH $NPM_PACKAGES/share/man $MANPATH
-if status --is-interactive;
-  source ~/.local/share/nvim/site/pack/packer/start/tokyonight.nvim/extras/fish_tokyonight_night.fish
-
-  set -g fish_greeting
+if status --is-interactive
+    source ~/.local/share/nvim/site/pack/packer/start/tokyonight.nvim/extras/fish_tokyonight_night.fish
+    set -g fish_greeting
 end
