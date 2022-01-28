@@ -1,20 +1,10 @@
 local telescope = require 'telescope'
-local themes = require 'telescope.themes'
-
-themes.get_dropdown()
-
-vim.cmd [[
-highlight link TelescopeNormal NormalFloat
-highlight link TelescopePreviewNormal NormalFloat
-]]
 
 telescope.setup {
   defaults = {
     color_devicons = false,
     history = false,
-    border = false,
-    preview = { msg_bg_fillchar = '▒' },
-    selection_caret = '→ ',
+    borderchars = { ' ' },
     layout_config = {
       height = 0.4,
     },
@@ -31,14 +21,19 @@ telescope.setup {
     symbols = { sources = { 'emoji', 'latex' } },
   },
   extensions = {
-    file_browser = {},
     ['ui-select'] = {
-      require('telescope.themes').get_cursor {},
+      require('telescope.themes').get_cursor {
+        borderchars = { ' ' },
+      },
+    },
+    project = {
+      base_dirs = {
+        '~/src',
+      },
     },
   },
 }
 
 telescope.load_extension 'fzy_native'
 telescope.load_extension 'ui-select'
-telescope.load_extension 'dap'
-telescope.load_extension 'file_browser'
+telescope.load_extension 'project'

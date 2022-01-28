@@ -6,20 +6,24 @@ local has_words_before = function()
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match '%s' == nil
 end
 
+require('luasnip.loaders.from_vscode').load()
+
 cmp.setup {
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
     end,
   },
+  experimental = {
+    ghost_text = {
+      hl_group = 'LspCodeLens',
+    },
+  },
   mapping = {
     ['<C-d>'] = cmp.mapping.scroll_docs(8),
     ['<C-u>'] = cmp.mapping.scroll_docs(-8),
     ['<C-Space>'] = cmp.mapping.complete(),
-    ['<CR>'] = cmp.mapping.confirm {
-      behavior = cmp.ConfirmBehavior.Replace,
-      select = true,
-    },
+    ['<CR>'] = cmp.mapping.confirm { select = true },
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -30,10 +34,7 @@ cmp.setup {
       else
         fallback()
       end
-    end, {
-      'i',
-      's',
-    }),
+    end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
@@ -42,19 +43,16 @@ cmp.setup {
       else
         fallback()
       end
-    end, {
-      'i',
-      's',
-    }),
+    end, { 'i', 's' }),
   },
   sources = cmp.config.sources({
+    { name = 'path' },
+  }, {
     { name = 'nvim_lsp_signature_help' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   }, {
     { name = 'conjure' },
-  }, {
-    { name = 'path' },
   }, {
     { name = 'buffer' },
   }),

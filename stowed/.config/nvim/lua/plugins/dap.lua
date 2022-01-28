@@ -1,4 +1,5 @@
 local dap = require 'dap'
+local widgets = require 'dap.ui.widgets'
 
 dap.adapters.nlua = function(callback, config)
   callback { type = 'server', host = config.host, port = config.port }
@@ -10,38 +11,23 @@ function _G.dap_keymap()
   local wk = require 'which-key'
   wk.register({
     name = 'DAP',
-    t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", 'Toggle Breakpoint' },
-    b = { "<cmd>lua require'dap'.step_back()<cr>", 'Step Back' },
-    c = { "<cmd>lua require'dap'.continue()<cr>", 'Continue' },
-    C = { "<cmd>lua require'dap'.run_to_cursor()<cr>", 'Run To Cursor' },
-    d = { "<cmd>lua require'dap'.disconnect()<cr>", 'Disconnect' },
-    g = { "<cmd>lua require'dap'.session()<cr>", 'Get Session' },
-    i = { "<cmd>lua require'dap'.step_into()<cr>", 'Step Into' },
-    o = { "<cmd>lua require'dap'.step_over()<cr>", 'Step Over' },
-    u = { "<cmd>lua require'dap'.step_out()<cr>", 'Step Out' },
-    p = { "<cmd>lua require'dap'.pause.toggle()<cr>", 'Pause' },
-    r = { "<cmd>lua require'dap'.repl.toggle()<cr>", 'Toggle Repl' },
-    q = { "<cmd>lua require'dap'.close()<cr>", 'Quit' },
-    s = {
-      name = 'Telescope search',
-      f = { '<cmd>Telescope dap frames<cr>', 'Frames' },
-      c = { '<cmd>Telescope dap commands<cr>', 'Commands' },
-      v = { '<cmd>Telescope dap variables<cr>', 'Variables' },
-      C = { '<cmd>Telescope dap configurations<cr>', 'Configurations' },
-      b = { '<cmd>Telescope dap list_breakpoints<cr>', 'List breakpoints' },
-    },
+    b = { "<cmd>lua require'dap'.toggle_breakpoint()<CR>", 'Toggle Breakpoint' },
+    c = { "<cmd>lua require'dap'.continue()<CR>", 'Continue' },
+    C = { "<cmd>lua require'dap'.run_to_cursor()<CR>", 'Run To Cursor' },
+    d = { "<cmd>lua require'dap'.disconnect()<CR>", 'Disconnect' },
+    e = { "<cmd>lua require'dap.ui.widgets'.hover(nil, {border = 'solid'})<CR>", 'Hover' },
+    r = { "<cmd>lua require'dap'.repl.toggle()<CR>", 'Toggle Repl' },
+    q = { "<cmd>lua require'dap'.close()<CR>", 'Quit' },
   }, {
     prefix = '<leader>d',
     buffer = 0,
   })
-  wk.register({
-    K = { '<cmd>lua require"dapui".eval()<CR>', 'Hover' },
-  }, {
-    prefix = '<localleader>',
-    buffer = 0,
-    mode = 'v',
-  })
 end
+
+local sidebar_scopes = widgets.sidebar(widgets.scopes)
+local sidebar_frames = widgets.sidebar(widgets.frames)
+_G.dap_scopes = sidebar_scopes
+_G.dap_frames = sidebar_frames
 
 local autocmds = { 'augroup dap_keymap', 'autocmd!' }
 for _, ft in ipairs { 'dap-repl', 'lua', 'rust' } do

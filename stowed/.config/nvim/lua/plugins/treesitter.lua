@@ -2,7 +2,6 @@ local config = require 'nvim-treesitter.configs'
 
 config.setup {
   ensure_installed = 'maintained',
-  sync_install = true,
   highlight = {
     enable = true,
     custom_captures = {},
@@ -21,17 +20,18 @@ config.setup {
     enable = true,
   },
   refactor = {
+    highlight_definitions = { enable = true },
     smart_rename = {
       enable = true,
-      keymaps = { smart_rename = 'gnr' },
+      keymaps = { smart_rename = '<leader>r' },
     },
     navigation = {
       enable = true,
       keymaps = {
-        goto_definition = 'gd',
+        goto_definition_lsp_fallback = 'gd',
         list_definitions_toc = 'gO',
-        goto_next_usage = 'gnu',
-        goto_previous_usage = 'gnU',
+        -- goto_next_usage = ']t',
+        -- goto_previous_usage = '[t',
       },
     },
   },
@@ -51,6 +51,8 @@ config.setup {
       goto_next_start = {
         [']m'] = '@function.outer',
         [']]'] = '@class.outer',
+        [']#'] = '@conditional.outer',
+        [']/'] = '@comment.outer',
       },
       goto_next_end = {
         [']M'] = '@function.outer',
@@ -59,10 +61,21 @@ config.setup {
       goto_previous_start = {
         ['[m'] = '@function.outer',
         ['[['] = '@class.outer',
+        ['[#'] = '@conditional.outer',
+        ['[/'] = '@comment.outer',
       },
       goto_previous_end = {
         ['[M'] = '@function.outer',
         ['[]'] = '@class.outer',
+      },
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        ['<leader>a'] = '@parameter.inner',
+      },
+      swap_previous = {
+        ['<leader>A'] = '@parameter.inner',
       },
     },
   },

@@ -1,6 +1,4 @@
-pcall(require, 'impatient')
-
-require 'init'
+require 'options'
 require 'plugins'
 
 function _G.put(...)

@@ -6,67 +6,112 @@ vim.diagnostic.config {
   signs = false,
 }
 
-function _G.clj_lsp_cmd(cmd, prompt)
-  local params = vim.lsp.util.make_position_params()
-  local args = { params.textDocument.uri, params.position.line, params.position.character }
-  if prompt then
-    table.insert(args, vim.fn.input(prompt))
+_G.diagnostic_changed = function()
+  if vim.fn.getqflist({ title = 0 }).title == 'Diagnostics' then
+    vim.diagnostic.setqflist { open = false }
   end
-  vim.lsp.buf.execute_command { command = cmd, arguments = args }
+  if vim.fn.getloclist(0, { title = 0 }).title == 'Diagnostics' then
+    vim.diagnostic.setloclist { open = false }
+  end
 end
+vim.cmd 'autocmd DiagnosticChanged * lua diagnostic_changed()'
 
-function _G.lsp_formatexr()
-  vim.lsp.buf.range_formatting({}, { vim.v.lnum, 0 }, { vim.v.lnum + vim.v.count, 0 })
-  return 0
+_G.progress_update = function()
+  local messages = vim.lsp.util.get_progress_messages()
+
+  if vim.tbl_isempty(messages) then
+    return
+  end
+
+  local chunks = {}
+  for _, message in ipairs(messages) do
+    local msg = {}
+
+    if message.name then
+      table.insert(msg, string.format('[%s]', message.name))
+    end
+    if message.title then
+      table.insert(msg, message.title)
+    end
+    if message.message then
+      table.insert(msg, message.message)
+    end
+    if message.done then
+      table.insert(msg, 'done')
+    elseif message.percentage then
+      table.insert(msg, string.format('%d%%', message.percentage))
+    end
+
+    table.insert(chunks, { table.concat(msg, ' ') .. ' ' })
+  end
+
+  vim.api.nvim_echo(chunks, true, {})
 end
+vim.cmd 'autocmd User LspProgressUpdate lua progress_update()'
+
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = 'solid',
+})
+
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = 'solid',
+})
 
 local function on_attach(client, bufnr)
+  local basics = require 'lsp_basics'
+  basics.make_lsp_commands(client, bufnr)
+  basics.make_lsp_mappings(client, bufnr)
+
+  local cap = client.resolved_capabilities
+
   local wk = require 'which-key'
   wk.register({
-    ['[d'] = { '<cmd>lua vim.diagnostic.goto_prev()<CR>', 'Prev diagnostic' },
-    [']d'] = { '<cmd>lua vim.diagnostic.goto_next()<CR>', 'Next diagnostic' },
-    ['gl'] = { '<cmd>lua vim.diagnostic.open_float()<CR>', 'Show diagnostics' },
-    ['<leaderlq>'] = { '<cmd>lua vim.diagnostic.setloclist()<CR>', 'Diagnostics loclist' },
-    ['<leader>ld'] = { '<cmd>Telescope diagnostics bufnr=0<CR>', 'Document diagnostics' },
-    ['<leader>lw'] = { '<cmd>Telescope diagnostics<CR>', 'Workspace diagnostics' },
+    ['[d'] = { vim.diagnostic.goto_prev, 'Prev diagnostic' },
+    [']d'] = { vim.diagnostic.goto_next, 'Next diagnostic' },
+    ['gl'] = { vim.diagnostic.open_float, 'Show diagnostics' },
+    ['<leader>lq'] = { vim.diagnostic.setloclist, 'Diagnostics loclist' },
+    ['<leader>lQ'] = { vim.diagnostic.setqflist, 'Diagnostics quickfix' },
   }, {
     buffer = bufnr,
   })
+  if cap.rename then
+    vim.cmd 'TSBufDisable refactor.smart_rename'
+  end
   for capability, mappings in pairs {
     call_hierarchy = {
       ['<leader>l'] = {
-        ['i'] = { '<cmd>lua vim.lsp.buf.incoming_calls()<CR>', 'Incoming calls' },
-        ['o'] = { '<cmd>lua vim.lsp.buf.outgoing_calls()<CR>', 'Outgoing calls' },
+        ['i'] = { vim.lsp.buf.incoming_calls, 'Incoming calls' },
+        ['o'] = { vim.lsp.buf.outgoing_calls, 'Outgoing calls' },
       },
     },
-    code_action = { ['<leader>la'] = { '<cmd>lua vim.lsp.buf.code_action()<CR>', 'Code actions' } },
-    declaration = { ['gD'] = { '<cmd>lua vim.lsp.buf.declaration()<CR>', 'Declaration' } },
-    document_formatting = { ['<leader>lf'] = { '<cmd>lua vim.lsp.buf.formatting()<CR>', 'Format' } },
-    document_symbol = { ['<leader>ls'] = { '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
-    find_references = { ['gr'] = { '<cmd>Telescope lsp_references<CR>', 'References' } },
-    goto_definition = { ['gd'] = { '<cmd>Telescope lsp_definitions<CR>', 'Definition' } },
-    hover = { ['K'] = { '<cmd>lua vim.lsp.buf.hover()<CR>', 'Hover' } },
-    implementation = { ['gI'] = { '<cmd>Telescope lsp_implementations<CR>', 'Implementation' } },
-    rename = { ['<leader>lr'] = { '<cmd>lua vim.lsp.buf.rename()<CR>', 'Rename' } },
-    signature_help = { ['gs'] = { '<cmd>lua vim.lsp.buf.signature_help()<CR>', 'Signature help' } },
-    type_definition = { ['<leader>lt'] = { '<cmd>Telescope lsp_type_definitions<CR>', 'Type definitions' } },
-    workspace_symbol = { ['<leader>lS'] = { '<cmd>Telescope lsp_workspace_symbols<CR>', 'Workspace symbols' } },
+    code_action = { ['<leader>la'] = { vim.lsp.buf.code_action, 'Code actions' } },
+    declaration = { ['gD'] = { vim.lsp.buf.declaration, 'Declaration' } },
+    document_formatting = { ['<leader>lf'] = { vim.lsp.buf.formatting, 'Format' } },
+    document_symbol = { ['<leader>ls'] = { vim.lsp.buf.document_symbol, 'Document symbols' } },
+    find_references = { ['gr'] = { vim.lsp.buf.references, 'References' } },
+    hover = { ['K'] = { vim.lsp.buf.hover, 'Hover' } },
+    implementation = { ['gI'] = { vim.lsp.buf.implementation, 'Implementation' } },
+    rename = { ['<leader>r'] = { vim.lsp.buf.rename, 'Rename' } },
+    signature_help = { ['gs'] = { vim.lsp.buf.signature_help, 'Signature help' } },
+    type_definition = { ['<leader>lt'] = { vim.lsp.buf.type_definition, 'Type definitions' } },
+    workspace_symbol = { ['<leader>lS'] = { vim.lsp.buf.workspace_symbol, 'Workspace symbols' } },
   } do
-    if client.resolved_capabilities[capability] then
+    if cap[capability] then
       wk.register(mappings, { buffer = bufnr })
     end
   end
-  if client.resolved_capabilities.document_range_formatting then
-    vim.bo.formatexpr = 'v:lua.lsp_formatexr()'
+  if cap.document_range_formatting then
+    vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
   end
-  if client.resolved_capabilities.document_highlight then
+  if cap.document_highlight then
+    vim.cmd 'TSBufDisable refactor.highlight_definitions'
     vim.cmd 'autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()'
     vim.cmd 'autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()'
   end
-  if client.resolved_capabilities.code_lens then
+  if cap.code_lens then
     vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
-  print(client.name .. ' attached')
+  vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'
 end
 
 local capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -102,9 +147,41 @@ for server, config in pairs {
     },
   },
   tsserver = {},
-  vimls = {},
   taplo = {},
   yamlls = {},
 } do
   lsp[server].setup(config)
 end
+
+local null_ls = require 'null-ls'
+null_ls.setup {
+  on_attach = on_attach,
+  sources = {
+    null_ls.builtins.formatting.stylua,
+    null_ls.builtins.formatting.fish_indent,
+  },
+}
+
+require('rust-tools').setup {
+  tools = {
+    inlay_hints = {
+      show_parameter_hints = false,
+    },
+    hover_actions = {
+      border = 'solid',
+    },
+  },
+  server = {
+    settings = {
+      ['rust-analyzer'] = {
+        checkOnSave = {
+          command = 'clippy',
+          extraArgs = { '--', '-W', 'clippy::pedantic' },
+        },
+        diagnostics = {
+          warningsAsInfo = { 'clippy::pedantic' },
+        },
+      },
+    },
+  },
+}
