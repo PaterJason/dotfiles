@@ -1,10 +1,8 @@
+gamescope
 lib32-vkd3d
 lib32-vulkan-icd-loader
 lib32-vulkan-radeon
 lutris
-ocl-icd
-opencl-mesa
-steam-native-runtime
 vkd3d
 vulkan-icd-loader
 vulkan-radeon

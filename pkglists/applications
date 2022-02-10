@@ -1,7 +1,11 @@
 chromium
 firefox
+inter-font
 mpv
-ttf-cascadia-code
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttc-iosevka
 wezterm
 yt-dlp
 zathura-pdf-mupdf
