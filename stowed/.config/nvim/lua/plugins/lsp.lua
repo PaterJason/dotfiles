@@ -42,10 +42,10 @@ _G.progress_update = function()
       table.insert(msg, string.format('%d%%', message.percentage))
     end
 
-    table.insert(chunks, { table.concat(msg, ' ') .. ' ' })
+    table.insert(chunks, table.concat(msg, ' '))
   end
 
-  vim.api.nvim_echo(chunks, true, {})
+  vim.notify(table.concat(chunks, ' '))
 end
 vim.cmd 'autocmd User LspProgressUpdate lua progress_update()'
 
@@ -100,9 +100,6 @@ local function on_attach(client, bufnr)
       wk.register(mappings, { buffer = bufnr })
     end
   end
-  if cap.document_range_formatting then
-    vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
-  end
   if cap.document_highlight then
     vim.cmd 'TSBufDisable refactor.highlight_definitions'
     vim.cmd 'autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()'
@@ -111,7 +108,13 @@ local function on_attach(client, bufnr)
   if cap.code_lens then
     vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
+  if cap.document_range_formatting then
+    vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
+  end
   vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'
+  vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
+
+  vim.notify(client.name .. ' attached')
 end
 
 local capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())

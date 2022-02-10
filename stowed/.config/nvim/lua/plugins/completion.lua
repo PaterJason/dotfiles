@@ -1,49 +1,27 @@
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
-local has_words_before = function()
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match '%s' == nil
-end
-
 require('luasnip.loaders.from_vscode').load()
+vim.api.nvim_set_keymap('i', '<C-l>', '<Plug>luasnip-expand-or-jump', {})
+vim.api.nvim_set_keymap('s', '<C-l>', '<Plug>luasnip-expand-or-jump', {})
+vim.api.nvim_set_keymap('i', '<C-h>', '<Plug>luasnip-jump-prev', {})
+vim.api.nvim_set_keymap('s', '<C-h>', '<Plug>luasnip-jump-prev', {})
 
-cmp.setup {
+local cmp_setup = {
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
     end,
   },
-  experimental = {
-    ghost_text = {
-      hl_group = 'LspCodeLens',
-    },
-  },
   mapping = {
-    ['<C-d>'] = cmp.mapping.scroll_docs(8),
-    ['<C-u>'] = cmp.mapping.scroll_docs(-8),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<CR>'] = cmp.mapping.confirm { select = true },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-      elseif has_words_before() then
-        cmp.complete()
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-      else
-        fallback()
-      end
-    end, { 'i', 's' }),
+    ['<C-d>'] = cmp.mapping(cmp.mapping.scroll_docs(8), { 'i', 'c' }),
+    ['<C-u>'] = cmp.mapping(cmp.mapping.scroll_docs(-8), { 'i', 'c' }),
+    ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+    ['<C-e>'] = cmp.mapping {
+      i = cmp.mapping.abort(),
+      c = cmp.mapping.close(),
+    },
+    ['<C-y>'] = cmp.mapping.confirm { select = true },
   },
   sources = cmp.config.sources({
     { name = 'path' },
@@ -57,6 +35,7 @@ cmp.setup {
     { name = 'buffer' },
   }),
 }
+cmp.setup(cmp_setup)
 
 cmp.setup.cmdline('/', {
   sources = {
@@ -71,6 +50,3 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' },
   }),
 })
-
-local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
-cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())

@@ -1,5 +1,8 @@
 local dap = require 'dap'
-local widgets = require 'dap.ui.widgets'
+
+require('nvim-dap-virtual-text').setup {
+  highlight_new_as_changed = true,
+}
 
 dap.adapters.nlua = function(callback, config)
   callback { type = 'server', host = config.host, port = config.port }
@@ -16,18 +19,14 @@ function _G.dap_keymap()
     C = { "<cmd>lua require'dap'.run_to_cursor()<CR>", 'Run To Cursor' },
     d = { "<cmd>lua require'dap'.disconnect()<CR>", 'Disconnect' },
     e = { "<cmd>lua require'dap.ui.widgets'.hover(nil, {border = 'solid'})<CR>", 'Hover' },
+    q = { "<cmd>lua require'dap'.terminate()<CR>", 'Quit' },
     r = { "<cmd>lua require'dap'.repl.toggle()<CR>", 'Toggle Repl' },
-    q = { "<cmd>lua require'dap'.close()<CR>", 'Quit' },
+    v = { '<cmd>DapVirtualTextToggle<CR>', 'Quit' },
   }, {
     prefix = '<leader>d',
     buffer = 0,
   })
 end
-
-local sidebar_scopes = widgets.sidebar(widgets.scopes)
-local sidebar_frames = widgets.sidebar(widgets.frames)
-_G.dap_scopes = sidebar_scopes
-_G.dap_frames = sidebar_frames
 
 local autocmds = { 'augroup dap_keymap', 'autocmd!' }
 for _, ft in ipairs { 'dap-repl', 'lua', 'rust' } do

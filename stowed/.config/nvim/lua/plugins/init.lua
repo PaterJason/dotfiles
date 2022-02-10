@@ -53,10 +53,12 @@ packer.startup {
     'tpope/vim-surround',
     {
       'windwp/nvim-autopairs',
+      after = 'nvim-cmp',
       config = function()
         require('nvim-autopairs').setup {
           enable_check_bracket_line = false,
         }
+        require('cmp').event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
       end,
     },
     {
@@ -82,6 +84,24 @@ packer.startup {
           },
           signcolumn = false,
           numhl = true,
+          on_attach = function()
+            require('which-key').register({
+              ['[c'] = { '<cmd>Gitsigns prev_hunk<CR>', 'Prev hunk' },
+              [']c'] = { '<cmd>Gitsigns next_hunk<CR>', 'Next hunk' },
+              ['<leader>h'] = {
+                name = 'Gitsigns',
+                b = { '<cmd>Gitsigns blame_line<CR>', 'Blame line' },
+                d = { '<cmd>Gitsigns diffthis<CR>', 'Diffthis' },
+                l = { '<cmd>Gitsigns setloclist<CR>', 'Set loclist' },
+                p = { '<cmd>Gitsigns preview_hunk<CR>', 'Preview hunk' },
+                r = { '<cmd>Gitsigns reset_hunk<CR>', 'Reset hunk' },
+                s = { '<cmd>Gitsigns stage_hunk<CR>', 'Stage hunk' },
+                u = { '<cmd>Gitsigns undo_stage_hunk<CR>', 'Undo stage hunk' },
+              },
+            }, {
+              buffer = 0,
+            })
+          end,
         }
       end,
     },
@@ -90,8 +110,6 @@ packer.startup {
       'hrsh7th/nvim-cmp',
       requires = {
         'L3MON4D3/LuaSnip',
-        'rafamadriz/friendly-snippets',
-        'saadparwaiz1/cmp_luasnip',
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-nvim-lsp-signature-help',
         'hrsh7th/cmp-cmdline',
@@ -120,6 +138,7 @@ packer.startup {
     {
       'mfussenegger/nvim-dap',
       requires = {
+        'theHamsta/nvim-dap-virtual-text',
         'jbyuki/one-small-step-for-vimkind',
       },
       config = function()
@@ -153,6 +172,7 @@ packer.startup {
         'nvim-telescope/telescope-ui-select.nvim',
         'nvim-telescope/telescope-symbols.nvim',
         'nvim-telescope/telescope-project.nvim',
+        'nvim-telescope/telescope-dap.nvim',
       },
       config = function()
         require 'plugins.telescope'

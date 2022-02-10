@@ -12,7 +12,6 @@ wk.setup {
 
 wk.register({
   ['<leader>'] = { '<cmd>Telescope builtin<CR>', 'Telescope builtins' },
-  h = { name = 'Gitsigns hunk' },
   l = { name = 'LSP' },
   s = {
     name = 'Telescope Search',

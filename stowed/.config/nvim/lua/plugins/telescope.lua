@@ -12,7 +12,7 @@ telescope.setup {
     sorting_strategy = 'ascending',
   },
   pickers = {
-    builtin = { previewer = false },
+    builtin = { include_extensions = true },
     colorscheme = { enable_preview = true },
     current_buffer_fuzzy_find = { skip_empty_lines = true },
     lsp_code_actions = { theme = 'cursor' },
@@ -37,3 +37,4 @@ telescope.setup {
 telescope.load_extension 'fzy_native'
 telescope.load_extension 'ui-select'
 telescope.load_extension 'project'
+telescope.load_extension 'dap'
