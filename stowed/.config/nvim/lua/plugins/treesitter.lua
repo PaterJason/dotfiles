@@ -27,12 +27,6 @@ config.setup {
     },
     navigation = {
       enable = true,
-      keymaps = {
-        goto_definition_lsp_fallback = 'gd',
-        list_definitions_toc = 'gO',
-        -- goto_next_usage = ']t',
-        -- goto_previous_usage = '[t',
-      },
     },
   },
   textobjects = {

@@ -18,6 +18,7 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.scrolloff = 4
 vim.o.shiftwidth = 0
+vim.o.showmode = false
 vim.o.sidescrolloff = 4
 vim.o.signcolumn = 'auto'
 vim.o.smartcase = true
@@ -28,5 +29,7 @@ vim.o.splitright = true
 vim.o.tabstop = 2
 vim.o.termguicolors = true
 vim.o.updatetime = 250
+
+vim.opt.shortmess:append('Ic')
 
 vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'

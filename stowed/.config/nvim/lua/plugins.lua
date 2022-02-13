@@ -8,18 +8,36 @@ if vim.fn.glob(install_path) == '' then
 end
 
 local packer = require 'packer'
-
 packer.startup {
-  {
-    'wbthomason/packer.nvim',
-    {
+  function(use)
+    use 'wbthomason/packer.nvim'
+
+    -- Visuals
+    use {
+      'nvim-lualine/lualine.nvim',
+      config = function()
+        require('lualine').setup {
+          options = {
+            theme = 'tokyonight',
+            icons_enabled = false,
+            section_separators = '',
+            component_separators = '',
+          },
+          sections = {
+            lualine_c = { 'filename', "require'lsp-status'.status_progress()" },
+          },
+          extensions = { 'fugitive', 'quickfix' },
+        }
+      end,
+    }
+    use {
       'folke/tokyonight.nvim',
       config = function()
         vim.g.tokyonight_style = 'night'
         vim.cmd 'colorscheme tokyonight'
       end,
-    },
-    {
+    }
+    use {
       'norcalli/nvim-colorizer.lua',
       config = function()
         require('colorizer').setup {
@@ -30,51 +48,65 @@ packer.startup {
           '!packer',
         }
       end,
-    },
+    }
+
     -- Keymaps
-    {
+    use {
       'folke/which-key.nvim',
       config = function()
         require 'plugins.keymap'
       end,
-    },
-    'tpope/vim-unimpaired',
-    'christoomey/vim-tmux-navigator',
+    }
+    use 'tpope/vim-unimpaired'
+    use 'christoomey/vim-tmux-navigator'
+
     -- Util
-    'tpope/vim-dispatch',
-    'tpope/vim-repeat',
-    'tpope/vim-vinegar',
-    'tpope/vim-eunuch',
-    'ggandor/lightspeed.nvim',
+    use 'tpope/vim-dispatch'
+    use 'tpope/vim-repeat'
+    use 'tpope/vim-vinegar'
+    use 'tpope/vim-eunuch'
+    use 'ggandor/lightspeed.nvim'
+
     -- Edit
-    'mbbill/undotree',
-    'tpope/vim-commentary',
+    use 'mbbill/undotree'
+    use 'tpope/vim-commentary'
+
     -- Parentheses
-    'tpope/vim-surround',
-    {
+    use 'tpope/vim-surround'
+    use {
       'windwp/nvim-autopairs',
       after = 'nvim-cmp',
       config = function()
         require('nvim-autopairs').setup {
+          disable_filetype = {
+            'TelescopePrompt',
+            -- Parinfer filetypes
+            'clojure',
+            'scheme',
+            'lisp',
+            'racket',
+            'hy',
+            'fennel',
+            'janet',
+            'carp',
+            'wast',
+            'yuck',
+            'query',
+          },
+          check_ts = true,
           enable_check_bracket_line = false,
         }
         require('cmp').event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
       end,
-    },
-    {
-      'guns/vim-sexp',
-      requires = 'tpope/vim-sexp-mappings-for-regular-people',
-      config = function()
-        vim.g.sexp_filetypes = 'clojure,scheme,lisp,fennel'
-        vim.g.sexp_enable_insert_mode_mappings = 0
-      end,
-    },
+    }
+    use 'gpanders/nvim-parinfer'
+
     -- Git
-    {
+    use {
       'tpope/vim-fugitive',
       requires = { 'tpope/vim-rhubarb' },
-    },
-    {
+    }
+    use {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
       config = function()
@@ -104,9 +136,10 @@ packer.startup {
           end,
         }
       end,
-    },
+    }
+
     -- Completion
-    {
+    use {
       'hrsh7th/nvim-cmp',
       requires = {
         'L3MON4D3/LuaSnip',
@@ -120,12 +153,14 @@ packer.startup {
       config = function()
         require 'plugins.completion'
       end,
-    },
+    }
+
     -- LSP
-    {
+    use {
       'neovim/nvim-lspconfig',
       requires = {
         'nanotee/nvim-lsp-basics',
+        'nvim-lua/lsp-status.nvim',
         'jose-elias-alvarez/null-ls.nvim',
         'folke/lua-dev.nvim',
         'simrat39/rust-tools.nvim',
@@ -133,9 +168,10 @@ packer.startup {
       config = function()
         require 'plugins.lsp'
       end,
-    },
+    }
+
     -- DAP
-    {
+    use {
       'mfussenegger/nvim-dap',
       requires = {
         'theHamsta/nvim-dap-virtual-text',
@@ -144,9 +180,10 @@ packer.startup {
       config = function()
         require 'plugins.dap'
       end,
-    },
+    }
+
     -- Treesitter
-    {
+    use {
       'nvim-treesitter/nvim-treesitter',
       requires = {
         'nvim-treesitter/nvim-treesitter-textobjects',
@@ -156,22 +193,22 @@ packer.startup {
       config = function()
         require 'plugins.treesitter'
       end,
-    },
-    {
+    }
+    use {
       'lewis6991/spellsitter.nvim',
       config = function()
         require('spellsitter').setup()
       end,
-    },
+    }
+
     -- Telescope
-    {
+    use {
       'nvim-telescope/telescope.nvim',
       requires = {
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzy-native.nvim',
         'nvim-telescope/telescope-ui-select.nvim',
         'nvim-telescope/telescope-symbols.nvim',
-        'nvim-telescope/telescope-project.nvim',
         'nvim-telescope/telescope-dap.nvim',
       },
       config = function()
@@ -179,18 +216,27 @@ packer.startup {
       end,
       cmd = 'Telescope',
       module = 'telescope',
-    },
+    }
+
     -- Clojure
-    {
+    use {
       'Olical/conjure',
       config = function()
-        vim.g['conjure#mapping#doc_word'] = 'K'
-        vim.g['conjure#log#hud#border'] = 'solid'
+        vim.g['conjure#completion#fallback'] = nil
         vim.g['conjure#completion#omnifunc'] = nil
+        vim.g['conjure#extract#tree_sitter#enabled'] = true
+        vim.g['conjure#highlight#enabled'] = true
+        vim.g['conjure#highlight#timeout'] = 150
+        vim.g['conjure#log#hud#border'] = 'solid'
+        vim.g['conjure#mapping#doc_word'] = 'K'
       end,
-    },
-    'clojure-vim/vim-jack-in',
-  },
+    }
+    use 'clojure-vim/vim-jack-in'
+
+    if packer_bootstrap then
+      packer.sync()
+    end
+  end,
   config = {
     profile = {
       enable = true,
@@ -199,7 +245,3 @@ packer.startup {
     display = { prompt_border = 'solid' },
   },
 }
-
-if packer_bootstrap then
-  packer.sync()
-end

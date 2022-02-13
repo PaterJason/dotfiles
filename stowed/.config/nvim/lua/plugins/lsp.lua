@@ -1,5 +1,6 @@
 local lsp = require 'lspconfig'
-local cmp_lsp = require 'cmp_nvim_lsp'
+local lsp_status = require 'lsp-status'
+lsp_status.register_progress()
 
 vim.diagnostic.config {
   severity_sort = true,
@@ -16,39 +17,6 @@ _G.diagnostic_changed = function()
 end
 vim.cmd 'autocmd DiagnosticChanged * lua diagnostic_changed()'
 
-_G.progress_update = function()
-  local messages = vim.lsp.util.get_progress_messages()
-
-  if vim.tbl_isempty(messages) then
-    return
-  end
-
-  local chunks = {}
-  for _, message in ipairs(messages) do
-    local msg = {}
-
-    if message.name then
-      table.insert(msg, string.format('[%s]', message.name))
-    end
-    if message.title then
-      table.insert(msg, message.title)
-    end
-    if message.message then
-      table.insert(msg, message.message)
-    end
-    if message.done then
-      table.insert(msg, 'done')
-    elseif message.percentage then
-      table.insert(msg, string.format('%d%%', message.percentage))
-    end
-
-    table.insert(chunks, table.concat(msg, ' '))
-  end
-
-  vim.notify(table.concat(chunks, ' '))
-end
-vim.cmd 'autocmd User LspProgressUpdate lua progress_update()'
-
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = 'solid',
 })
@@ -61,6 +29,8 @@ local function on_attach(client, bufnr)
   local basics = require 'lsp_basics'
   basics.make_lsp_commands(client, bufnr)
   basics.make_lsp_mappings(client, bufnr)
+
+  lsp_status.on_attach(client)
 
   local cap = client.resolved_capabilities
 
@@ -89,6 +59,7 @@ local function on_attach(client, bufnr)
     document_formatting = { ['<leader>lf'] = { vim.lsp.buf.formatting, 'Format' } },
     document_symbol = { ['<leader>ls'] = { vim.lsp.buf.document_symbol, 'Document symbols' } },
     find_references = { ['gr'] = { vim.lsp.buf.references, 'References' } },
+    goto_definition = { ['gd'] = { vim.lsp.buf.definition, 'Goto Definition' } },
     hover = { ['K'] = { vim.lsp.buf.hover, 'Hover' } },
     implementation = { ['gI'] = { vim.lsp.buf.implementation, 'Implementation' } },
     rename = { ['<leader>r'] = { vim.lsp.buf.rename, 'Rename' } },
@@ -100,6 +71,7 @@ local function on_attach(client, bufnr)
       wk.register(mappings, { buffer = bufnr })
     end
   end
+
   if cap.document_highlight then
     vim.cmd 'TSBufDisable refactor.highlight_definitions'
     vim.cmd 'autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()'
@@ -108,6 +80,7 @@ local function on_attach(client, bufnr)
   if cap.code_lens then
     vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
+
   if cap.document_range_formatting then
     vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
   end
@@ -117,7 +90,7 @@ local function on_attach(client, bufnr)
   vim.notify(client.name .. ' attached')
 end
 
-local capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
 
 lsp.util.default_config.on_attach = on_attach
 lsp.util.default_config.capabilities = capabilities
@@ -129,7 +102,7 @@ for server, config in pairs {
   jsonls = { cmd = { 'vscode-json-languageserver', '--stdio' } },
   bashls = {},
   clojure_lsp = { init_options = { ['ignore-classpath-directories'] = true } },
-  sumneko_lua = require('lua-dev').setup {},
+  sumneko_lua = string.find(vim.fn.getcwd(), '/nvim') and require('lua-dev').setup {} or {},
   texlab = {
     settings = {
       texlab = {
