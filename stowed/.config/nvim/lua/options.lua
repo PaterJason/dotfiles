@@ -6,13 +6,11 @@ vim.o.clipboard = 'unnamedplus'
 vim.o.completeopt = 'menu,menuone,noselect'
 vim.o.confirm = true
 vim.o.expandtab = true
-vim.o.fillchars = 'fold: ,diff: '
 vim.o.grepformat = '%f:%l:%c:%m'
 vim.o.grepprg = 'rg --vimgrep'
 vim.o.ignorecase = true
 vim.o.linebreak = true
 vim.o.list = true
-vim.o.listchars = 'tab:│ ,trail:·,nbsp:+'
 vim.o.mouse = 'a'
 vim.o.number = true
 vim.o.relativenumber = true
@@ -30,6 +28,8 @@ vim.o.tabstop = 2
 vim.o.termguicolors = true
 vim.o.updatetime = 250
 
-vim.opt.shortmess:append('Ic')
+vim.opt.shortmess:append 'Ic'
+vim.opt.listchars = { tab = '| ', trail = '·', nbsp = '+' }
+vim.opt.fillchars = { fold = ' ', diff = ' ' }
 
 vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'

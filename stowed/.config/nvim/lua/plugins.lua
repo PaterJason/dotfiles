@@ -1,7 +1,7 @@
 -- Bootstrap
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 local packer_bootstrap = false
-if vim.fn.glob(install_path) == '' then
+if not vim.loop.fs_access(install_path, 'W') then
   local url = 'https://github.com/wbthomason/packer.nvim'
   packer_bootstrap = vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path }
   vim.cmd 'packadd packer.nvim'
@@ -13,23 +13,6 @@ packer.startup {
     use 'wbthomason/packer.nvim'
 
     -- Visuals
-    use {
-      'nvim-lualine/lualine.nvim',
-      config = function()
-        require('lualine').setup {
-          options = {
-            theme = 'tokyonight',
-            icons_enabled = false,
-            section_separators = '',
-            component_separators = '',
-          },
-          sections = {
-            lualine_c = { 'filename', "require'lsp-status'.status_progress()" },
-          },
-          extensions = { 'fugitive', 'quickfix' },
-        }
-      end,
-    }
     use {
       'folke/tokyonight.nvim',
       config = function()
@@ -74,6 +57,14 @@ packer.startup {
     -- Parentheses
     use 'tpope/vim-surround'
     use {
+      'gpanders/nvim-parinfer',
+      config = function ()
+        require('which-key').register({
+          ['<leader>p'] = { '<cmd>ParinferToggle!<CR>', 'Toggle Parinfer'}
+        }, {})
+      end
+    }
+    use {
       'windwp/nvim-autopairs',
       after = 'nvim-cmp',
       config = function()
@@ -99,7 +90,6 @@ packer.startup {
         require('cmp').event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
       end,
     }
-    use 'gpanders/nvim-parinfer'
 
     -- Git
     use {
@@ -159,14 +149,18 @@ packer.startup {
     use {
       'neovim/nvim-lspconfig',
       requires = {
-        'nanotee/nvim-lsp-basics',
-        'nvim-lua/lsp-status.nvim',
-        'jose-elias-alvarez/null-ls.nvim',
         'folke/lua-dev.nvim',
         'simrat39/rust-tools.nvim',
       },
       config = function()
         require 'plugins.lsp'
+      end,
+    }
+
+    use {
+      'mhartington/formatter.nvim',
+      config = function()
+        require 'plugins.format'
       end,
     }
 

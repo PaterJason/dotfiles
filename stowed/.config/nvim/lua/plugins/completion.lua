@@ -7,7 +7,7 @@ vim.api.nvim_set_keymap('s', '<C-l>', '<Plug>luasnip-expand-or-jump', {})
 vim.api.nvim_set_keymap('i', '<C-h>', '<Plug>luasnip-jump-prev', {})
 vim.api.nvim_set_keymap('s', '<C-h>', '<Plug>luasnip-jump-prev', {})
 
-local cmp_setup = {
+cmp.setup({
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
@@ -34,8 +34,7 @@ local cmp_setup = {
   }, {
     { name = 'buffer' },
   }),
-}
-cmp.setup(cmp_setup)
+})
 
 cmp.setup.cmdline('/', {
   sources = {

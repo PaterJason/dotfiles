@@ -22,7 +22,6 @@ wk.register({
     h = { '<cmd>Telescope help_tags<CR>', 'Help' },
     l = { '<cmd>Telescope loclist<CR>', 'Loclist' },
     q = { '<cmd>Telescope quickfix<CR>', 'Quickfix' },
-    p = { [[<cmd>lua require'telescope'.extensions.project.project{}<CR>]], 'Project' },
   },
   u = { '<cmd>UndotreeToggle<CR>', 'Undotree' },
 }, {

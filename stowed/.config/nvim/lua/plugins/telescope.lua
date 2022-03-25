@@ -15,20 +15,12 @@ telescope.setup {
     builtin = { include_extensions = true },
     colorscheme = { enable_preview = true },
     current_buffer_fuzzy_find = { skip_empty_lines = true },
-    lsp_code_actions = { theme = 'cursor' },
-    lsp_range_code_actions = { theme = 'cursor' },
-    spell_suggest = { theme = 'cursor' },
     symbols = { sources = { 'emoji', 'latex' } },
   },
   extensions = {
     ['ui-select'] = {
       require('telescope.themes').get_cursor {
         borderchars = { ' ' },
-      },
-    },
-    project = {
-      base_dirs = {
-        '~/src',
       },
     },
   },

@@ -1,5 +1,6 @@
 require 'options'
 require 'plugins'
+require 'diagnostic'
 
 function _G.put(...)
   local objects = {}

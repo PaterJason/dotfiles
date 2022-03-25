@@ -1,21 +1,36 @@
 local lsp = require 'lspconfig'
-local lsp_status = require 'lsp-status'
-lsp_status.register_progress()
 
-vim.diagnostic.config {
-  severity_sort = true,
-  signs = false,
-}
+_G.lsp_progress = function()
+  local messages = vim.lsp.util.get_progress_messages()
 
-_G.diagnostic_changed = function()
-  if vim.fn.getqflist({ title = 0 }).title == 'Diagnostics' then
-    vim.diagnostic.setqflist { open = false }
+  if vim.tbl_isempty(messages) then
+    return
   end
-  if vim.fn.getloclist(0, { title = 0 }).title == 'Diagnostics' then
-    vim.diagnostic.setloclist { open = false }
+
+  local msg = ''
+  for _, message in ipairs(messages) do
+    if msg ~= '' then
+      msg = string.format('%s | ', msg)
+    end
+    if message.name then
+      msg = string.format('%s[%s]', msg, message.name)
+    end
+    if message.title then
+      msg = string.format('%s %s', msg, message.title)
+    end
+    if message.message then
+      msg = string.format('%s %s', msg, message.message)
+    end
+    if message.done then
+      msg = string.format('%s done', msg, message.message)
+    elseif message.percentage then
+      msg = string.format('%s %d%%', msg, message.percentage)
+    end
   end
+
+  vim.api.nvim_echo({ { msg } }, false, {})
 end
-vim.cmd 'autocmd DiagnosticChanged * lua diagnostic_changed()'
+vim.cmd 'autocmd User LspProgressUpdate call v:lua.lsp_progress()'
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = 'solid',
@@ -26,28 +41,10 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
 })
 
 local function on_attach(client, bufnr)
-  local basics = require 'lsp_basics'
-  basics.make_lsp_commands(client, bufnr)
-  basics.make_lsp_mappings(client, bufnr)
-
-  lsp_status.on_attach(client)
-
-  local cap = client.resolved_capabilities
+  local caps = client.resolved_capabilities
 
   local wk = require 'which-key'
-  wk.register({
-    ['[d'] = { vim.diagnostic.goto_prev, 'Prev diagnostic' },
-    [']d'] = { vim.diagnostic.goto_next, 'Next diagnostic' },
-    ['gl'] = { vim.diagnostic.open_float, 'Show diagnostics' },
-    ['<leader>lq'] = { vim.diagnostic.setloclist, 'Diagnostics loclist' },
-    ['<leader>lQ'] = { vim.diagnostic.setqflist, 'Diagnostics quickfix' },
-  }, {
-    buffer = bufnr,
-  })
-  if cap.rename then
-    vim.cmd 'TSBufDisable refactor.smart_rename'
-  end
-  for capability, mappings in pairs {
+  for cap, keymaps in pairs {
     call_hierarchy = {
       ['<leader>l'] = {
         ['i'] = { vim.lsp.buf.incoming_calls, 'Incoming calls' },
@@ -57,31 +54,33 @@ local function on_attach(client, bufnr)
     code_action = { ['<leader>la'] = { vim.lsp.buf.code_action, 'Code actions' } },
     declaration = { ['gD'] = { vim.lsp.buf.declaration, 'Declaration' } },
     document_formatting = { ['<leader>lf'] = { vim.lsp.buf.formatting, 'Format' } },
-    document_symbol = { ['<leader>ls'] = { vim.lsp.buf.document_symbol, 'Document symbols' } },
-    find_references = { ['gr'] = { vim.lsp.buf.references, 'References' } },
-    goto_definition = { ['gd'] = { vim.lsp.buf.definition, 'Goto Definition' } },
+    document_symbol = { ['<leader>ls'] = { '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
+    find_references = { ['gr'] = { '<cmd>Telescope lsp_references<CR>', 'References' } },
+    goto_definition = { ['gd'] = { '<cmd>Telescope lsp_definitions<CR>', 'Goto Definition' } },
     hover = { ['K'] = { vim.lsp.buf.hover, 'Hover' } },
-    implementation = { ['gI'] = { vim.lsp.buf.implementation, 'Implementation' } },
+    implementation = { ['gi'] = { '<cmd>Telescope lsp_implementations<CR>', 'Implementation' } },
     rename = { ['<leader>r'] = { vim.lsp.buf.rename, 'Rename' } },
     signature_help = { ['gs'] = { vim.lsp.buf.signature_help, 'Signature help' } },
-    type_definition = { ['<leader>lt'] = { vim.lsp.buf.type_definition, 'Type definitions' } },
-    workspace_symbol = { ['<leader>lS'] = { vim.lsp.buf.workspace_symbol, 'Workspace symbols' } },
+    type_definition = { ['<leader>ld'] = { '<cmd>Telescope lsp_type_definitions<CR>', 'Type definitions' } },
+    workspace_symbol = {
+      ['<leader>lw'] = { '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', 'Workspace symbols' },
+    },
   } do
-    if cap[capability] then
-      wk.register(mappings, { buffer = bufnr })
+    if caps[cap] then
+      wk.register(keymaps, { buffer = bufnr })
     end
   end
 
-  if cap.document_highlight then
+  if caps.document_highlight then
     vim.cmd 'TSBufDisable refactor.highlight_definitions'
     vim.cmd 'autocmd CursorHold  <buffer> lua vim.lsp.buf.document_highlight()'
     vim.cmd 'autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()'
   end
-  if cap.code_lens then
+  if caps.code_lens then
     vim.cmd 'autocmd BufEnter,CursorHold,InsertLeave <buffer> lua vim.lsp.codelens.refresh()'
   end
 
-  if cap.document_range_formatting then
+  if caps.document_range_formatting then
     vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
   end
   vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'
@@ -90,7 +89,7 @@ local function on_attach(client, bufnr)
   vim.notify(client.name .. ' attached')
 end
 
-local capabilities = require('cmp_nvim_lsp').update_capabilities(lsp_status.capabilities)
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 lsp.util.default_config.on_attach = on_attach
 lsp.util.default_config.capabilities = capabilities
@@ -102,7 +101,7 @@ for server, config in pairs {
   jsonls = { cmd = { 'vscode-json-languageserver', '--stdio' } },
   bashls = {},
   clojure_lsp = { init_options = { ['ignore-classpath-directories'] = true } },
-  sumneko_lua = string.find(vim.fn.getcwd(), '/nvim') and require('lua-dev').setup {} or {},
+  sumneko_lua = string.find(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {} or {},
   texlab = {
     settings = {
       texlab = {
@@ -128,15 +127,6 @@ for server, config in pairs {
 } do
   lsp[server].setup(config)
 end
-
-local null_ls = require 'null-ls'
-null_ls.setup {
-  on_attach = on_attach,
-  sources = {
-    null_ls.builtins.formatting.stylua,
-    null_ls.builtins.formatting.fish_indent,
-  },
-}
 
 require('rust-tools').setup {
   tools = {
