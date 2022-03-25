@@ -7,14 +7,14 @@ return {
   color_scheme_dirs = { HOME .. '/.local/share/nvim/site/pack/packer/start/tokyonight.nvim/extras' },
   color_scheme = 'wezterm_tokyonight_night',
 
-  font = wezterm.font 'Iosevka',
-  font_size = 11.0,
+  font = wezterm.font 'Monospace',
+  font_size = 10.0,
   freetype_load_target = 'HorizontalLcd',
 
   hide_tab_bar_if_only_one_tab = true,
   window_frame = {
-    font = wezterm.font 'Iosevka',
-    font_size = 11.0,
+    font = wezterm.font 'Monospace',
+    font_size = 10.0,
     active_titlebar_bg = '#15161E',
   },
 
