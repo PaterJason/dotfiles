@@ -11,25 +11,14 @@ local packer = require 'packer'
 packer.startup {
   function(use)
     use 'wbthomason/packer.nvim'
+    use 'lewis6991/impatient.nvim'
 
-    -- Visuals
+    -- Theme
     use {
       'folke/tokyonight.nvim',
       config = function()
         vim.g.tokyonight_style = 'night'
         vim.cmd 'colorscheme tokyonight'
-      end,
-    }
-    use {
-      'norcalli/nvim-colorizer.lua',
-      config = function()
-        require('colorizer').setup {
-          css = { css = true },
-          scss = { css = true },
-          '*',
-          '!fugitive',
-          '!packer',
-        }
       end,
     }
 
@@ -48,7 +37,12 @@ packer.startup {
     use 'tpope/vim-repeat'
     use 'tpope/vim-vinegar'
     use 'tpope/vim-eunuch'
-    use 'ggandor/lightspeed.nvim'
+    use {
+      'ggandor/leap.nvim',
+      config = function()
+        require('leap').set_default_keymaps()
+      end,
+    }
 
     -- Edit
     use 'mbbill/undotree'
@@ -58,11 +52,11 @@ packer.startup {
     use 'tpope/vim-surround'
     use {
       'gpanders/nvim-parinfer',
-      config = function ()
+      config = function()
         require('which-key').register({
-          ['<leader>p'] = { '<cmd>ParinferToggle!<CR>', 'Toggle Parinfer'}
+          ['<leader>p'] = { '<cmd>ParinferToggle!<CR>', 'Toggle Parinfer' },
         }, {})
-      end
+      end,
     }
     use {
       'windwp/nvim-autopairs',
@@ -181,7 +175,6 @@ packer.startup {
       'nvim-treesitter/nvim-treesitter',
       requires = {
         'nvim-treesitter/nvim-treesitter-textobjects',
-        'nvim-treesitter/nvim-treesitter-refactor',
       },
       run = ':TSUpdate',
       config = function()
@@ -208,8 +201,6 @@ packer.startup {
       config = function()
         require 'plugins.telescope'
       end,
-      cmd = 'Telescope',
-      module = 'telescope',
     }
 
     -- Clojure
@@ -239,3 +230,13 @@ packer.startup {
     display = { prompt_border = 'solid' },
   },
 }
+
+local augroup = vim.api.nvim_create_augroup('PackerCompile', {})
+vim.api.nvim_create_autocmd('BufWritePost', {
+  pattern = 'plugins.lua',
+  callback = function()
+    vim.cmd 'source <afile>'
+    packer.compile()
+  end,
+  group = augroup,
+})

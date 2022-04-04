@@ -3,15 +3,18 @@ vim.diagnostic.config {
   signs = false,
 }
 
-_G.diagnostic_changed = function()
-  if vim.fn.getqflist({ title = 0 }).title == 'Diagnostics' then
-    vim.diagnostic.setqflist { open = false }
-  end
-  if vim.fn.getloclist(0, { title = 0 }).title == 'Diagnostics' then
-    vim.diagnostic.setloclist { open = false }
-  end
-end
-vim.cmd 'autocmd DiagnosticChanged * lua diagnostic_changed()'
+local augroup = vim.api.nvim_create_augroup('DiagnosticLists', {})
+vim.api.nvim_create_autocmd('DiagnosticChanged', {
+  callback = function()
+    if vim.fn.getqflist({ title = 0 }).title == 'Diagnostics' then
+      vim.diagnostic.setqflist { open = false }
+    end
+    if vim.fn.getloclist(0, { title = 0 }).title == 'Diagnostics' then
+      vim.diagnostic.setloclist { open = false }
+    end
+  end,
+  group = augroup,
+})
 
 require('which-key').register {
   ['[d'] = { vim.diagnostic.goto_prev, 'Prev diagnostic' },

@@ -2,12 +2,12 @@ local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
 require('luasnip.loaders.from_vscode').load()
-vim.api.nvim_set_keymap('i', '<C-l>', '<Plug>luasnip-expand-or-jump', {})
-vim.api.nvim_set_keymap('s', '<C-l>', '<Plug>luasnip-expand-or-jump', {})
-vim.api.nvim_set_keymap('i', '<C-h>', '<Plug>luasnip-jump-prev', {})
-vim.api.nvim_set_keymap('s', '<C-h>', '<Plug>luasnip-jump-prev', {})
+vim.keymap.set('i', '<C-l>', '<Plug>luasnip-expand-or-jump')
+vim.keymap.set('s', '<C-l>', '<Plug>luasnip-expand-or-jump')
+vim.keymap.set('i', '<C-h>', '<Plug>luasnip-jump-prev')
+vim.keymap.set('s', '<C-h>', '<Plug>luasnip-jump-prev')
 
-cmp.setup({
+cmp.setup {
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
@@ -34,7 +34,7 @@ cmp.setup({
   }, {
     { name = 'buffer' },
   }),
-})
+}
 
 cmp.setup.cmdline('/', {
   sources = {

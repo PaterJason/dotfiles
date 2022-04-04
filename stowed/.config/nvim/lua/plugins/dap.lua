@@ -17,7 +17,12 @@ dap.adapters.nlua = function(callback, config)
   callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8088 }
 end
 
-vim.cmd 'au FileType dap-repl lua require("dap.ext.autocompl").attach()'
+local augroup = vim.api.nvim_create_augroup('Dap', {})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'dap-repl',
+  callback = require('dap.ext.autocompl').attach,
+  group = augroup,
+})
 
 require('which-key').register({
   name = 'DAP',

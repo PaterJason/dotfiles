@@ -32,4 +32,8 @@ vim.opt.shortmess:append 'Ic'
 vim.opt.listchars = { tab = '| ', trail = '·', nbsp = '+' }
 vim.opt.fillchars = { fold = ' ', diff = ' ' }
 
-vim.cmd 'au TextYankPost * silent! lua vim.highlight.on_yank()'
+local yank_augroup = vim.api.nvim_create_augroup('YankHighlight', {})
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = vim.highlight.on_yank,
+  group = yank_augroup,
+})
