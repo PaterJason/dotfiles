@@ -1,21 +1,42 @@
 local wezterm = require 'wezterm'
 local HOME = os.getenv 'HOME'
 
+local colors = {
+  foreground = '#c0caf5',
+  background = '#1a1b26',
+  cursor_bg = '#c0caf5',
+  cursor_border = '#c0caf5',
+  cursor_fg = '#1a1b26',
+  selection_bg = '#33467C',
+  selection_fg = '#c0caf5',
+  ansi = { '#15161E', '#f7768e', '#9ece6a', '#e0af68', '#7aa2f7', '#bb9af7', '#7dcfff', '#a9b1d6' },
+  brights = { '#414868', '#f7768e', '#9ece6a', '#e0af68', '#7aa2f7', '#bb9af7', '#7dcfff', '#c0caf5' },
+}
+
 return {
   default_prog = { '/usr/bin/tmux', '-l' },
 
-  color_scheme_dirs = { HOME .. '/.local/share/nvim/site/pack/packer/start/tokyonight.nvim/extras' },
-  color_scheme = 'wezterm_tokyonight_night',
+  colors = colors,
 
   font = wezterm.font 'Monospace',
   font_size = 10.0,
   freetype_load_target = 'HorizontalLcd',
 
-  hide_tab_bar_if_only_one_tab = true,
+  enable_tab_bar = false,
   window_frame = {
     font = wezterm.font 'Monospace',
     font_size = 10.0,
-    active_titlebar_bg = '#15161E',
+
+    inactive_titlebar_bg = colors.background,
+    active_titlebar_bg = colors.ansi[1],
+    inactive_titlebar_fg = colors.foreground,
+    -- active_titlebar_fg = colors.foreground,
+    inactive_titlebar_border_bottom = colors.ansi[1],
+    active_titlebar_border_bottom = colors.ansi[1],
+    button_fg = colors.foreground,
+    button_bg = colors.ansi[1],
+    button_hover_fg = colors.foreground,
+    button_hover_bg = colors.background,
   },
 
   enable_wayland = true,
