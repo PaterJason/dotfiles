@@ -1,5 +1,4 @@
 local wezterm = require 'wezterm'
-local HOME = os.getenv 'HOME'
 
 local colors = {
   foreground = '#c0caf5',

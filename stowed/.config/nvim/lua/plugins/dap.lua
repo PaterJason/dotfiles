@@ -24,27 +24,16 @@ vim.api.nvim_create_autocmd('FileType', {
   group = augroup,
 })
 
-require('which-key').register({
-  name = 'DAP',
-  b = { dap.toggle_breakpoint, 'Toggle Breakpoint' },
-  c = { dap.continue, 'Continue' },
-  C = { dap.run_to_cursor, 'Run To Cursor' },
-  e = {
-    function()
-      widgets.hover(nil, { border = 'solid' })
-    end,
-    'Hover',
-  },
-  n = { dap.next, 'Next' },
-  q = {
-    function()
-      dap.terminate()
-      dap.close()
-    end,
-    'Quit',
-  },
-  r = { dap.repl.toggle, 'Toggle Repl' },
-  v = { '<cmd>DapVirtualTextToggle<CR>', 'Quit' },
-}, {
-  prefix = '<leader>d',
-})
+vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Toggle breakpoint' })
+vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Continue' })
+vim.keymap.set('n', '<leader>dC', dap.run_to_cursor, { desc = 'Run to cursor' })
+vim.keymap.set('n', '<leader>de', function()
+  widgets.hover(nil, { border = 'solid' })
+end, { desc = 'Hover' })
+vim.keymap.set('n', '<leader>dn', dap.step_over, { desc = 'Next' })
+vim.keymap.set('n', '<leader>dq', function()
+  dap.terminate()
+  dap.close()
+end, { desc = 'Quit' })
+vim.keymap.set('n', '<leader>dr', dap.repl.toggle, { desc = 'Toggle Repl' })
+vim.keymap.set('n', '<leader>dv', '<cmd>DapVirtualTextToggle<CR>', { desc = 'Toggle virtual text' })

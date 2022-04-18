@@ -1,4 +1,2 @@
-require('which-key').register({
-  ['r'] = { '<cmd>RustRunnables<CR>', 'Runnables' },
-  ['d'] = { '<cmd>RustDebuggables<CR>', 'Debuggables' },
-}, { prefix = '<localleader>', buffer = 0 })
+vim.keymap.set('n', '<localleader>r', '<cmd>RustRunnables<CR>', { buffer = 0, desc = 'Runnables' })
+vim.keymap.set('n', '<localleader>d', '<cmd>RustDebuggables<CR>', { buffer = 0, desc = 'Debuggables' })

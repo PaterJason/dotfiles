@@ -1,6 +1,3 @@
 vim.bo.keywordprg = ':help'
 
-require('which-key').register(
-  { ['r'] = { '<cmd>lua require"osv".run_this()<CR>', 'Run this' } },
-  { prefix = '<localleader>', buffer = 0 }
-)
+vim.keymap.set('n', '<localleader>r', '<cmd>lua require"osv".run_this()<CR>', { buffer = 0, desc = 'Run this' })

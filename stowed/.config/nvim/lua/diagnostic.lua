@@ -16,10 +16,9 @@ vim.api.nvim_create_autocmd('DiagnosticChanged', {
   group = augroup,
 })
 
-require('which-key').register {
-  ['[d'] = { vim.diagnostic.goto_prev, 'Prev diagnostic' },
-  [']d'] = { vim.diagnostic.goto_next, 'Next diagnostic' },
-  ['<leader>e'] = { vim.diagnostic.open_float, 'Show diagnostics' },
-  ['<leader>q'] = { vim.diagnostic.setloclist, 'Diagnostics loclist' },
-  ['<leader>Q'] = { vim.diagnostic.setqflist, 'Diagnostics quickfix' },
-}
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Prev diagnostic' })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
+
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostics' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostics loclist' })
+vim.keymap.set('n', '<leader>Q', vim.diagnostic.setqflist, { desc = 'Diagnostics quickfix' })

@@ -1,6 +1,7 @@
 require('which-key').register {
   ['<leader>f'] = { '<cmd>Format<CR>', 'Format' },
 }
+vim.keymap.set('n', '<leader>f', '<cmd>Format<CR>', { desc = 'Format' })
 
 require('formatter').setup {
   filetype = {

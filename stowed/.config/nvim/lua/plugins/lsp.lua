@@ -46,43 +46,40 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
 })
 
 local function on_attach(client, bufnr)
-  for _, autocmd in ipairs(vim.api.nvim_get_autocmds { group = 'Lsp', buffer = bufnr }) do
-    vim.api.nvim_del_autocmd(autocmd.id)
-  end
+  vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
 
-  local caps = client.resolved_capabilities
+  local caps = client.server_capabilities
 
-  local wk = require 'which-key'
   for cap, keymaps in
     pairs {
-      call_hierarchy = {
-        ['<leader>l'] = {
-          ['i'] = { vim.lsp.buf.incoming_calls, 'Incoming calls' },
-          ['o'] = { vim.lsp.buf.outgoing_calls, 'Outgoing calls' },
-        },
+      callHierarchyProvider = {
+        { '<leader>li', vim.lsp.buf.incoming_calls, 'Incoming calls' },
+        { '<leader>lo', vim.lsp.buf.outgoing_calls, 'Outgoing calls' },
       },
-      code_action = { ['<leader>la'] = { vim.lsp.buf.code_action, 'Code actions' } },
-      declaration = { ['gD'] = { vim.lsp.buf.declaration, 'Declaration' } },
-      document_formatting = { ['<leader>lf'] = { vim.lsp.buf.formatting, 'Format' } },
-      document_symbol = { ['<leader>ls'] = { '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
-      find_references = { ['gr'] = { '<cmd>Telescope lsp_references<CR>', 'References' } },
-      goto_definition = { ['gd'] = { '<cmd>Telescope lsp_definitions<CR>', 'Goto Definition' } },
-      hover = { ['K'] = { vim.lsp.buf.hover, 'Hover' } },
-      implementation = { ['gi'] = { '<cmd>Telescope lsp_implementations<CR>', 'Implementation' } },
-      rename = { ['<leader>r'] = { vim.lsp.buf.rename, 'Rename' } },
-      signature_help = { ['gs'] = { vim.lsp.buf.signature_help, 'Signature help' } },
-      type_definition = { ['<leader>ld'] = { '<cmd>Telescope lsp_type_definitions<CR>', 'Type definitions' } },
-      workspace_symbol = {
-        ['<leader>lw'] = { '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', 'Workspace symbols' },
+      codeActionProvider = { { '<leader>la', vim.lsp.buf.code_action, 'Code actions' } },
+      declarationProvider = { { 'gD', vim.lsp.buf.declaration, 'Declaration' } },
+      documentFormattingProvider = { { '<leader>lf', vim.lsp.buf.formatting, 'Format' } },
+      documentSymbolProvider = { { '<leader>ls', '<cmd>Telescope lsp_document_symbols<CR>', 'Document symbols' } },
+      referencesProvider = { { 'gr', '<cmd>Telescope lsp_references<CR>', 'References' } },
+      definitionProvider = { { 'gd', '<cmd>Telescope lsp_definitions<CR>', 'Goto Definition' } },
+      hoverProvider = { { 'K', vim.lsp.buf.hover, 'Hover' } },
+      implementationProvider = { { 'gi', '<cmd>Telescope lsp_implementations<CR>', 'Implementation' } },
+      renameProvider = { { '<leader>r', vim.lsp.buf.rename, 'Rename' } },
+      signatureHelpProvider = { { 'gs', vim.lsp.buf.signature_help, 'Signature help' } },
+      typeDefinitionProvider = { { '<leader>ld', '<cmd>Telescope lsp_type_definitions<CR>', 'Type definitions' } },
+      workspaceSymbolProvider = {
+        { '<leader>lw', '<cmd>Telescope lsp_dynamic_workspace_symbols<CR>', 'Workspace symbols' },
       },
     }
   do
     if caps[cap] then
-      wk.register(keymaps, { buffer = bufnr })
+      for _, value in ipairs(keymaps) do
+        vim.keymap.set('n', value[1], value[2], { buffer = bufnr, desc = value[3] })
+      end
     end
   end
 
-  if caps.document_highlight then
+  if caps.documentHighlightProvider then
     vim.api.nvim_create_autocmd('CursorHold', {
       callback = vim.lsp.buf.document_highlight,
       group = augroup,
@@ -94,7 +91,7 @@ local function on_attach(client, bufnr)
       buffer = bufnr,
     })
   end
-  if caps.code_lens then
+  if caps.codeLensProvider then
     vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
       callback = vim.lsp.codelens.refresh,
       group = augroup,
@@ -102,7 +99,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if caps.document_range_formatting then
+  if caps.documentRangeFormattingProvider then
     vim.bo[bufnr].formatexpr = 'v:lua.vim.lsp.formatexpr()'
   end
   vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'

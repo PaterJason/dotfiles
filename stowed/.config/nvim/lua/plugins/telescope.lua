@@ -29,3 +29,13 @@ telescope.setup {
 telescope.load_extension 'fzy_native'
 telescope.load_extension 'ui-select'
 telescope.load_extension 'dap'
+
+vim.keymap.set('n', '<leader><leader>', '<cmd>Telescope<CR>', { desc = 'Telescope builtins' })
+
+vim.keymap.set('n', '<leader>sb', '<cmd>Telescope current_buffer_fuzzy_find<CR>', { desc = 'Current buffer' })
+vim.keymap.set('n', '<leader>sf', '<cmd>Telescope find_files<CR>', { desc = 'Find Files' })
+vim.keymap.set('n', '<leader>sg', '<cmd>Telescope live_grep<CR>', { desc = 'Grep' })
+vim.keymap.set('n', '<leader>sG', '<cmd>Telescope grep_string<CR>', { desc = 'Grep string' })
+vim.keymap.set('n', '<leader>sh', '<cmd>Telescope help_tags<CR>', { desc = 'Help' })
+vim.keymap.set('n', '<leader>sl', '<cmd>Telescope loclist<CR>', { desc = 'Loclist' })
+vim.keymap.set('n', '<leader>sq', '<cmd>Telescope quickfix<CR>', { desc = 'Quickfix' })

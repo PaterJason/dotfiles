@@ -21,12 +21,25 @@ packer.startup {
         vim.cmd 'colorscheme tokyonight'
       end,
     }
+    use {
+      'norcalli/nvim-colorizer.lua',
+      config = function()
+        require('colorizer').setup {
+          css = { css = true },
+          scss = { css = true },
+          '*',
+          '!fugitive',
+          '!packer',
+        }
+      end,
+    }
 
     -- Keymaps
     use {
-      'folke/which-key.nvim',
+      -- 'folke/which-key.nvim',
+      'xiyaowong/which-key.nvim',
       config = function()
-        require 'plugins.keymap'
+        require 'plugins.whichkey'
       end,
     }
     use 'tpope/vim-unimpaired'
@@ -45,7 +58,12 @@ packer.startup {
     }
 
     -- Edit
-    use 'mbbill/undotree'
+    use {
+      'mbbill/undotree',
+      config = function()
+        vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = 'Undotree' })
+      end,
+    }
     use 'tpope/vim-commentary'
 
     -- Parentheses
@@ -53,77 +71,26 @@ packer.startup {
     use {
       'gpanders/nvim-parinfer',
       config = function()
-        require('which-key').register({
-          ['<leader>p'] = { '<cmd>ParinferToggle!<CR>', 'Toggle Parinfer' },
-        }, {})
+        vim.keymap.set('n', '<leader>p', '<cmd>ParinferToggle!<CR>', { desc = 'Toggle Parinfer' })
       end,
     }
     use {
       'windwp/nvim-autopairs',
       after = 'nvim-cmp',
       config = function()
-        local npairs = require 'nvim-autopairs'
-
-        npairs.setup {
-          check_ts = true,
-          enable_check_bracket_line = false,
-        }
-        require('cmp').event:on('confirm_done', require('nvim-autopairs.completion.cmp').on_confirm_done())
-
-        local lisp_filetypes = {
-          'clojure',
-          'scheme',
-          'lisp',
-          'racket',
-          'hy',
-          'fennel',
-          'janet',
-          'carp',
-          'wast',
-          'yuck',
-        }
-
-        vim.list_extend(npairs.get_rule("'")[1].not_filetypes, lisp_filetypes)
-        npairs.get_rule("(").not_filetypes = lisp_filetypes
-        npairs.get_rule("{").not_filetypes = lisp_filetypes
-        npairs.get_rule("[").not_filetypes = lisp_filetypes
+        require 'plugins.autopairs'
       end,
     }
 
     -- Git
     use {
       'tpope/vim-fugitive',
-      requires = { 'tpope/vim-rhubarb' },
     }
     use {
       'lewis6991/gitsigns.nvim',
       requires = 'nvim-lua/plenary.nvim',
       config = function()
-        require('gitsigns').setup {
-          preview_config = {
-            border = 'solid',
-          },
-          signcolumn = false,
-          numhl = true,
-          on_attach = function()
-            require('which-key').register({
-              ['[c'] = { '<cmd>Gitsigns prev_hunk<CR>', 'Prev hunk' },
-              [']c'] = { '<cmd>Gitsigns next_hunk<CR>', 'Next hunk' },
-              ['<leader>h'] = {
-                name = 'Gitsigns',
-                b = { '<cmd>Gitsigns blame_line<CR>', 'Blame line' },
-                d = { '<cmd>Gitsigns diffthis<CR>', 'Diffthis' },
-                l = { '<cmd>Gitsigns setloclist<CR>', 'Set loclist' },
-                p = { '<cmd>Gitsigns preview_hunk<CR>', 'Preview hunk' },
-                r = { '<cmd>Gitsigns reset_hunk<CR>', 'Reset hunk' },
-                s = { '<cmd>Gitsigns stage_hunk<CR>', 'Stage hunk' },
-                u = { '<cmd>Gitsigns undo_stage_hunk<CR>', 'Undo stage hunk' },
-              },
-            }, {
-              buffer = 0,
-            })
-          end,
-        }
+        require 'plugins.gitsigns'
       end,
     }
 
@@ -133,6 +100,7 @@ packer.startup {
       requires = {
         'L3MON4D3/LuaSnip',
         'hrsh7th/cmp-nvim-lsp',
+        'hrsh7th/cmp-nvim-lsp-document-symbol',
         'hrsh7th/cmp-nvim-lsp-signature-help',
         'hrsh7th/cmp-cmdline',
         'hrsh7th/cmp-path',
@@ -221,7 +189,10 @@ packer.startup {
         vim.g['conjure#mapping#doc_word'] = 'K'
       end,
     }
-    use 'clojure-vim/vim-jack-in'
+    use {
+      'clojure-vim/vim-jack-in',
+      ft = 'clojure',
+    }
 
     if packer_bootstrap then
       packer.sync()

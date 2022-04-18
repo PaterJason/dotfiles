@@ -16,7 +16,6 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.scrolloff = 4
 vim.o.shiftwidth = 0
-vim.o.showmode = false
 vim.o.sidescrolloff = 4
 vim.o.signcolumn = 'auto'
 vim.o.smartcase = true
@@ -34,6 +33,8 @@ vim.opt.fillchars = { fold = ' ', diff = ' ' }
 
 local yank_augroup = vim.api.nvim_create_augroup('YankHighlight', {})
 vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = vim.highlight.on_yank,
+  callback = function()
+    vim.highlight.on_yank()
+  end,
   group = yank_augroup,
 })
