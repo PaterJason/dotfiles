@@ -122,7 +122,7 @@ for server, config in
     jsonls = { cmd = { 'vscode-json-languageserver', '--stdio' } },
     bashls = {},
     clojure_lsp = { init_options = { ['ignore-classpath-directories'] = true } },
-    sumneko_lua = string.find(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {} or {},
+    sumneko_lua = string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {} or {},
     texlab = {
       settings = {
         texlab = {

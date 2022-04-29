@@ -3,5 +3,6 @@ pcall(function()
 end)
 
 require 'options'
+require 'filetype'
 require 'plugins'
 require 'diagnostic'

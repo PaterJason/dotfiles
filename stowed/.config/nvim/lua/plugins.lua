@@ -108,7 +108,7 @@ packer.startup {
         'PaterJason/cmp-conjure',
       },
       config = function()
-        require 'plugins.completion'
+        require 'plugins.cmp'
       end,
     }
 
@@ -192,6 +192,17 @@ packer.startup {
     use {
       'clojure-vim/vim-jack-in',
       ft = 'clojure',
+    }
+
+    use {
+      'nvim-neorg/neorg',
+      requires = {
+        'nvim-lua/plenary.nvim',
+        'nvim-neorg/neorg-telescope',
+      },
+      config = function()
+        require 'plugins.neorg'
+      end,
     }
 
     if packer_bootstrap then
