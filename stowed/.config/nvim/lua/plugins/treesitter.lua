@@ -55,12 +55,11 @@ config.setup {
     },
     swap = {
       enable = true,
-      swap_next = {
-        ['<leader>a'] = '@parameter.inner',
-      },
-      swap_previous = {
-        ['<leader>A'] = '@parameter.inner',
-      },
+      swap_next = {},
+      swap_previous = {},
     },
+  },
+  playground = {
+    enable = true,
   },
 }

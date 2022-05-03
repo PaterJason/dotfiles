@@ -116,6 +116,8 @@ packer.startup {
     use {
       'neovim/nvim-lspconfig',
       requires = {
+        'williamboman/nvim-lsp-installer',
+        'jose-elias-alvarez/null-ls.nvim',
         'folke/lua-dev.nvim',
         'simrat39/rust-tools.nvim',
       },
@@ -147,6 +149,7 @@ packer.startup {
     use {
       'nvim-treesitter/nvim-treesitter',
       requires = {
+        'nvim-treesitter/playground',
         'nvim-treesitter/nvim-treesitter-textobjects',
       },
       run = ':TSUpdate',
