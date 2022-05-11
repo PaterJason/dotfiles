@@ -7,3 +7,7 @@ set -gx NPM_PACKAGES "$HOME/.npm-packages"
 if status --is-interactive
     set -g fish_greeting
 end
+
+if type -q direnv
+    direnv hook fish | source
+end
