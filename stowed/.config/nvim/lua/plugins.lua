@@ -15,10 +15,9 @@ packer.startup {
 
     -- Theme
     use {
-      'folke/tokyonight.nvim',
+      'Shatur/neovim-ayu',
       config = function()
-        vim.g.tokyonight_style = 'night'
-        vim.cmd 'colorscheme tokyonight'
+        vim.cmd 'colorscheme ayu'
       end,
     }
     use {
