@@ -76,3 +76,10 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' },
   }),
 })
+
+cmp.setup.filetype({ 'sql', 'mysql', 'plsql' }, {
+  -- mapping = cmp.mapping.preset.insert {},
+  sources = cmp.config.sources {
+    { name = 'vim-dadbod-completion' },
+  },
+})

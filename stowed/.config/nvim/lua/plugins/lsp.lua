@@ -49,11 +49,11 @@ vim.api.nvim_create_autocmd('User', {
 })
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = 'solid',
+  border = 'single',
 })
 
 vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = 'solid',
+  border = 'single',
 })
 
 lspconfig.util.default_config.on_attach = function(client, bufnr)
@@ -160,7 +160,7 @@ require('rust-tools').setup {
       show_parameter_hints = false,
     },
     hover_actions = {
-      border = 'solid',
+      border = 'single',
     },
   },
   server = {
@@ -183,7 +183,8 @@ do
   null_ls.setup {
     sources = {
       null_ls.builtins.formatting.stylua,
-      -- null_ls.builtins.completion.spell,
+      null_ls.builtins.diagnostics.fish,
+      null_ls.builtins.formatting.fish_indent,
     },
   }
 end

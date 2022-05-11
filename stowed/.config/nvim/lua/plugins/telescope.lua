@@ -4,7 +4,6 @@ telescope.setup {
   defaults = {
     color_devicons = false,
     history = false,
-    borderchars = { ' ' },
     layout_config = {
       height = 0.4,
     },
@@ -19,9 +18,7 @@ telescope.setup {
   },
   extensions = {
     ['ui-select'] = {
-      require('telescope.themes').get_cursor {
-        borderchars = { ' ' },
-      },
+      require('telescope.themes').get_cursor {},
     },
   },
 }

@@ -35,8 +35,7 @@ packer.startup {
 
     -- Keymaps
     use {
-      -- 'folke/which-key.nvim',
-      'xiyaowong/which-key.nvim',
+      'folke/which-key.nvim',
       config = function()
         require 'plugins.whichkey'
       end,
@@ -70,7 +69,15 @@ packer.startup {
     use {
       'gpanders/nvim-parinfer',
       config = function()
+        vim.g.parinfer_enabled = false
         vim.keymap.set('n', '<leader>p', '<cmd>ParinferToggle!<CR>', { desc = 'Toggle Parinfer' })
+      end,
+    }
+    use {
+      'guns/vim-sexp',
+      requires = 'tpope/vim-sexp-mappings-for-regular-people',
+      config = function()
+        vim.g.sexp_enable_insert_mode_mappings = 0
       end,
     }
     use {
@@ -105,6 +112,7 @@ packer.startup {
         'hrsh7th/cmp-path',
         'hrsh7th/cmp-buffer',
         'PaterJason/cmp-conjure',
+        'kristijanhusak/vim-dadbod-completion',
       },
       config = function()
         require 'plugins.cmp'
@@ -186,8 +194,6 @@ packer.startup {
         vim.g['conjure#completion#omnifunc'] = nil
         vim.g['conjure#extract#tree_sitter#enabled'] = true
         vim.g['conjure#highlight#enabled'] = true
-        vim.g['conjure#highlight#timeout'] = 150
-        vim.g['conjure#log#hud#border'] = 'solid'
         vim.g['conjure#mapping#doc_word'] = 'K'
       end,
     }
@@ -207,16 +213,23 @@ packer.startup {
       end,
     }
 
+    use {
+      'tpope/vim-dadbod',
+      requires = {
+        'kristijanhusak/vim-dadbod-ui',
+      },
+    }
+
     if packer_bootstrap then
       packer.sync()
     end
   end,
   config = {
     profile = {
-      enable = true,
+      enable = false,
     },
     max_jobs = 5,
-    display = { prompt_border = 'solid' },
+    display = { prompt_border = 'single' },
   },
 }
 

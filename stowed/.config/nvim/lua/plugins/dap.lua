@@ -28,7 +28,7 @@ vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = 'Toggle breakp
 vim.keymap.set('n', '<leader>dc', dap.continue, { desc = 'Continue' })
 vim.keymap.set('n', '<leader>dC', dap.run_to_cursor, { desc = 'Run to cursor' })
 vim.keymap.set('n', '<leader>de', function()
-  widgets.hover(nil, { border = 'solid' })
+  widgets.hover()
 end, { desc = 'Hover' })
 vim.keymap.set('n', '<leader>dn', dap.step_over, { desc = 'Next' })
 vim.keymap.set('n', '<leader>dq', function()
