@@ -133,13 +133,6 @@ packer.startup {
       end,
     }
 
-    use {
-      'mhartington/formatter.nvim',
-      config = function()
-        require 'plugins.format'
-      end,
-    }
-
     -- DAP
     use {
       'mfussenegger/nvim-dap',
