@@ -150,6 +150,7 @@ for server, config in pairs {
   },
   taplo = {},
   yamlls = {},
+  tsserver = {},
 } do
   lspconfig[server].setup(config)
 end

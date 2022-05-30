@@ -15,9 +15,13 @@ packer.startup {
 
     -- Theme
     use {
-      'Shatur/neovim-ayu',
+      'projekt0n/github-nvim-theme',
       config = function()
-        vim.cmd 'colorscheme ayu'
+        require('github-theme').setup {
+          hide_end_of_buffer = false,
+          hide_inactive_statusline = false,
+          theme_style = 'light_default',
+        }
       end,
     }
     use {
