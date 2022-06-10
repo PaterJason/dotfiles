@@ -56,7 +56,7 @@ vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.s
   border = 'single',
 })
 
-lspconfig.util.default_config.on_attach = function(client, bufnr)
+local on_attach = function(client, bufnr)
   vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
 
   local caps = client.server_capabilities
@@ -116,10 +116,10 @@ lspconfig.util.default_config.on_attach = function(client, bufnr)
 
   vim.notify(client.name .. ' attached')
 end
+lspconfig.util.default_config.on_attach = on_attach
 
-lspconfig.util.default_config.capabilities = require('cmp_nvim_lsp').update_capabilities(
-  vim.lsp.protocol.make_client_capabilities()
-)
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+lspconfig.util.default_config.capabilities = capabilities
 
 for server, config in pairs {
   cssls = {},
@@ -128,29 +128,30 @@ for server, config in pairs {
   jsonls = {},
   bashls = {},
   clojure_lsp = { init_options = { ['ignore-classpath-directories'] = true } },
+  sqls = {
+    on_attach = function(client, bufnr)
+      on_attach(client, bufnr)
+      require('sqls').on_attach(client, bufnr)
+    end,
+  },
   sumneko_lua = string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {} or {},
   texlab = {
     settings = {
       texlab = {
-        build = {
-          onSave = true,
-          forwardSearchAfter = true,
-        },
+        build = { onSave = true, forwardSearchAfter = true },
         forwardSearch = {
           onSave = true,
           executable = 'zathura',
           args = { '--synctex-forward', '%l:1:%f', '%p' },
         },
-        chktex = {
-          onEdit = true,
-          onOpenAndSave = true,
-        },
+        chktex = { onEdit = true, onOpenAndSave = true },
       },
     },
   },
   taplo = {},
   yamlls = {},
   tsserver = {},
+  lemminx = {},
 } do
   lspconfig[server].setup(config)
 end

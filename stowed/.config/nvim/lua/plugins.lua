@@ -18,7 +18,6 @@ packer.startup {
       'projekt0n/github-nvim-theme',
       config = function()
         require('github-theme').setup {
-          hide_end_of_buffer = false,
           hide_inactive_statusline = false,
           theme_style = 'light_default',
         }
@@ -116,7 +115,6 @@ packer.startup {
         'hrsh7th/cmp-path',
         'hrsh7th/cmp-buffer',
         'PaterJason/cmp-conjure',
-        'kristijanhusak/vim-dadbod-completion',
       },
       config = function()
         require 'plugins.cmp'
@@ -131,6 +129,7 @@ packer.startup {
         'jose-elias-alvarez/null-ls.nvim',
         'folke/lua-dev.nvim',
         'simrat39/rust-tools.nvim',
+        'nanotee/sqls.nvim',
       },
       config = function()
         require 'plugins.lsp'
@@ -197,24 +196,6 @@ packer.startup {
     use {
       'clojure-vim/vim-jack-in',
       ft = 'clojure',
-    }
-
-    use {
-      'nvim-neorg/neorg',
-      requires = {
-        'nvim-lua/plenary.nvim',
-        'nvim-neorg/neorg-telescope',
-      },
-      config = function()
-        require 'plugins.neorg'
-      end,
-    }
-
-    use {
-      'tpope/vim-dadbod',
-      requires = {
-        'kristijanhusak/vim-dadbod-ui',
-      },
     }
 
     if packer_bootstrap then
