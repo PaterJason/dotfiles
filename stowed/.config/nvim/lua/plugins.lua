@@ -64,6 +64,25 @@ packer.startup {
         require('leap').set_default_keymaps()
       end,
     }
+    use {
+      'rcarriga/nvim-notify',
+      config = function()
+        local notify = require 'notify'
+        notify.setup {
+          -- fps = 0,
+          icons = {
+            DEBUG = '[Debug]',
+            ERROR = '[Error]',
+            INFO = '[Info]',
+            TRACE = '[Trace]',
+            WARN = '[Warn]',
+          },
+          stages = 'static',
+          minimum_width = 80,
+        }
+        vim.notify = notify.notify
+      end,
+    }
 
     -- Edit
     use {

@@ -13,6 +13,8 @@ require('nvim-lsp-installer').setup {
 vim.keymap.set('n', '<leader>ll', '<cmd>LspInstallInfo<CR>', { desc = 'Install Info' })
 
 local augroup = vim.api.nvim_create_augroup('Lsp', {})
+
+_G.lsp_progress_record = {}
 vim.api.nvim_create_autocmd('User', {
   pattern = 'LspProgressUpdate',
   callback = function()
@@ -22,14 +24,8 @@ vim.api.nvim_create_autocmd('User', {
       return
     end
 
-    local msg = ''
     for _, message in ipairs(messages) do
-      if msg ~= '' then
-        msg = string.format('%s | ', msg)
-      end
-      if message.name then
-        msg = string.format('%s[%s]', msg, message.name)
-      end
+      local msg = message.name or ''
       if message.title then
         msg = string.format('%s %s', msg, message.title)
       end
@@ -41,9 +37,11 @@ vim.api.nvim_create_autocmd('User', {
       elseif message.percentage then
         msg = string.format('%s %d%%', msg, message.percentage)
       end
+      lsp_progress_record[message.name] = vim.notify(msg, vim.log.levels.INFO, {
+        title = 'LSP Progress',
+        replace = lsp_progress_record[message.name],
+      })
     end
-
-    vim.api.nvim_echo({ { msg } }, false, {})
   end,
   group = augroup,
 })
@@ -114,23 +112,12 @@ local on_attach = function(client, bufnr)
   vim.bo[bufnr].tagfunc = 'v:lua.vim.lsp.tagfunc'
   vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
-  vim.notify(client.name .. ' attached')
+  vim.notify(client.name .. ' attached', vim.log.levels.INFO, { title = 'LSP' })
 end
 lspconfig.util.default_config.on_attach = on_attach
 
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 lspconfig.util.default_config.capabilities = capabilities
-
-local sumneko_lua = {
-  settings = {
-    Lua = {
-      format = {
-        enable = false,
-      },
-    },
-  },
-}
-sumneko_lua = (string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup(sumneko_lua)) or sumneko_lua
 
 for server, config in pairs {
   cssls = {},
@@ -152,7 +139,7 @@ for server, config in pairs {
       require('sqls').on_attach(client, bufnr)
     end,
   },
-  sumneko_lua = sumneko_lua,
+  sumneko_lua = (string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {}) or {},
   texlab = {
     settings = {
       texlab = {
