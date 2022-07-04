@@ -119,7 +119,14 @@ packer.startup {
 
     -- Git
     use {
-      'tpope/vim-fugitive',
+      'TimUntersberger/neogit',
+      requires = 'nvim-lua/plenary.nvim',
+      config = function()
+        vim.keymap.set('n', '<leader>g', '<cmd>Neogit<CR>', { desc = 'Git' })
+        require('neogit').setup {
+          disable_builtin_notifications = true,
+        }
+      end,
     }
     use {
       'lewis6991/gitsigns.nvim',
