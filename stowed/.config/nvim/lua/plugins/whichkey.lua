@@ -12,7 +12,7 @@ wk.setup {
 
 wk.register({
   d = { name = 'DAP' },
-  h = { name = 'Gitsigns' },
+  h = { name = 'Git hunks' },
   l = { name = 'LSP' },
   s = { name = 'Telescope Search' },
 }, {

@@ -3,7 +3,9 @@ local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nv
 local packer_bootstrap = false
 if not vim.loop.fs_access(install_path, 'W') then
   local url = 'https://github.com/wbthomason/packer.nvim'
-  packer_bootstrap = vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path }
+  if vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path } then
+    packer_bootstrap = true
+  end
   vim.cmd 'packadd packer.nvim'
 end
 
@@ -47,7 +49,12 @@ packer.startup {
     use 'christoomey/vim-tmux-navigator'
 
     -- Util
-    use 'tpope/vim-dispatch'
+    use {
+      'tpope/vim-dispatch',
+      config = function()
+        vim.g.dispatch_no_maps = 1
+      end,
+    }
     use 'tpope/vim-repeat'
     use 'tpope/vim-vinegar'
     use 'tpope/vim-eunuch'
@@ -73,7 +80,7 @@ packer.startup {
       'gpanders/nvim-parinfer',
       config = function()
         vim.g.parinfer_enabled = false
-        vim.keymap.set('n', '<leader>p', '<cmd>ParinferToggle!<CR>', { desc = 'Toggle Parinfer' })
+        vim.keymap.set('n', '<leader>tp', '<cmd>ParinferToggle!<CR>', { desc = 'Toggle Parinfer' })
       end,
     }
     use {
@@ -126,10 +133,10 @@ packer.startup {
       'neovim/nvim-lspconfig',
       requires = {
         'williamboman/nvim-lsp-installer',
-        'jose-elias-alvarez/null-ls.nvim',
         'folke/lua-dev.nvim',
         'simrat39/rust-tools.nvim',
         'nanotee/sqls.nvim',
+        'b0o/SchemaStore.nvim',
       },
       config = function()
         require 'plugins.lsp'

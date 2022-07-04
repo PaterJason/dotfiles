@@ -121,11 +121,29 @@ lspconfig.util.default_config.on_attach = on_attach
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 lspconfig.util.default_config.capabilities = capabilities
 
+local sumneko_lua = {
+  settings = {
+    Lua = {
+      format = {
+        enable = false,
+      },
+    },
+  },
+}
+sumneko_lua = (string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup(sumneko_lua)) or sumneko_lua
+
 for server, config in pairs {
   cssls = {},
   eslint = {},
   html = {},
-  jsonls = {},
+  jsonls = {
+    settings = {
+      json = {
+        schemas = require('schemastore').json.schemas(),
+        validate = { enable = true },
+      },
+    },
+  },
   bashls = {},
   clojure_lsp = { init_options = { ['ignore-classpath-directories'] = true } },
   sqls = {
@@ -134,7 +152,7 @@ for server, config in pairs {
       require('sqls').on_attach(client, bufnr)
     end,
   },
-  sumneko_lua = string.match(vim.loop.cwd(), '/nvim') and require('lua-dev').setup {} or {},
+  sumneko_lua = sumneko_lua,
   texlab = {
     settings = {
       texlab = {
@@ -152,6 +170,18 @@ for server, config in pairs {
   yamlls = {},
   tsserver = {},
   lemminx = {},
+  efm = {
+    init_options = { documentFormatting = true },
+    settings = {
+      languages = {
+        lua = {
+          { formatCommand = 'stylua --config-path ~/.config/stylua/stylua.toml -', formatStdin = true },
+        },
+      },
+    },
+    filetypes = { 'lua' },
+  },
+  marksman = {},
 } do
   lspconfig[server].setup(config)
 end
@@ -179,14 +209,3 @@ require('rust-tools').setup {
     },
   },
 }
-
-do
-  local null_ls = require 'null-ls'
-  null_ls.setup {
-    sources = {
-      null_ls.builtins.formatting.stylua,
-      null_ls.builtins.diagnostics.fish,
-      null_ls.builtins.formatting.fish_indent,
-    },
-  }
-end

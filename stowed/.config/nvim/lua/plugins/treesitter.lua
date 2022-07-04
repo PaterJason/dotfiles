@@ -4,7 +4,6 @@ config.setup {
   ensure_installed = 'all',
   highlight = {
     enable = true,
-    custom_captures = {},
     additional_vim_regex_highlighting = false,
   },
   incremental_selection = {
