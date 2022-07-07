@@ -1,4 +1,4 @@
-local wk = require 'which-key'
+local wk = require "which-key"
 
 wk.setup {
   plugins = {
@@ -11,10 +11,10 @@ wk.setup {
 }
 
 wk.register({
-  d = { name = 'DAP' },
-  h = { name = 'Git hunks' },
-  l = { name = 'LSP' },
-  s = { name = 'Telescope Search' },
+  d = { name = "DAP" },
+  h = { name = "Git hunks" },
+  l = { name = "LSP" },
+  s = { name = "Telescope Search" },
 }, {
-  prefix = '<leader>',
+  prefix = "<leader>",
 })

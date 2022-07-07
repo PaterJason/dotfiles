@@ -1,1 +1,1 @@
-vim.bo.keywordprg = ':help'
+vim.bo.keywordprg = ":help"

@@ -1,1 +1,1 @@
-vim.g.vimsyn_embed = 'l'
+vim.g.vimsyn_embed = "l"

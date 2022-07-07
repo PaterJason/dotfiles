@@ -1,83 +1,83 @@
 -- Bootstrap
-local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
+local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 local packer_bootstrap = false
-if not vim.loop.fs_access(install_path, 'W') then
-  local url = 'https://github.com/wbthomason/packer.nvim'
-  if vim.fn.system { 'git', 'clone', '--depth', '1', url, install_path } then
+if not vim.loop.fs_access(install_path, "W") then
+  local url = "https://github.com/wbthomason/packer.nvim"
+  if vim.fn.system { "git", "clone", "--depth", "1", url, install_path } then
     packer_bootstrap = true
   end
-  vim.cmd 'packadd packer.nvim'
+  vim.cmd "packadd packer.nvim"
 end
 
-local packer = require 'packer'
+local packer = require "packer"
 packer.startup {
   function(use)
-    use 'wbthomason/packer.nvim'
-    use 'lewis6991/impatient.nvim'
+    use "wbthomason/packer.nvim"
+    use "lewis6991/impatient.nvim"
 
     -- Theme
     use {
-      'projekt0n/github-nvim-theme',
+      "projekt0n/github-nvim-theme",
       config = function()
-        require('github-theme').setup {
+        require("github-theme").setup {
           hide_inactive_statusline = false,
-          theme_style = 'light_default',
+          theme_style = "light_default",
         }
       end,
     }
     use {
-      'norcalli/nvim-colorizer.lua',
+      "norcalli/nvim-colorizer.lua",
       config = function()
-        require('colorizer').setup {
+        require("colorizer").setup {
           css = { css = true },
           scss = { css = true },
-          '*',
-          '!fugitive',
-          '!packer',
+          "*",
+          "!fugitive",
+          "!packer",
         }
       end,
     }
 
     -- Keymaps
     use {
-      'folke/which-key.nvim',
+      "folke/which-key.nvim",
       config = function()
-        require 'plugins.whichkey'
+        require "plugins.whichkey"
       end,
     }
-    use 'tpope/vim-unimpaired'
-    use 'christoomey/vim-tmux-navigator'
+    use "tpope/vim-unimpaired"
+    use "christoomey/vim-tmux-navigator"
 
     -- Util
     use {
-      'tpope/vim-dispatch',
+      "tpope/vim-dispatch",
       config = function()
         vim.g.dispatch_no_maps = 1
       end,
     }
-    use 'tpope/vim-repeat'
-    use 'tpope/vim-vinegar'
-    use 'tpope/vim-eunuch'
+    use "tpope/vim-repeat"
+    use "tpope/vim-vinegar"
+    use "tpope/vim-eunuch"
     use {
-      'ggandor/leap.nvim',
+      "ggandor/leap.nvim",
       config = function()
-        require('leap').set_default_keymaps()
+        require("leap").set_default_keymaps()
       end,
     }
     use {
-      'rcarriga/nvim-notify',
+      "rcarriga/nvim-notify",
       config = function()
-        local notify = require 'notify'
+        local notify = require "notify"
         notify.setup {
           -- fps = 0,
           icons = {
-            DEBUG = '[Debug]',
-            ERROR = '[Error]',
-            INFO = '[Info]',
-            TRACE = '[Trace]',
-            WARN = '[Warn]',
+            DEBUG = "[Debug]",
+            ERROR = "[Error]",
+            INFO = "[Info]",
+            TRACE = "[Trace]",
+            WARN = "[Warn]",
           },
-          stages = 'static',
+          stages = "static",
           minimum_width = 80,
         }
         vim.notify = notify.notify
@@ -86,149 +86,149 @@ packer.startup {
 
     -- Edit
     use {
-      'mbbill/undotree',
+      "mbbill/undotree",
       config = function()
-        vim.keymap.set('n', '<leader>u', '<cmd>UndotreeToggle<CR>', { desc = 'Undotree' })
+        vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<CR>", { desc = "Undotree" })
       end,
     }
-    use 'tpope/vim-commentary'
+    use "tpope/vim-commentary"
 
     -- Parentheses
-    use 'tpope/vim-surround'
+    use "tpope/vim-surround"
     use {
-      'gpanders/nvim-parinfer',
+      "gpanders/nvim-parinfer",
       config = function()
         vim.g.parinfer_enabled = false
-        vim.keymap.set('n', '<leader>tp', '<cmd>ParinferToggle!<CR>', { desc = 'Toggle Parinfer' })
+        vim.keymap.set("n", "<leader>tp", "<cmd>ParinferToggle!<CR>", { desc = "Toggle Parinfer" })
       end,
     }
     use {
-      'guns/vim-sexp',
-      requires = 'tpope/vim-sexp-mappings-for-regular-people',
+      "guns/vim-sexp",
+      requires = "tpope/vim-sexp-mappings-for-regular-people",
       config = function()
         vim.g.sexp_enable_insert_mode_mappings = 0
       end,
     }
     use {
-      'windwp/nvim-autopairs',
-      after = 'nvim-cmp',
+      "windwp/nvim-autopairs",
+      after = "nvim-cmp",
       config = function()
-        require 'plugins.autopairs'
+        require "plugins.autopairs"
       end,
     }
 
     -- Git
     use {
-      'TimUntersberger/neogit',
-      requires = 'nvim-lua/plenary.nvim',
+      "TimUntersberger/neogit",
+      requires = "nvim-lua/plenary.nvim",
       config = function()
-        vim.keymap.set('n', '<leader>g', '<cmd>Neogit<CR>', { desc = 'Git' })
-        require('neogit').setup {
+        vim.keymap.set("n", "<leader>g", "<cmd>Neogit<CR>", { desc = "Git" })
+        require("neogit").setup {
           disable_builtin_notifications = true,
         }
       end,
     }
     use {
-      'lewis6991/gitsigns.nvim',
-      requires = 'nvim-lua/plenary.nvim',
+      "lewis6991/gitsigns.nvim",
+      requires = "nvim-lua/plenary.nvim",
       config = function()
-        require 'plugins.gitsigns'
+        require "plugins.gitsigns"
       end,
     }
 
     -- Completion
     use {
-      'hrsh7th/nvim-cmp',
+      "hrsh7th/nvim-cmp",
       requires = {
-        'L3MON4D3/LuaSnip',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-nvim-lsp-document-symbol',
-        'hrsh7th/cmp-nvim-lsp-signature-help',
-        'hrsh7th/cmp-cmdline',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-buffer',
-        'PaterJason/cmp-conjure',
+        "L3MON4D3/LuaSnip",
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-nvim-lsp-document-symbol",
+        "hrsh7th/cmp-nvim-lsp-signature-help",
+        "hrsh7th/cmp-cmdline",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-buffer",
+        "PaterJason/cmp-conjure",
       },
       config = function()
-        require 'plugins.cmp'
+        require "plugins.cmp"
       end,
     }
 
     -- LSP
     use {
-      'neovim/nvim-lspconfig',
+      "neovim/nvim-lspconfig",
       requires = {
-        'williamboman/nvim-lsp-installer',
-        'folke/lua-dev.nvim',
-        'simrat39/rust-tools.nvim',
-        'nanotee/sqls.nvim',
-        'b0o/SchemaStore.nvim',
+        "williamboman/nvim-lsp-installer",
+        "folke/lua-dev.nvim",
+        "simrat39/rust-tools.nvim",
+        "nanotee/sqls.nvim",
+        "b0o/SchemaStore.nvim",
       },
       config = function()
-        require 'plugins.lsp'
+        require "plugins.lsp"
       end,
     }
 
     -- DAP
     use {
-      'mfussenegger/nvim-dap',
+      "mfussenegger/nvim-dap",
       requires = {
-        'theHamsta/nvim-dap-virtual-text',
-        'jbyuki/one-small-step-for-vimkind',
+        "theHamsta/nvim-dap-virtual-text",
+        "jbyuki/one-small-step-for-vimkind",
       },
       config = function()
-        require 'plugins.dap'
+        require "plugins.dap"
       end,
     }
 
     -- Treesitter
     use {
-      'nvim-treesitter/nvim-treesitter',
+      "nvim-treesitter/nvim-treesitter",
       requires = {
-        'nvim-treesitter/playground',
-        'nvim-treesitter/nvim-treesitter-textobjects',
+        "nvim-treesitter/playground",
+        "nvim-treesitter/nvim-treesitter-textobjects",
       },
-      run = ':TSUpdate',
+      run = ":TSUpdate",
       config = function()
-        require 'plugins.treesitter'
+        require "plugins.treesitter"
       end,
     }
     use {
-      'lewis6991/spellsitter.nvim',
+      "lewis6991/spellsitter.nvim",
       config = function()
-        require('spellsitter').setup()
+        require("spellsitter").setup()
       end,
     }
 
     -- Telescope
     use {
-      'nvim-telescope/telescope.nvim',
+      "nvim-telescope/telescope.nvim",
       requires = {
-        'nvim-lua/plenary.nvim',
-        'nvim-telescope/telescope-fzy-native.nvim',
-        'nvim-telescope/telescope-ui-select.nvim',
-        'nvim-telescope/telescope-symbols.nvim',
-        'nvim-telescope/telescope-dap.nvim',
+        "nvim-lua/plenary.nvim",
+        "nvim-telescope/telescope-fzy-native.nvim",
+        "nvim-telescope/telescope-ui-select.nvim",
+        "nvim-telescope/telescope-symbols.nvim",
+        "nvim-telescope/telescope-dap.nvim",
       },
       config = function()
-        require 'plugins.telescope'
+        require "plugins.telescope"
       end,
     }
 
     -- Clojure
     use {
-      'Olical/conjure',
+      "Olical/conjure",
       config = function()
-        vim.g['conjure#completion#fallback'] = nil
-        vim.g['conjure#completion#omnifunc'] = nil
-        vim.g['conjure#extract#tree_sitter#enabled'] = true
-        vim.g['conjure#highlight#enabled'] = true
-        vim.g['conjure#mapping#doc_word'] = 'K'
+        vim.g["conjure#completion#fallback"] = nil
+        vim.g["conjure#completion#omnifunc"] = nil
+        vim.g["conjure#extract#tree_sitter#enabled"] = true
+        vim.g["conjure#highlight#enabled"] = true
+        vim.g["conjure#mapping#doc_word"] = "K"
       end,
     }
     use {
-      'clojure-vim/vim-jack-in',
-      ft = 'clojure',
+      "clojure-vim/vim-jack-in",
+      ft = "clojure",
     }
 
     if packer_bootstrap then
@@ -240,15 +240,15 @@ packer.startup {
       enable = false,
     },
     max_jobs = 5,
-    display = { prompt_border = 'single' },
+    display = { prompt_border = "single" },
   },
 }
 
-local augroup = vim.api.nvim_create_augroup('PackerCompile', {})
-vim.api.nvim_create_autocmd('BufWritePost', {
-  pattern = 'plugins.lua',
+local augroup = vim.api.nvim_create_augroup("PackerCompile", {})
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "plugins.lua",
   callback = function()
-    vim.cmd 'source <afile>'
+    vim.cmd "source <afile>"
     packer.compile()
   end,
   group = augroup,

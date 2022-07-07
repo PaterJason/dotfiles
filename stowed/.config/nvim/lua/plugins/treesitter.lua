@@ -1,7 +1,7 @@
-local config = require 'nvim-treesitter.configs'
+local config = require "nvim-treesitter.configs"
 
 config.setup {
-  ensure_installed = 'all',
+  ensure_installed = "all",
   highlight = {
     enable = true,
     additional_vim_regex_highlighting = false,
@@ -9,10 +9,10 @@ config.setup {
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = 'gnn',
-      node_incremental = 'grn',
-      scope_incremental = 'grc',
-      node_decremental = 'grm',
+      init_selection = "gnn",
+      node_incremental = "grn",
+      scope_incremental = "grc",
+      node_decremental = "grm",
     },
   },
   indent = {
@@ -22,34 +22,34 @@ config.setup {
     select = {
       enable = true,
       keymaps = {
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['ac'] = '@class.outer',
-        ['ic'] = '@class.inner',
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
       },
     },
     move = {
       enable = true,
       set_jumps = true,
       goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
-        [']#'] = '@conditional.outer',
-        [']/'] = '@comment.outer',
+        ["]m"] = "@function.outer",
+        ["]]"] = "@class.outer",
+        ["]#"] = "@conditional.outer",
+        ["]/"] = "@comment.outer",
       },
       goto_next_end = {
-        [']M'] = '@function.outer',
-        [']['] = '@class.outer',
+        ["]M"] = "@function.outer",
+        ["]["] = "@class.outer",
       },
       goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
-        ['[#'] = '@conditional.outer',
-        ['[/'] = '@comment.outer',
+        ["[m"] = "@function.outer",
+        ["[["] = "@class.outer",
+        ["[#"] = "@conditional.outer",
+        ["[/"] = "@comment.outer",
       },
       goto_previous_end = {
-        ['[M'] = '@function.outer',
-        ['[]'] = '@class.outer',
+        ["[M"] = "@function.outer",
+        ["[]"] = "@class.outer",
       },
     },
     swap = {

@@ -1,8 +1,8 @@
 pcall(function()
-  require 'impatient'
+  require "impatient"
 end)
 
-require 'options'
-require 'filetype'
-require 'plugins'
-require 'diagnostic'
+require "options"
+require "filetype"
+require "plugins"
+require "diagnostic"
