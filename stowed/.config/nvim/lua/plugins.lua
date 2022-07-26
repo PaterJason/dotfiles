@@ -140,6 +140,7 @@ packer.startup {
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-buffer",
         "PaterJason/cmp-conjure",
+        "rcarriga/cmp-dap",
       },
       config = function()
         require "plugins.cmp"
@@ -166,7 +167,7 @@ packer.startup {
     use {
       "mfussenegger/nvim-dap",
       requires = {
-        "theHamsta/nvim-dap-virtual-text",
+        "rcarriga/nvim-dap-ui",
         "jbyuki/one-small-step-for-vimkind",
       },
       config = function()
