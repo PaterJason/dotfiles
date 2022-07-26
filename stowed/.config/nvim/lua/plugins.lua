@@ -79,6 +79,7 @@ packer.startup {
           },
           stages = "static",
           minimum_width = 80,
+          timeout = 2000,
         }
         vim.notify = notify.notify
       end,
@@ -118,7 +119,7 @@ packer.startup {
     }
 
     -- Git
-    use 'tpope/vim-fugitive'
+    use "tpope/vim-fugitive"
     use {
       "lewis6991/gitsigns.nvim",
       requires = "nvim-lua/plenary.nvim",
@@ -149,7 +150,8 @@ packer.startup {
     use {
       "neovim/nvim-lspconfig",
       requires = {
-        "williamboman/nvim-lsp-installer",
+        "williamboman/mason.nvim",
+        "williamboman/mason-lspconfig.nvim",
         "folke/lua-dev.nvim",
         "simrat39/rust-tools.nvim",
         "nanotee/sqls.nvim",

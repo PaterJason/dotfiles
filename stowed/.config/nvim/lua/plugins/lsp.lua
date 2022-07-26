@@ -1,17 +1,26 @@
 local lspconfig = require "lspconfig"
 
-require("nvim-lsp-installer").setup {
-  automatic_installation = { exclude = {} },
+require("mason").setup {
   ui = {
     border = "single",
     icons = {
-      server_installed = "✓",
-      server_pending = "➜",
-      server_uninstalled = "✗",
+      package_installed = "✓",
+      package_pending = "➜",
+      package_uninstalled = "✗",
     },
   },
 }
-vim.keymap.set("n", "<leader>ll", "<cmd>LspInstallInfo<CR>", { desc = "Install Info" })
+require("mason-lspconfig").setup {
+  ensure_installed = {
+    "cssls",
+    "eslint",
+    "html",
+    "jsonls",
+    "sumneko_lua",
+    "efm",
+  },
+}
+vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
 
