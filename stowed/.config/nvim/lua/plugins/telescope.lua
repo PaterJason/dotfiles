@@ -26,7 +26,7 @@ telescope.setup {
 telescope.load_extension "fzy_native"
 telescope.load_extension "ui-select"
 telescope.load_extension "dap"
-telescope.load_extension "notify"
+telescope.load_extension "file_browser"
 
 vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescope builtins" })
 

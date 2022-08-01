@@ -34,8 +34,14 @@ vim.api.nvim_create_autocmd("User", {
       return
     end
 
+    local msg = ""
     for _, message in ipairs(messages) do
-      local msg = message.name or ""
+      if msg ~= "" then
+        msg = string.format("%s | ", msg, message.name)
+      end
+      if message.name then
+        msg = string.format("%s[%s]", msg, message.name)
+      end
       if message.title then
         msg = string.format("%s %s", msg, message.title)
       end
@@ -47,11 +53,8 @@ vim.api.nvim_create_autocmd("User", {
       elseif message.percentage then
         msg = string.format("%s %d%%", msg, message.percentage)
       end
-      lsp_progress_record[message.name] = vim.notify(msg, vim.log.levels.INFO, {
-        title = "LSP Progress",
-        replace = lsp_progress_record[message.name],
-      })
     end
+    vim.notify(msg, vim.log.levels.INFO)
   end,
   group = augroup,
 })
@@ -122,7 +125,7 @@ local on_attach = function(client, bufnr)
   vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
   vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 
-  vim.notify(client.name .. " attached", vim.log.levels.INFO, { title = "LSP" })
+  vim.notify(client.name .. " attached", vim.log.levels.INFO)
 end
 lspconfig.util.default_config.on_attach = on_attach
 
@@ -167,42 +170,43 @@ for server, config in pairs {
   yamlls = {},
   tsserver = {},
   lemminx = {},
-  efm = {
-    init_options = { documentFormatting = true },
-    settings = {
-      languages = {
-        lua = {
-          { formatCommand = "stylua --config-path ~/.config/stylua/stylua.toml -", formatStdin = true },
-        },
-      },
-    },
-    filetypes = { "lua" },
-  },
   marksman = {},
 } do
   lspconfig[server].setup(config)
 end
 
-require("rust-tools").setup {
-  tools = {
-    inlay_hints = {
-      show_parameter_hints = false,
+do
+  local extension_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/"
+  local codelldb_path = extension_path .. "adapter/codelldb"
+  local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+  require("rust-tools").setup {
+    tools = {
+      hover_actions = {
+        border = "single",
+      },
     },
-    hover_actions = {
-      border = "single",
-    },
-  },
-  server = {
-    settings = {
-      ["rust-analyzer"] = {
-        checkOnSave = {
-          command = "clippy",
-          extraArgs = { "--", "-W", "clippy::pedantic" },
-        },
-        diagnostics = {
-          warningsAsInfo = { "clippy::pedantic" },
+    server = {
+      settings = {
+        ["rust-analyzer"] = {
+          checkOnSave = {
+            command = "clippy",
+            extraArgs = { "--", "-W", "clippy::pedantic" },
+          },
+          diagnostics = {
+            warningsAsInfo = { "clippy::pedantic" },
+          },
         },
       },
     },
+    dap = {
+      adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+  }
+end
+
+local null_ls = require "null-ls"
+null_ls.setup {
+  sources = {
+    null_ls.builtins.formatting.stylua,
   },
 }

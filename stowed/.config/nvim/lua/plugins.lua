@@ -12,8 +12,8 @@ end
 local packer = require "packer"
 packer.startup {
   function(use)
-    use "wbthomason/packer.nvim"
     use "lewis6991/impatient.nvim"
+    use "wbthomason/packer.nvim"
 
     -- Theme
     use {
@@ -62,26 +62,6 @@ packer.startup {
       "ggandor/leap.nvim",
       config = function()
         require("leap").set_default_keymaps()
-      end,
-    }
-    use {
-      "rcarriga/nvim-notify",
-      config = function()
-        local notify = require "notify"
-        notify.setup {
-          -- fps = 0,
-          icons = {
-            DEBUG = "[Debug]",
-            ERROR = "[Error]",
-            INFO = "[Info]",
-            TRACE = "[Trace]",
-            WARN = "[Warn]",
-          },
-          stages = "static",
-          minimum_width = 80,
-          timeout = 2000,
-        }
-        vim.notify = notify.notify
       end,
     }
 
@@ -151,10 +131,11 @@ packer.startup {
     use {
       "neovim/nvim-lspconfig",
       requires = {
+        "jose-elias-alvarez/null-ls.nvim",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
         "folke/lua-dev.nvim",
-        "simrat39/rust-tools.nvim",
+        { "simrat39/rust-tools.nvim", branch = "modularize_and_inlay_rewrite" },
         "nanotee/sqls.nvim",
         "b0o/SchemaStore.nvim",
       },
@@ -203,6 +184,7 @@ packer.startup {
         "nvim-telescope/telescope-ui-select.nvim",
         "nvim-telescope/telescope-symbols.nvim",
         "nvim-telescope/telescope-dap.nvim",
+        "nvim-telescope/telescope-file-browser.nvim",
       },
       config = function()
         require "plugins.telescope"
