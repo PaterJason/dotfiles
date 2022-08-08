@@ -19,7 +19,7 @@ packer.startup {
     use {
       "Shatur/neovim-ayu",
       config = function()
-        require('ayu').colorscheme()
+        require("ayu").colorscheme()
         vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
       end,
     }

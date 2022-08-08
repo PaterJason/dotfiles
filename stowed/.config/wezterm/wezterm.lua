@@ -1,17 +1,20 @@
-local wezterm = require 'wezterm'
+local wezterm = require "wezterm"
 
 return {
-  default_prog = { '/usr/bin/tmux', '-l' },
+  default_prog = { "/usr/bin/tmux", "-l" },
 
-  color_scheme = 'ayu_light',
+  color_scheme = "ayu_light",
 
-  font = wezterm.font 'Monospace',
+  font = wezterm.font {
+    family = "Monospace",
+    harfbuzz_features = { "zero" },
+  },
   font_size = 10.0,
-  freetype_load_target = 'HorizontalLcd',
+  freetype_load_target = "HorizontalLcd",
 
   enable_tab_bar = false,
   window_frame = {
-    font = wezterm.font 'Monospace',
+    font = wezterm.font "Monospace",
     font_size = 10.0,
   },
 
