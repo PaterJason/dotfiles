@@ -24,7 +24,6 @@ vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
 
-_G.lsp_progress_record = {}
 vim.api.nvim_create_autocmd("User", {
   pattern = "LspProgressUpdate",
   callback = function()

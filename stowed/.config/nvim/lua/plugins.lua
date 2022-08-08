@@ -17,12 +17,10 @@ packer.startup {
 
     -- Theme
     use {
-      "projekt0n/github-nvim-theme",
+      "Shatur/neovim-ayu",
       config = function()
-        require("github-theme").setup {
-          hide_inactive_statusline = false,
-          theme_style = "light_default",
-        }
+        require('ayu').colorscheme()
+        vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
       end,
     }
     use {

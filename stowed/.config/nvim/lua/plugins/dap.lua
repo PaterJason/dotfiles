@@ -7,23 +7,6 @@ dapui.setup {
 }
 dap.listeners.after.event_initialized["dapui_config"] = dapui.open
 
-vim.api.nvim_set_hl(0, "DapUIScope", { link = "Special" })
-vim.api.nvim_set_hl(0, "DapUIType", { link = "TSType" })
-vim.api.nvim_set_hl(0, "DapUIModifiedValue", { link = "Special", bold = true })
-vim.api.nvim_set_hl(0, "DapUIDecoration", { link = "Special" })
-vim.api.nvim_set_hl(0, "DapUIThread", { link = "TSTag" })
-vim.api.nvim_set_hl(0, "DapUIStoppedThread", { link = "Special" })
-vim.api.nvim_set_hl(0, "DapUISource", { link = "TSType" })
-vim.api.nvim_set_hl(0, "DapUILineNumber", { link = "LineNr" })
-vim.api.nvim_set_hl(0, "DapUIFloatBorder", { link = "Normal" })
-vim.api.nvim_set_hl(0, "DapUIWatchesEmpty", { link = "Error" })
-vim.api.nvim_set_hl(0, "DapUIWatchesValue", { link = "TSTag" })
-vim.api.nvim_set_hl(0, "DapUIWatchesError", { link = "Error" })
-vim.api.nvim_set_hl(0, "DapUIBreakpointsPath", { link = "Special" })
-vim.api.nvim_set_hl(0, "DapUIBreakpointsInfo", { link = "TSTag" })
-vim.api.nvim_set_hl(0, "DapUIBreakpointsCurrentLine", { link = "TSTag", bold = true })
-vim.api.nvim_set_hl(0, "DapUIBreakpointsDisabledLine", { link = "Comment" })
-
 -- Configurations
 dap.configurations.lua = {
   {
