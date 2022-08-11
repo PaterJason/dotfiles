@@ -17,10 +17,17 @@ packer.startup {
 
     -- Theme
     use {
-      "Shatur/neovim-ayu",
+      "RRethy/nvim-base16",
       config = function()
-        require("ayu").colorscheme()
+        vim.cmd "colorscheme base16-tomorrow"
         vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
+      end,
+    }
+    use {
+      "nvim-lualine/lualine.nvim",
+      requires = { "arkav/lualine-lsp-progress" },
+      config = function()
+        require "plugins.lualine"
       end,
     }
     use {
@@ -53,6 +60,7 @@ packer.startup {
         vim.g.dispatch_no_maps = 1
       end,
     }
+    use "tpope/vim-sleuth"
     use "tpope/vim-repeat"
     use "tpope/vim-vinegar"
     use "tpope/vim-eunuch"
@@ -130,10 +138,11 @@ packer.startup {
       "neovim/nvim-lspconfig",
       requires = {
         "jose-elias-alvarez/null-ls.nvim",
+        "simrat39/inlay-hints.nvim",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
         "folke/lua-dev.nvim",
-        { "simrat39/rust-tools.nvim", branch = "modularize_and_inlay_rewrite" },
+        "simrat39/rust-tools.nvim",
         "nanotee/sqls.nvim",
         "b0o/SchemaStore.nvim",
       },

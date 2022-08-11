@@ -1,4 +1,6 @@
 local lspconfig = require "lspconfig"
+local ih = require "inlay-hints"
+ih.setup { only_current_line = true }
 
 require("mason").setup {
   ui = {
@@ -24,40 +26,6 @@ vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
 
-vim.api.nvim_create_autocmd("User", {
-  pattern = "LspProgressUpdate",
-  callback = function()
-    local messages = vim.lsp.util.get_progress_messages()
-
-    if vim.tbl_isempty(messages) then
-      return
-    end
-
-    local msg = ""
-    for _, message in ipairs(messages) do
-      if msg ~= "" then
-        msg = string.format("%s | ", msg, message.name)
-      end
-      if message.name then
-        msg = string.format("%s[%s]", msg, message.name)
-      end
-      if message.title then
-        msg = string.format("%s %s", msg, message.title)
-      end
-      if message.message then
-        msg = string.format("%s %s", msg, message.message)
-      end
-      if message.done then
-        msg = string.format("%s done", msg, message.message)
-      elseif message.percentage then
-        msg = string.format("%s %d%%", msg, message.percentage)
-      end
-    end
-    vim.notify(msg, vim.log.levels.INFO)
-  end,
-  group = augroup,
-})
-
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = "single",
 })
@@ -68,6 +36,7 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 
 local on_attach = function(client, bufnr)
   vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
+  ih.on_attach(client, bufnr)
 
   local caps = client.server_capabilities
 
@@ -151,7 +120,19 @@ for server, config in pairs {
       require("sqls").on_attach(client, bufnr)
     end,
   },
-  sumneko_lua = (string.match(vim.loop.cwd(), "/nvim") and require("lua-dev").setup {}) or {},
+  sumneko_lua = vim.tbl_deep_extend(
+    "force",
+    (string.match(vim.loop.cwd(), "/nvim") and require("lua-dev").setup {}) or {},
+    {
+      settings = {
+        Lua = {
+          hint = {
+            enable = true,
+          },
+        },
+      },
+    }
+  ),
   texlab = {
     settings = {
       texlab = {
@@ -167,7 +148,32 @@ for server, config in pairs {
   },
   taplo = {},
   yamlls = {},
-  tsserver = {},
+  tsserver = {
+    settings = {
+      javascript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+        },
+      },
+      typescript = {
+        inlayHints = {
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+        },
+      },
+    },
+  },
   lemminx = {},
   marksman = {},
 } do

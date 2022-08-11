@@ -30,7 +30,8 @@ telescope.load_extension "file_browser"
 
 vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescope builtins" })
 
-vim.keymap.set("n", "<leader>sb", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Current buffer" })
+vim.keymap.set("n", "<leader>sb", "<cmd>Telescope buffers<CR>", { desc = "Buffers" })
+vim.keymap.set("n", "<leader>sc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Current buffer" })
 vim.keymap.set("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
 vim.keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<CR>", { desc = "Grep" })
 vim.keymap.set("n", "<leader>sG", "<cmd>Telescope grep_string<CR>", { desc = "Grep string" })
