@@ -1,7 +1,6 @@
 vim.diagnostic.config {
   severity_sort = true,
   signs = false,
-  float = { border = "single" },
 }
 
 local augroup = vim.api.nvim_create_augroup("DiagnosticLists", {})

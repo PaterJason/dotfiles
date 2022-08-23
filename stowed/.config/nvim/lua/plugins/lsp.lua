@@ -4,7 +4,6 @@ ih.setup { only_current_line = true }
 
 require("mason").setup {
   ui = {
-    border = "single",
     icons = {
       package_installed = "✓",
       package_pending = "➜",
@@ -19,20 +18,11 @@ require("mason-lspconfig").setup {
     "html",
     "jsonls",
     "sumneko_lua",
-    "efm",
   },
 }
 vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = "single",
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = "single",
-})
 
 local on_attach = function(client, bufnr)
   vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
@@ -185,11 +175,6 @@ do
   local codelldb_path = extension_path .. "adapter/codelldb"
   local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
   require("rust-tools").setup {
-    tools = {
-      hover_actions = {
-        border = "single",
-      },
-    },
     server = {
       settings = {
         ["rust-analyzer"] = {

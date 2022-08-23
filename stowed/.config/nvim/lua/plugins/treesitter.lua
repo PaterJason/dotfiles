@@ -62,3 +62,17 @@ config.setup {
     enable = true,
   },
 }
+
+require("treesitter-context").setup {
+  enable = true,
+  patterns = {
+    json = {
+      "pair",
+    },
+    clojure = {
+      "list_lit",
+      "map_lit",
+      "vec_lit",
+    },
+  },
+}

@@ -15,21 +15,13 @@ packer.startup {
     use "lewis6991/impatient.nvim"
     use "wbthomason/packer.nvim"
 
-    -- Theme
     use {
-      "RRethy/nvim-base16",
+      "echasnovski/mini.nvim",
       config = function()
-        vim.cmd "colorscheme base16-tomorrow"
-        vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
+        require "plugins.mini"
       end,
     }
-    use {
-      "nvim-lualine/lualine.nvim",
-      requires = { "arkav/lualine-lsp-progress" },
-      config = function()
-        require "plugins.lualine"
-      end,
-    }
+
     use {
       "norcalli/nvim-colorizer.lua",
       config = function()
@@ -66,8 +58,12 @@ packer.startup {
     use "tpope/vim-eunuch"
     use {
       "ggandor/leap.nvim",
+      requires = "ggandor/leap-ast.nvim",
       config = function()
         require("leap").set_default_keymaps()
+        vim.keymap.set({ "n", "x", "o" }, "<C-S>", function()
+          require("leap-ast").leap()
+        end, {})
       end,
     }
 
@@ -78,10 +74,8 @@ packer.startup {
         vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<CR>", { desc = "Undotree" })
       end,
     }
-    use "tpope/vim-commentary"
 
     -- Parentheses
-    use "tpope/vim-surround"
     use {
       "gpanders/nvim-parinfer",
       config = function()
@@ -94,13 +88,6 @@ packer.startup {
       requires = "tpope/vim-sexp-mappings-for-regular-people",
       config = function()
         vim.g.sexp_enable_insert_mode_mappings = 0
-      end,
-    }
-    use {
-      "windwp/nvim-autopairs",
-      after = "nvim-cmp",
-      config = function()
-        require "plugins.autopairs"
       end,
     }
 
@@ -168,6 +155,7 @@ packer.startup {
       "nvim-treesitter/nvim-treesitter",
       requires = {
         "nvim-treesitter/playground",
+        "nvim-treesitter/nvim-treesitter-context",
         "nvim-treesitter/nvim-treesitter-textobjects",
       },
       run = ":TSUpdate",
@@ -206,6 +194,7 @@ packer.startup {
         vim.g["conjure#completion#omnifunc"] = nil
         vim.g["conjure#extract#tree_sitter#enabled"] = true
         vim.g["conjure#highlight#enabled"] = true
+        vim.g["conjure#log#hud#border"] = "none"
         vim.g["conjure#mapping#doc_word"] = "K"
       end,
     }
@@ -223,7 +212,7 @@ packer.startup {
       enable = false,
     },
     max_jobs = 5,
-    display = { prompt_border = "single" },
+    display = { prompt_border = "none" },
   },
 }
 
