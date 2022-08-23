@@ -37,3 +37,5 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
   group = yank_augroup,
 })
+
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]])
