@@ -23,7 +23,7 @@ packer.startup {
     }
 
     use {
-      "norcalli/nvim-colorizer.lua",
+      "NvChad/nvim-colorizer.lua",
       config = function()
         require("colorizer").setup {
           css = { css = true },
