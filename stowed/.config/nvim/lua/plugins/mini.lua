@@ -1,4 +1,4 @@
-require("mini.ai").setup {}
+require("mini.ai").setup { n_lines = 100 }
 
 require("mini.bufremove").setup {}
 vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Buffer delete" })
@@ -44,9 +44,10 @@ require("mini.surround").setup {
     replace = "cs",
     update_n_lines = "",
   },
+  n_lines = 100,
 }
-vim.keymap.del('x', 'ys')
-vim.keymap.set('x', 'S', [[:<C-u>lua MiniSurround.add('visual')<CR>]])
+vim.keymap.del("x", "ys")
+vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]])
+vim.keymap.set("n", "yss", "ys_", { remap = true })
 
 require("mini.tabline").setup { use_icons = false }
-
