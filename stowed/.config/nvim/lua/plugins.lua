@@ -16,9 +16,10 @@ packer.startup {
     use "wbthomason/packer.nvim"
 
     use {
-      "echasnovski/mini.nvim",
+      "RRethy/nvim-base16",
       config = function()
-        require "plugins.mini"
+        vim.cmd "colorscheme base16-tomorrow"
+        vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
       end,
     }
 
@@ -58,12 +59,16 @@ packer.startup {
     use "tpope/vim-eunuch"
     use {
       "ggandor/leap.nvim",
-      requires = "ggandor/leap-ast.nvim",
+      requires = {
+        "ggandor/leap-ast.nvim",
+        "ggandor/flit.nvim",
+      },
       config = function()
         require("leap").set_default_keymaps()
         vim.keymap.set({ "n", "x", "o" }, "<C-S>", function()
           require("leap-ast").leap()
         end, {})
+        require("flit").setup {}
       end,
     }
 
@@ -74,8 +79,11 @@ packer.startup {
         vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<CR>", { desc = "Undotree" })
       end,
     }
+    use "tpope/vim-commentary"
+    use "tpope/vim-abolish"
 
     -- Parentheses
+    use "tpope/vim-surround"
     use {
       "gpanders/nvim-parinfer",
       config = function()
@@ -88,6 +96,17 @@ packer.startup {
       requires = "tpope/vim-sexp-mappings-for-regular-people",
       config = function()
         vim.g.sexp_enable_insert_mode_mappings = 0
+      end,
+    }
+    use {
+      "windwp/nvim-autopairs",
+      after = "nvim-cmp",
+      config = function()
+        require("nvim-autopairs").setup {
+          check_ts = true,
+          enable_check_bracket_line = false,
+        }
+        require("cmp").event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
       end,
     }
 
@@ -194,7 +213,6 @@ packer.startup {
         vim.g["conjure#completion#omnifunc"] = nil
         vim.g["conjure#extract#tree_sitter#enabled"] = true
         vim.g["conjure#highlight#enabled"] = true
-        vim.g["conjure#log#hud#border"] = "none"
         vim.g["conjure#mapping#doc_word"] = "K"
       end,
     }
@@ -212,7 +230,7 @@ packer.startup {
       enable = false,
     },
     max_jobs = 5,
-    display = { prompt_border = "none" },
+    display = { prompt_border = "single" },
   },
 }
 

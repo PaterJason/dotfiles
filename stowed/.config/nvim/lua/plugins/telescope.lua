@@ -2,6 +2,7 @@ local telescope = require "telescope"
 
 telescope.setup {
   defaults = {
+    borderchars = { " " },
     color_devicons = false,
     history = false,
     layout_config = {
@@ -18,7 +19,7 @@ telescope.setup {
   },
   extensions = {
     ["ui-select"] = {
-      require("telescope.themes").get_cursor {},
+      require("telescope.themes").get_cursor { borderchars = { " " } },
     },
   },
 }

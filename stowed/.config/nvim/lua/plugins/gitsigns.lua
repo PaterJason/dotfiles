@@ -1,5 +1,4 @@
 require("gitsigns").setup {
-  preview_config = { border = "none" },
   signcolumn = false,
   numhl = true,
   on_attach = function(bufnr)

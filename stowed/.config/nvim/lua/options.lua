@@ -18,7 +18,6 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
 vim.opt.shortmess:append "Ic"
-vim.opt.showmode = false
 vim.opt.sidescrolloff = 4
 vim.opt.signcolumn = "auto"
 vim.opt.smartcase = true

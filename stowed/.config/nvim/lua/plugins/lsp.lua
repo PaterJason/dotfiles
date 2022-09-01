@@ -4,6 +4,7 @@ ih.setup { only_current_line = true }
 
 require("mason").setup {
   ui = {
+    border = "single",
     icons = {
       package_installed = "✓",
       package_pending = "➜",
@@ -23,6 +24,14 @@ require("mason-lspconfig").setup {
 vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "single",
+})
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = "single",
+})
 
 local on_attach = function(client, bufnr)
   vim.api.nvim_clear_autocmds { group = augroup, buffer = bufnr }
@@ -190,6 +199,11 @@ do
     },
     dap = {
       adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+    tools = {
+      hover_actions = {
+        border = "single",
+      },
     },
   }
 end
