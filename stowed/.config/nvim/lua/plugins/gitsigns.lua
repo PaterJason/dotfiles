@@ -1,6 +1,9 @@
 require("gitsigns").setup {
-  signcolumn = false,
+  linehl = false,
   numhl = true,
+  show_deleted = false,
+  signcolumn = false,
+  word_diff = false,
   on_attach = function(bufnr)
     local gs = package.loaded.gitsigns
 
@@ -41,11 +44,14 @@ require("gitsigns").setup {
     map("n", "<leader>hb", function()
       gs.blame_line { full = true }
     end, { desc = "Blame line" })
-    map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "Toggle blame line" })
     map("n", "<leader>hd", gs.diffthis, { desc = "Diff this" })
-    map("n", "<leader>td", gs.toggle_deleted, { desc = "Toggle deleted" })
+    map("n", "<leader>tg", function()
+      gs.toggle_deleted()
+      gs.toggle_linehl()
+      gs.toggle_word_diff()
+    end, { desc = "Gitsigns" })
 
     -- Text object
-    map({ "o", "x" }, "ih", "<cmd>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
+    map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
   end,
 }

@@ -3,7 +3,7 @@ local wezterm = require "wezterm"
 return {
   default_prog = { "/usr/bin/tmux", "-l" },
 
-  color_scheme = "Tomorrow",
+  color_scheme = "Catppuccin Latte",
 
   font = wezterm.font {
     family = "Monospace",

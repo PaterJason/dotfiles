@@ -6,7 +6,7 @@ if not vim.loop.fs_access(install_path, "W") then
   if vim.fn.system { "git", "clone", "--depth", "1", url, install_path } then
     packer_bootstrap = true
   end
-  vim.cmd "packadd packer.nvim"
+  vim.cmd.packadd "packer.nvim"
 end
 
 local packer = require "packer"
@@ -16,25 +16,25 @@ packer.startup {
     use "wbthomason/packer.nvim"
 
     use {
-      "RRethy/nvim-base16",
+      "catppuccin/nvim",
       config = function()
-        vim.cmd "colorscheme base16-tomorrow"
-        vim.api.nvim_set_hl(0, "LspCodeLens", { link = "Comment" })
+        require "colour"
       end,
     }
 
-    use {
-      "NvChad/nvim-colorizer.lua",
-      config = function()
-        require("colorizer").setup {
-          css = { css = true },
-          scss = { css = true },
-          "*",
-          "!fugitive",
-          "!packer",
-        }
-      end,
-    }
+    -- use {
+    --   "NvChad/nvim-colorizer.lua",
+    --   config = function()
+    --     require("colorizer").setup {
+    --       filetypes = {
+    --         "*",
+    --         "!fugitive",
+    --         "!mason",
+    --         "!packer",
+    --       },
+    --     }
+    --   end,
+    -- }
 
     -- Keymaps
     use {
@@ -80,10 +80,21 @@ packer.startup {
       end,
     }
     use "tpope/vim-commentary"
+    use {
+      "numToStr/Comment.nvim",
+      config = function()
+        require("Comment").setup {}
+      end,
+    }
     use "tpope/vim-abolish"
 
     -- Parentheses
-    use "tpope/vim-surround"
+    use {
+      "kylechui/nvim-surround",
+      config = function()
+        require("nvim-surround").setup {}
+      end,
+    }
     use {
       "gpanders/nvim-parinfer",
       config = function()
@@ -144,10 +155,10 @@ packer.startup {
       "neovim/nvim-lspconfig",
       requires = {
         "jose-elias-alvarez/null-ls.nvim",
-        "simrat39/inlay-hints.nvim",
+        "lvimuser/lsp-inlayhints.nvim",
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
-        "folke/lua-dev.nvim",
+        "folke/neodev.nvim",
         "simrat39/rust-tools.nvim",
         "nanotee/sqls.nvim",
         "b0o/SchemaStore.nvim",
@@ -176,16 +187,11 @@ packer.startup {
         "nvim-treesitter/playground",
         "nvim-treesitter/nvim-treesitter-context",
         "nvim-treesitter/nvim-treesitter-textobjects",
+        "nvim-treesitter/nvim-treesitter-refactor",
       },
       run = ":TSUpdate",
       config = function()
         require "plugins.treesitter"
-      end,
-    }
-    use {
-      "lewis6991/spellsitter.nvim",
-      config = function()
-        require("spellsitter").setup()
       end,
     }
 
@@ -221,6 +227,18 @@ packer.startup {
       ft = "clojure",
     }
 
+    -- REST
+    use {
+      "NTBBloodbath/rest.nvim",
+      requires = { "nvim-lua/plenary.nvim" },
+      config = function()
+        require("rest-nvim").setup {}
+        vim.keymap.set("n", "<leader>cr", "<Plug>RestNvim", { desc = "Run the request under the cursor" })
+        vim.keymap.set("n", "<leader>cp", "<Plug>RestNvimPreview", { desc = "Preview the request cURL command" })
+        vim.keymap.set("n", "<leader>cl", "<Plug>RestNvimLast", { desc = "Re-run the last request" })
+      end,
+    }
+
     if packer_bootstrap then
       packer.sync()
     end
@@ -238,7 +256,7 @@ local augroup = vim.api.nvim_create_augroup("PackerCompile", {})
 vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = "plugins.lua",
   callback = function()
-    vim.cmd "source <afile>"
+    vim.cmd.source "<afile>"
     packer.compile()
   end,
   group = augroup,

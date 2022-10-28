@@ -21,10 +21,14 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
+  window = {
+    completion = cmp.config.window.bordered { border = "single" },
+    documentation = cmp.config.window.bordered { border = "single" },
+  },
   mapping = cmp.mapping.preset.insert {
     ["<C-d>"] = cmp.mapping.scroll_docs(8),
     ["<C-u>"] = cmp.mapping.scroll_docs(-8),
-    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<C-Space>"] = cmp.mapping.complete {},
     ["<CR>"] = cmp.mapping.confirm { select = true },
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
@@ -80,7 +84,7 @@ cmp.setup.cmdline(":", {
   }),
 })
 
-cmp.setup.filetype({ "dap-repl", "dapui_watches" }, {
+cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
   sources = {
     { name = "dap" },
   },

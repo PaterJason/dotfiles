@@ -2,7 +2,11 @@ local telescope = require "telescope"
 
 telescope.setup {
   defaults = {
-    borderchars = { " " },
+    borderchars = {
+      preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+      prompt = { "─", " ", " ", " ", "─", "─", " ", " " },
+      results = { " " },
+    },
     color_devicons = false,
     history = false,
     layout_config = {
@@ -18,8 +22,18 @@ telescope.setup {
     symbols = { sources = { "emoji", "latex" } },
   },
   extensions = {
+    file_browser = {
+      dir_icon = "",
+      grouped = true,
+    },
     ["ui-select"] = {
-      require("telescope.themes").get_cursor { borderchars = { " " } },
+      require("telescope.themes").get_cursor {
+        borderchars = {
+          preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
+          results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+        },
+      },
     },
   },
 }
@@ -34,6 +48,7 @@ vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescop
 vim.keymap.set("n", "<leader>sb", "<cmd>Telescope buffers<CR>", { desc = "Buffers" })
 vim.keymap.set("n", "<leader>sc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Current buffer" })
 vim.keymap.set("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
+vim.keymap.set("n", "<leader>sF", "<cmd>Telescope file_browser<CR>", { desc = "Find Files" })
 vim.keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<CR>", { desc = "Grep" })
 vim.keymap.set("n", "<leader>sG", "<cmd>Telescope grep_string<CR>", { desc = "Grep string" })
 vim.keymap.set("n", "<leader>sh", "<cmd>Telescope help_tags<CR>", { desc = "Help" })

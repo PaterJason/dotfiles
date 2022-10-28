@@ -18,39 +18,57 @@ config.setup {
   indent = {
     enable = true,
   },
+  refactor = {
+    smart_rename = {
+      enable = true,
+      keymaps = {
+        smart_rename = "gnr",
+      },
+    },
+    navigation = {
+      enable = true,
+      keymaps = {
+        goto_definition = "gnd",
+        list_definitions = "gnD",
+        list_definitions_toc = "gO",
+        goto_previous_usage = "[g",
+        goto_next_usage = "]g",
+      },
+    },
+  },
   textobjects = {
     select = {
       enable = true,
       keymaps = {
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        ["ic"] = "@class.inner",
+        -- ["af"] = "@function.outer",
+        -- ["if"] = "@function.inner",
+        -- ["ac"] = "@class.outer",
+        -- ["ic"] = "@class.inner",
       },
     },
     move = {
       enable = true,
       set_jumps = true,
-      goto_next_start = {
-        ["]m"] = "@function.outer",
-        ["]]"] = "@class.outer",
-        ["]#"] = "@conditional.outer",
-        ["]/"] = "@comment.outer",
-      },
-      goto_next_end = {
-        ["]M"] = "@function.outer",
-        ["]["] = "@class.outer",
-      },
-      goto_previous_start = {
-        ["[m"] = "@function.outer",
-        ["[["] = "@class.outer",
-        ["[#"] = "@conditional.outer",
-        ["[/"] = "@comment.outer",
-      },
-      goto_previous_end = {
-        ["[M"] = "@function.outer",
-        ["[]"] = "@class.outer",
-      },
+      -- goto_next_start = {
+      --   ["]m"] = "@function.outer",
+      --   ["]]"] = "@class.outer",
+      --   ["]#"] = "@conditional.outer",
+      --   ["]/"] = "@comment.outer",
+      -- },
+      -- goto_next_end = {
+      --   ["]M"] = "@function.outer",
+      --   ["]["] = "@class.outer",
+      -- },
+      -- goto_previous_start = {
+      --   ["[m"] = "@function.outer",
+      --   ["[["] = "@class.outer",
+      --   ["[#"] = "@conditional.outer",
+      --   ["[/"] = "@comment.outer",
+      -- },
+      -- goto_previous_end = {
+      --   ["[M"] = "@function.outer",
+      --   ["[]"] = "@class.outer",
+      -- },
     },
     swap = {
       enable = true,

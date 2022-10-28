@@ -8,6 +8,9 @@ wk.setup {
       text_objects = false,
     },
   },
+  window = {
+    border = "single",
+  },
 }
 
 wk.register({
@@ -15,6 +18,7 @@ wk.register({
   h = { name = "Git hunks" },
   l = { name = "LSP" },
   s = { name = "Telescope Search" },
+  t = { name = "Toggle" },
 }, {
   prefix = "<leader>",
 })
