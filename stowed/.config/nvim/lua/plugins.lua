@@ -17,24 +17,25 @@ packer.startup {
 
     use {
       "catppuccin/nvim",
+      as = "catppuccin",
       config = function()
         require "colour"
       end,
     }
 
-    -- use {
-    --   "NvChad/nvim-colorizer.lua",
-    --   config = function()
-    --     require("colorizer").setup {
-    --       filetypes = {
-    --         "*",
-    --         "!fugitive",
-    --         "!mason",
-    --         "!packer",
-    --       },
-    --     }
-    --   end,
-    -- }
+    use {
+      "NvChad/nvim-colorizer.lua",
+      config = function()
+        require("colorizer").setup {
+          filetypes = {
+            "*",
+            "!fugitive",
+            "!mason",
+            "!packer",
+          },
+        }
+      end,
+    }
 
     -- Keymaps
     use {
@@ -184,9 +185,7 @@ packer.startup {
     use {
       "nvim-treesitter/nvim-treesitter",
       requires = {
-        "nvim-treesitter/playground",
         "nvim-treesitter/nvim-treesitter-context",
-        "nvim-treesitter/nvim-treesitter-textobjects",
         "nvim-treesitter/nvim-treesitter-refactor",
       },
       run = ":TSUpdate",
@@ -224,19 +223,6 @@ packer.startup {
     }
     use {
       "clojure-vim/vim-jack-in",
-      ft = "clojure",
-    }
-
-    -- REST
-    use {
-      "NTBBloodbath/rest.nvim",
-      requires = { "nvim-lua/plenary.nvim" },
-      config = function()
-        require("rest-nvim").setup {}
-        vim.keymap.set("n", "<leader>cr", "<Plug>RestNvim", { desc = "Run the request under the cursor" })
-        vim.keymap.set("n", "<leader>cp", "<Plug>RestNvimPreview", { desc = "Preview the request cURL command" })
-        vim.keymap.set("n", "<leader>cl", "<Plug>RestNvimLast", { desc = "Re-run the last request" })
-      end,
     }
 
     if packer_bootstrap then
@@ -247,7 +233,7 @@ packer.startup {
     profile = {
       enable = false,
     },
-    max_jobs = 5,
+    max_jobs = 8,
     display = { prompt_border = "single" },
   },
 }

@@ -9,11 +9,19 @@ telescope.setup {
     },
     color_devicons = false,
     history = false,
-    layout_config = {
-      height = 0.4,
-    },
+    layout_config = { height = 0.4 },
     layout_strategy = "bottom_pane",
     sorting_strategy = "ascending",
+    vimgrep_arguments = {
+      "rg",
+      "--color=never",
+      "--no-heading",
+      "--with-filename",
+      "--line-number",
+      "--column",
+      "--smart-case",
+      "--trim",
+    },
   },
   pickers = {
     builtin = { include_extensions = true },
@@ -22,10 +30,7 @@ telescope.setup {
     symbols = { sources = { "emoji", "latex" } },
   },
   extensions = {
-    file_browser = {
-      dir_icon = "",
-      grouped = true,
-    },
+    file_browser = { dir_icon = "", grouped = true },
     ["ui-select"] = {
       require("telescope.themes").get_cursor {
         borderchars = {
@@ -48,7 +53,7 @@ vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescop
 vim.keymap.set("n", "<leader>sb", "<cmd>Telescope buffers<CR>", { desc = "Buffers" })
 vim.keymap.set("n", "<leader>sc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Current buffer" })
 vim.keymap.set("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
-vim.keymap.set("n", "<leader>sF", "<cmd>Telescope file_browser<CR>", { desc = "Find Files" })
+vim.keymap.set("n", "<leader>sF", "<cmd>Telescope file_browser<CR>", { desc = "File Browser" })
 vim.keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<CR>", { desc = "Grep" })
 vim.keymap.set("n", "<leader>sG", "<cmd>Telescope grep_string<CR>", { desc = "Grep string" })
 vim.keymap.set("n", "<leader>sh", "<cmd>Telescope help_tags<CR>", { desc = "Help" })

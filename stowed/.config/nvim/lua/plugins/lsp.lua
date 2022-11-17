@@ -14,7 +14,6 @@ require("mason").setup {
     },
   },
 }
-require("mason-lspconfig").setup {}
 vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })

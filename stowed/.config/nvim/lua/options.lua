@@ -24,6 +24,7 @@ vim.opt.smartindent = true
 vim.opt.spelllang = "en_gb"
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.swapfile = false
 vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.updatetime = 250

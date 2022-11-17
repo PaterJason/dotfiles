@@ -4,9 +4,10 @@ require("catppuccin").setup {
     cmp = true,
     gitsigns = true,
     leap = true,
+    mason = true,
     telescope = true,
-    treesitter_context = true,
     treesitter = true,
+    treesitter_context = true,
     which_key = true,
 
     dap = { enabled = true, enable_ui = true },
@@ -15,5 +16,3 @@ require("catppuccin").setup {
 }
 
 vim.cmd.colorscheme "catppuccin"
-
-vim.api.nvim_set_hl(0, "LspInlayHint", { link = "Comment" })
