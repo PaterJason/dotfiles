@@ -8,9 +8,6 @@ wk.setup {
       text_objects = false,
     },
   },
-  window = {
-    border = "single",
-  },
 }
 
 wk.register({

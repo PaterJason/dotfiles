@@ -21,10 +21,6 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
-  window = {
-    completion = cmp.config.window.bordered { border = "single" },
-    documentation = cmp.config.window.bordered { border = "single" },
-  },
   mapping = cmp.mapping.preset.insert {
     ["<C-d>"] = cmp.mapping.scroll_docs(8),
     ["<C-u>"] = cmp.mapping.scroll_docs(-8),
@@ -54,7 +50,6 @@ cmp.setup {
   },
   sources = cmp.config.sources({
     { name = "path" },
-    { name = "neorg" },
   }, {
     { name = "nvim_lsp_signature_help" },
     { name = "nvim_lsp" },

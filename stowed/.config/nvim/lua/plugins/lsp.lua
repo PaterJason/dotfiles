@@ -6,7 +6,6 @@ local lspconfig = require "lspconfig"
 
 require("mason").setup {
   ui = {
-    border = "single",
     icons = {
       package_installed = "✓",
       package_pending = "➜",
@@ -14,10 +13,8 @@ require("mason").setup {
     },
   },
 }
+require("mason-lspconfig").setup {}
 vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = "single" })
 
 local augroup = vim.api.nvim_create_augroup("Lsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("lsp_attach", {})
@@ -46,7 +43,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       { "documentFormattingProvider", "<leader>lf", vim.lsp.buf.format, "Format" },
       { "documentSymbolProvider", "<leader>ls", t.lsp_document_symbols, "Document symbols" },
       { "hoverProvider", "K", vim.lsp.buf.hover, "Hover" },
-      { "implementationProvider", "gi", t.lsp_implementations, "Implementation" },
+      { "implementationProvider", "gI", t.lsp_implementations, "Implementation" },
       { "referencesProvider", "gr", t.lsp_references, "References" },
       { "renameProvider", "<leader>r", vim.lsp.buf.rename, "Rename" },
       { "signatureHelpProvider", "gs", vim.lsp.buf.signature_help, "Signature help" },
@@ -192,7 +189,6 @@ do
       },
     },
     dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
-    tools = { hover_actions = { border = "single" } },
   }
 end
 
