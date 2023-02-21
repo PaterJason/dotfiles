@@ -3,6 +3,7 @@ return {
   config = function()
     require("mini.ai").setup {}
     require("mini.align").setup {}
+    require("mini.bracketed").setup {}
     require("mini.bufremove").setup {}
     vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Eval" })
     vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Eval" })

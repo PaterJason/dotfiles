@@ -10,7 +10,5 @@ return {
   "tpope/vim-eunuch",
   "tpope/vim-repeat",
   "tpope/vim-sleuth",
-  -- "tpope/vim-surround",
-  "tpope/vim-unimpaired",
   "tpope/vim-vinegar",
 }

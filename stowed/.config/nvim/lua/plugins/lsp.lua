@@ -75,14 +75,6 @@ local function config()
           { callback = vim.lsp.codelens.refresh, group = attach_augroup, buffer = bufnr }
         )
       end
-
-      if caps.documentRangeFormattingProvider then
-        vim.bo[bufnr].formatexpr = "v:lua.vim.lsp.formatexpr()"
-      end
-      vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
-      vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
-
-      vim.notify(client.name .. " attached", vim.log.levels.INFO)
     end,
   })
 
