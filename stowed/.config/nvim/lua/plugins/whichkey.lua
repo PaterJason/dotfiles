@@ -1,21 +1,29 @@
-local wk = require "which-key"
-
-wk.setup {
-  plugins = {
-    presets = {
-      operators = false,
-      motions = false,
-      text_objects = false,
-    },
-  },
+local M = {
+  "folke/which-key.nvim",
 }
 
-wk.register({
-  d = { name = "DAP" },
-  h = { name = "Git hunks" },
-  l = { name = "LSP" },
-  s = { name = "Telescope Search" },
-  t = { name = "Toggle" },
-}, {
-  prefix = "<leader>",
-})
+function M.config()
+  local wk = require "which-key"
+
+  wk.setup {
+    plugins = {
+      presets = {
+        operators = false,
+        motions = false,
+        text_objects = false,
+      },
+    },
+  }
+
+  wk.register({
+    d = { name = "DAP" },
+    h = { name = "Git hunks" },
+    l = { name = "LSP" },
+    s = { name = "Telescope Search" },
+    t = { name = "Toggle" },
+  }, {
+    prefix = "<leader>",
+  })
+end
+
+return M
