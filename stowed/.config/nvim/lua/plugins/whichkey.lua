@@ -20,7 +20,6 @@ function M.config()
     h = { name = "Git hunks" },
     l = { name = "LSP" },
     s = { name = "Telescope Search" },
-    t = { name = "Toggle" },
   }, {
     prefix = "<leader>",
   })

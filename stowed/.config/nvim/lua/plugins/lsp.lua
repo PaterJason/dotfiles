@@ -27,7 +27,7 @@ local function config()
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-      if string.match(vim.fn.expand("#" .. bufnr .. ":t"), "^conjure%-log%-") then
+      if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(bufnr)), "^conjure%-log%-%d+%.%a+$") then
         vim.diagnostic.disable(bufnr)
       end
 
@@ -97,7 +97,7 @@ local function config()
     vim.tbl_extend("force", lspconfig.util.default_config.capabilities, require("cmp_nvim_lsp").default_capabilities())
   lspconfig.util.default_config.capabilities.textDocument.colorProvider = { dynamicRegistration = true }
 
-  for server, config in pairs {
+  for server, cfg in pairs {
     cssls = {},
     eslint = {},
     html = {},
@@ -111,18 +111,15 @@ local function config()
     },
     bashls = {},
     clojure_lsp = { init_options = { ["ignore-classpath-directories"] = true } },
-    sqls = {
-      on_attach = require("sqls").on_attach,
-    },
     lua_ls = {
       settings = {
         Lua = {
           completion = {
             callSnippet = "Replace",
           },
-          hint = {
-            enable = true,
-          },
+          hint = { enable = true },
+          format = { enable = false },
+          telemetry = { enable = false },
         },
       },
     },
@@ -141,7 +138,37 @@ local function config()
     },
     taplo = {},
     yamlls = {},
-    tsserver = {
+    lemminx = {
+      settings = {
+        xml = {
+          catalogs = { vim.fs.normalize "$HOME/.config/fontconfig/catalog.xml" },
+        },
+      },
+    },
+    marksman = {},
+  } do
+    lspconfig[server].setup(cfg)
+  end
+
+  do
+    local extension_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/"
+    local codelldb_path = extension_path .. "adapter/codelldb"
+    local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+    require("rust-tools").setup {
+      server = {
+        settings = {
+          ["rust-analyzer"] = {
+            checkOnSave = { command = "clippy", extraArgs = { "--", "-W", "clippy::pedantic" } },
+            diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
+          },
+        },
+      },
+      dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
+      tools = { inlay_hints = { auto = false } },
+    }
+  end
+  require("typescript").setup {
+    server = { -- pass options to lspconfig's setup method
       settings = {
         typescript = {
           inlayHints = {
@@ -167,29 +194,7 @@ local function config()
         },
       },
     },
-    lemminx = {},
-    marksman = {},
-  } do
-    lspconfig[server].setup(config)
-  end
-
-  do
-    local extension_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/"
-    local codelldb_path = extension_path .. "adapter/codelldb"
-    local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
-    require("rust-tools").setup {
-      server = {
-        settings = {
-          ["rust-analyzer"] = {
-            checkOnSave = { command = "clippy", extraArgs = { "--", "-W", "clippy::pedantic" } },
-            diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
-          },
-        },
-      },
-      dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
-      tools = { inlay_hints = { auto = false } },
-    }
-  end
+  }
 
   local null_ls = require "null-ls"
   null_ls.setup {
@@ -203,14 +208,19 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "jose-elias-alvarez/null-ls.nvim",
-      "lvimuser/lsp-inlayhints.nvim",
+      -- mason
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      "folke/neodev.nvim",
-      "simrat39/rust-tools.nvim",
-      "nanotee/sqls.nvim",
+
+      -- lsp extras
+      "jose-elias-alvarez/null-ls.nvim",
+      "lvimuser/lsp-inlayhints.nvim",
+
+      -- language support
       "b0o/SchemaStore.nvim",
+      "folke/neodev.nvim",
+      "jose-elias-alvarez/typescript.nvim",
+      "simrat39/rust-tools.nvim",
     },
     config = config,
   },

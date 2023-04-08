@@ -1,9 +1,9 @@
-require "options"
-require "filetype"
-require "diagnostic"
+require "jp.options"
+require "jp.filetype"
+require "jp.diagnostic"
 
 if vim.g.neovide then
-  require "neovide"
+  require "jp.neovide"
 end
 
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
@@ -18,22 +18,5 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.runtimepath:prepend(lazypath)
-require("lazy").setup("plugins", {
-  ui = {
-    icons = {
-      cmd = "⌘",
-      config = "",
-      event = "",
-      ft = "",
-      init = "",
-      keys = "",
-      plugin = "",
-      runtime = "",
-      source = "",
-      start = "",
-      task = "",
-      lazy = " ",
-    },
-  },
-})
+require("lazy").setup "plugins"
 vim.keymap.set("n", "<leader>p", "<cmd>Lazy<CR>", { desc = "Plugins" })

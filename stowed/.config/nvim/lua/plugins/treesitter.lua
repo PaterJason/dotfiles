@@ -1,6 +1,7 @@
 local function config()
   require("nvim-treesitter.configs").setup {
     ensure_installed = "all",
+    ignore_install = { "comment" },
     highlight = {
       enable = true,
       additional_vim_regex_highlighting = false,
@@ -35,6 +36,9 @@ local function config()
         },
       },
     },
+    playground = {
+      enable = true,
+    },
   }
 
   require("treesitter-context").setup {
@@ -58,6 +62,7 @@ return {
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
       "nvim-treesitter/nvim-treesitter-refactor",
+      "nvim-treesitter/playground",
     },
     build = ":TSUpdate",
     config = config,

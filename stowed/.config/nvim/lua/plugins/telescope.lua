@@ -8,7 +8,6 @@ local function config()
         prompt = { "─", " ", " ", " ", "─", "─", " ", " " },
         results = { " " },
       },
-      color_devicons = false,
       history = false,
       layout_config = { height = 0.4 },
       layout_strategy = "bottom_pane",
@@ -31,7 +30,7 @@ local function config()
       symbols = { sources = { "emoji", "latex" } },
     },
     extensions = {
-      file_browser = { dir_icon = "", grouped = true },
+      file_browser = { grouped = true },
       ["ui-select"] = {
         require("telescope.themes").get_cursor {
           borderchars = {

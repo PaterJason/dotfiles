@@ -30,7 +30,7 @@ vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.updatetime = 250
 
-local yank_augroup = vim.api.nvim_create_augroup("YankHighlight", {})
+local yank_augroup = vim.api.nvim_create_augroup("highlight_yank", {})
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     vim.highlight.on_yank { timeout = 500 }

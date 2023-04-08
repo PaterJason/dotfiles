@@ -9,7 +9,9 @@ neovide
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
-ttf-jetbrains-mono
+otf-latin-modern
+ttf-jetbrains-mono-nerd
+ttf-overpass
 wezterm
 yt-dlp
 zathura-pdf-mupdf

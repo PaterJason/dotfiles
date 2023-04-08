@@ -4,7 +4,31 @@ return {
     name = "catppuccin",
     priority = 1000,
     config = function()
-      require "colour"
+      require("catppuccin").setup {
+        flavour = "latte",
+        integrations = {
+          cmp = true,
+          gitsigns = true,
+          leap = true,
+          mason = true,
+          mini = true,
+          telescope = true,
+          treesitter = true,
+          treesitter_context = true,
+          which_key = true,
+
+          dap = { enabled = true, enable_ui = true },
+          native_lsp = { enabled = true },
+        },
+      }
+      vim.cmd.colorscheme "catppuccin-latte"
+    end,
+  },
+  {
+    "nvim-tree/nvim-web-devicons",
+    priority = 1000,
+    config = function()
+      require("nvim-web-devicons").setup {}
     end,
   },
   -- Keymaps
