@@ -7,13 +7,14 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.opt.concealcursor = "nc"
 vim.opt.confirm = true
-vim.opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal" }
+vim.opt.diffopt = { "internal", "filler", "closeoff", "hiddenoff", "algorithm:minimal", "linematch:60" }
 vim.opt.grepformat = "%f:%l:%c:%m"
 vim.opt.grepprg = "rg --vimgrep"
 vim.opt.ignorecase = true
+vim.opt.infercase = true
 vim.opt.linebreak = true
 vim.opt.list = true
-vim.opt.listchars = { tab = "| ", trail = "·", nbsp = "+" }
+vim.opt.listchars = { tab = "| ", trail = "·", nbsp = "␣", extends = "…", precedes = "…" }
 vim.opt.mouse = "a"
 vim.opt.number = true
 vim.opt.relativenumber = true

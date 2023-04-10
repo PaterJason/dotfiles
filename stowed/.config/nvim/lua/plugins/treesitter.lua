@@ -36,9 +36,6 @@ local function config()
         },
       },
     },
-    playground = {
-      enable = true,
-    },
   }
 
   require("treesitter-context").setup {
@@ -62,7 +59,6 @@ return {
     dependencies = {
       "nvim-treesitter/nvim-treesitter-context",
       "nvim-treesitter/nvim-treesitter-refactor",
-      "nvim-treesitter/playground",
     },
     build = ":TSUpdate",
     config = config,

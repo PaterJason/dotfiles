@@ -10,8 +10,7 @@ return {
       comment = { suffix = "/", options = {} },
     }
     require("mini.bufremove").setup {}
-    vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Eval" })
-    vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Eval" })
+    vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete Buffer" })
     require("mini.comment").setup {}
     require("mini.indentscope").setup {
       draw = {

@@ -38,8 +38,8 @@ local function config()
 
       local t = package.loaded["telescope.builtin"]
       for _, value in ipairs {
-        { "callHierarchyProvider", "<leader>li", vim.lsp.buf.incoming_calls, "Incoming calls" },
-        { "callHierarchyProvider", "<leader>lo", vim.lsp.buf.outgoing_calls, "Outgoing calls" },
+        { "callHierarchyProvider", "<leader>li", t.lsp_incoming_calls, "Incoming calls" },
+        { "callHierarchyProvider", "<leader>lo", t.lsp_outgoing_calls, "Outgoing calls" },
         { "codeActionProvider", "<leader>a", vim.lsp.buf.code_action, "Code actions" },
         { "declarationProvider", "gD", vim.lsp.buf.declaration, "Declaration" },
         { "definitionProvider", "gd", t.lsp_definitions, "Goto Definition" },
@@ -49,9 +49,9 @@ local function config()
         { "implementationProvider", "gI", t.lsp_implementations, "Implementation" },
         { "referencesProvider", "gr", t.lsp_references, "References" },
         { "renameProvider", "<leader>r", vim.lsp.buf.rename, "Rename" },
-        { "signatureHelpProvider", "gs", vim.lsp.buf.signature_help, "Signature help" },
+        { "signatureHelpProvider", "gK", vim.lsp.buf.signature_help, "Signature help" },
         { "typeDefinitionProvider", "<leader>ld", t.lsp_type_definitions, "Type definitions" },
-        { "workspaceSymbolProvider", "<leader>lw", t.lsp_dynamic_workspace_symbols, "Workspace symbols" },
+        { "workspaceSymbolProvider", "<leader>lw", t.lsp_workspace_symbols, "Workspace symbols" },
       } do
         local cap, lhs, rhs, desc = unpack(value)
         if caps[cap] then
@@ -84,7 +84,7 @@ local function config()
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-      -- vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
+      vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
       -- for _, value in ipairs(keymaps) do
       --   local _, lhs, _, _ = unpack(value)
       --   vim.keymap.del("n", lhs, { buffer = bufnr })
@@ -137,7 +137,13 @@ local function config()
       },
     },
     taplo = {},
-    yamlls = {},
+    yamlls = {
+      settings = {
+        yaml = {
+          schemas = require("schemastore").yaml.schemas(),
+        },
+      },
+    },
     lemminx = {
       settings = {
         xml = {
