@@ -6,6 +6,10 @@ return {
     config = function()
       require("catppuccin").setup {
         flavour = "latte",
+        background = {
+          light = "latte",
+          dark = "mocha",
+        },
         integrations = {
           cmp = true,
           gitsigns = true,
@@ -21,7 +25,7 @@ return {
           native_lsp = { enabled = true },
         },
       }
-      vim.cmd.colorscheme "catppuccin-latte"
+      vim.cmd.colorscheme "catppuccin"
     end,
   },
   {
@@ -39,14 +43,12 @@ return {
     "ggandor/leap.nvim",
     dependencies = {
       "ggandor/leap-ast.nvim",
-      "ggandor/flit.nvim",
     },
     config = function()
       require("leap").set_default_keymaps()
       vim.keymap.set({ "n", "x", "o" }, "<C-S>", function()
         require("leap-ast").leap()
       end, {})
-      require("flit").setup {}
     end,
   },
 
@@ -70,4 +72,12 @@ return {
     end,
   },
   "clojure-vim/vim-jack-in",
+
+  {
+    "gpanders/nvim-parinfer",
+    config = function()
+      vim.g.parinfer_enabled = false
+      vim.keymap.set("n", "<leader>tp", "<cmd>ParinferToggle!<CR>", { desc = "Toggle Parinfer" })
+    end,
+  },
 }

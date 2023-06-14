@@ -1,8 +1,16 @@
 local wezterm = require "wezterm"
 
+local function scheme_for_appearance(appearance)
+  if appearance:find "Dark" then
+    return "Catppuccin Mocha"
+  else
+    return "Catppuccin Latte"
+  end
+end
+
 return {
   default_prog = { "/usr/bin/tmux", "-l" },
-  color_scheme = "Catppuccin Latte",
+  color_scheme = scheme_for_appearance(wezterm.gui.get_appearance()),
   font = wezterm.font {
     family = "Monospace",
     harfbuzz_features = { "zero" },

@@ -1,6 +1,5 @@
 return {
   "tpope/vim-abolish",
-  -- "tpope/vim-commentary",
   {
     "tpope/vim-dispatch",
     config = function()

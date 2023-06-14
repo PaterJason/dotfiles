@@ -9,3 +9,6 @@
 	autosquash = true
 [fetch]
 	prune = true
+[diff]
+	indentHeuristic = true
+	algorithm = histogram

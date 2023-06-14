@@ -1,4 +1,5 @@
 require "jp.options"
+require "jp.autocmd"
 require "jp.filetype"
 require "jp.diagnostic"
 
@@ -18,5 +19,11 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.runtimepath:prepend(lazypath)
-require("lazy").setup "plugins"
+require("lazy").setup("plugins", {
+  dev = {
+    path = vim.fs.normalize "~/src/neovim",
+    patterns = { "PaterJason" },
+    fallback = true,
+  },
+})
 vim.keymap.set("n", "<leader>p", "<cmd>Lazy<CR>", { desc = "Plugins" })

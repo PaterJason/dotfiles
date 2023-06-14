@@ -71,9 +71,10 @@ local function config()
       end
       if caps.codeLensProvider then
         vim.api.nvim_create_autocmd(
-          { "BufEnter", "CursorHold", "InsertLeave" },
+          { "BufEnter", "TextChanged", "InsertLeave" },
           { callback = vim.lsp.codelens.refresh, group = attach_augroup, buffer = bufnr }
         )
+        vim.lsp.codelens.refresh()
       end
     end,
   })
@@ -110,7 +111,7 @@ local function config()
       },
     },
     bashls = {},
-    clojure_lsp = { init_options = { ["ignore-classpath-directories"] = true } },
+    clojure_lsp = {},
     lua_ls = {
       settings = {
         Lua = {
@@ -137,6 +138,34 @@ local function config()
       },
     },
     taplo = {},
+    tsserver = {
+      settings = {
+        typescript = {
+          inlayHints = {
+            includeInlayParameterNameHints = "all",
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = false,
+            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+        },
+        javascript = {
+          inlayHints = {
+            includeInlayParameterNameHints = "all",
+            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+            includeInlayFunctionParameterTypeHints = true,
+            includeInlayVariableTypeHints = false,
+            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+            includeInlayPropertyDeclarationTypeHints = true,
+            includeInlayFunctionLikeReturnTypeHints = true,
+            includeInlayEnumMemberValueHints = true,
+          },
+        },
+      },
+    },
     yamlls = {
       settings = {
         yaml = {
@@ -173,34 +202,6 @@ local function config()
       tools = { inlay_hints = { auto = false } },
     }
   end
-  require("typescript").setup {
-    server = { -- pass options to lspconfig's setup method
-      settings = {
-        typescript = {
-          inlayHints = {
-            includeInlayEnumMemberValueHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          },
-        },
-        javascript = {
-          inlayHints = {
-            includeInlayEnumMemberValueHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayVariableTypeHints = true,
-          },
-        },
-      },
-    },
-  }
 
   local null_ls = require "null-ls"
   null_ls.setup {
@@ -225,7 +226,6 @@ return {
       -- language support
       "b0o/SchemaStore.nvim",
       "folke/neodev.nvim",
-      "jose-elias-alvarez/typescript.nvim",
       "simrat39/rust-tools.nvim",
     },
     config = config,

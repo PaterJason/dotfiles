@@ -51,9 +51,18 @@ local function config()
       },
     },
   }
+  vim.keymap.set("n", "[C", function()
+    require("treesitter-context").go_to_context()
+  end, { silent = true })
 end
 
 return {
+  {
+    "PaterJason/nvim-treesitter-sexp",
+    config = function()
+      require("treesitter-sexp").setup {}
+    end,
+  },
   {
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
