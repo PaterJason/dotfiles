@@ -1,0 +1,1 @@
+{:output {:exclude-files ["conjure-log-.*\\.cljc"]}}

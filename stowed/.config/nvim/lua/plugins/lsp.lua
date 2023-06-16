@@ -27,10 +27,6 @@ local function config()
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
 
-      if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(bufnr)), "^conjure%-log%-%d+%.%a+$") then
-        vim.diagnostic.disable(bufnr)
-      end
-
       vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
       ih.on_attach(client, bufnr, false)
 
