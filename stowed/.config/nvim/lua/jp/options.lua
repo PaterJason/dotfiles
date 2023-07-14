@@ -17,6 +17,7 @@ vim.opt.mouse = "a"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.scrolloff = 4
+vim.opt.shortmess:append "I"
 vim.opt.showmode = false
 vim.opt.sidescrolloff = 8
 vim.opt.signcolumn = "auto"
@@ -29,5 +30,6 @@ vim.opt.swapfile = false
 vim.opt.tabstop = 4
 vim.opt.termguicolors = true
 vim.opt.updatetime = 250
+vim.opt.wrap = false
 
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], {})

@@ -4,7 +4,6 @@ local M = {
 
 function M.config()
   local wk = require "which-key"
-
   wk.setup {
     plugins = {
       presets = {
@@ -14,7 +13,6 @@ function M.config()
       },
     },
   }
-
   wk.register({
     d = { name = "DAP" },
     h = { name = "Git hunks" },

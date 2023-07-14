@@ -14,15 +14,17 @@ return {
           cmp = true,
           gitsigns = true,
           leap = true,
+          markdown = true,
           mason = true,
           mini = true,
-          telescope = true,
+          semantic_tokens = true,
           treesitter = true,
           treesitter_context = true,
           which_key = true,
 
           dap = { enabled = true, enable_ui = true },
           native_lsp = { enabled = true },
+          telescope = { enabled = true },
         },
       }
       vim.cmd.colorscheme "catppuccin"
@@ -31,9 +33,7 @@ return {
   {
     "nvim-tree/nvim-web-devicons",
     priority = 1000,
-    config = function()
-      require("nvim-web-devicons").setup {}
-    end,
+    opts = {},
   },
   -- Keymaps
   "christoomey/vim-tmux-navigator",
@@ -55,20 +55,20 @@ return {
   -- Edit
   {
     "mbbill/undotree",
-    config = function()
-      vim.keymap.set("n", "<leader>u", "<cmd>UndotreeToggle<CR>", { desc = "Undotree" })
-    end,
+    keys = { { "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Undotree" } },
   },
 
   -- Clojure
   {
     "Olical/conjure",
-    config = function()
+    init = function()
       vim.g["conjure#completion#fallback"] = nil
       vim.g["conjure#completion#omnifunc"] = nil
       vim.g["conjure#extract#tree_sitter#enabled"] = true
       vim.g["conjure#highlight#enabled"] = true
+      vim.g["conjure#log#hud#border"] = "none"
       vim.g["conjure#mapping#doc_word"] = "K"
+      vim.g["conjure#completion#omnifunc"] = false
     end,
   },
   "clojure-vim/vim-jack-in",

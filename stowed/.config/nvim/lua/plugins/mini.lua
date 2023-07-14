@@ -8,13 +8,18 @@ return {
         f = false,
       },
     }
+
     require("mini.align").setup {}
+
     require("mini.bracketed").setup {
       comment = { suffix = "/", options = {} },
     }
+
     require("mini.bufremove").setup {}
     vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete Buffer" })
+
     require("mini.comment").setup {}
+
     local hipatterns = require "mini.hipatterns"
     hipatterns.setup {
       highlighters = {
@@ -25,13 +30,27 @@ return {
         hex_color = hipatterns.gen_highlighter.hex_color(),
       },
     }
+
+    require("mini.doc").setup {}
+
+    require("mini.files").setup {}
+    vim.keymap.set("n", "<leader>f", function()
+      MiniFiles.open(nil, false)
+    end, { desc = "Files" })
+    vim.keymap.set("n", "<leader>F", function()
+      MiniFiles.open(vim.api.nvim_buf_get_name(0), false)
+    end, { desc = "Files" })
+
     require("mini.indentscope").setup {
       draw = {
         animation = require("mini.indentscope").gen_animation.none(),
       },
     }
+
     require("mini.pairs").setup {}
+
     require("mini.statusline").setup {}
+
     require("mini.surround").setup {
       mappings = {
         add = "ys",

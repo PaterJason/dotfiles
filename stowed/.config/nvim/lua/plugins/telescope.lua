@@ -4,12 +4,12 @@ local function config()
   telescope.setup {
     defaults = {
       borderchars = {
-        preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+        preview = { " " },
         prompt = { "─", " ", " ", " ", "─", "─", " ", " " },
-        results = { " " },
+        results = { " ", "│", " ", " ", " ", " ", " ", " " },
       },
       history = false,
-      layout_config = { height = 0.4 },
+      layout_config = { height = 25 },
       layout_strategy = "bottom_pane",
       sorting_strategy = "ascending",
       vimgrep_arguments = {
@@ -24,29 +24,19 @@ local function config()
       },
     },
     pickers = {
-      builtin = { include_extensions = true },
+      builtin = {
+        include_extensions = true,
+        previewer = false,
+        use_default_opts = true,
+      },
       colorscheme = { enable_preview = true },
       current_buffer_fuzzy_find = { skip_empty_lines = true },
-      symbols = { sources = { "emoji", "latex" } },
-    },
-    extensions = {
-      file_browser = { grouped = true },
-      ["ui-select"] = {
-        require("telescope.themes").get_cursor {
-          borderchars = {
-            preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-            prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
-            results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
-          },
-        },
-      },
     },
   }
 
   telescope.load_extension "fzy_native"
   telescope.load_extension "ui-select"
   telescope.load_extension "dap"
-  telescope.load_extension "file_browser"
 
   vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescope builtins" })
 
@@ -68,9 +58,7 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope-fzy-native.nvim",
       "nvim-telescope/telescope-ui-select.nvim",
-      "nvim-telescope/telescope-symbols.nvim",
       "nvim-telescope/telescope-dap.nvim",
-      "nvim-telescope/telescope-file-browser.nvim",
     },
     config = config,
   },

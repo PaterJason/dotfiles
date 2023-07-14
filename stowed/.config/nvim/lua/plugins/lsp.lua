@@ -19,7 +19,7 @@ local function config()
 
   local lspconfig = require "lspconfig"
 
-  local augroup = vim.api.nvim_create_augroup("Lsp", {})
+  local augroup = vim.api.nvim_create_augroup("UserLspConfig", {})
   local attach_augroup = vim.api.nvim_create_augroup("lsp_attach", {})
   vim.api.nvim_create_autocmd("LspAttach", {
     group = augroup,
@@ -82,6 +82,7 @@ local function config()
       local client = vim.lsp.get_client_by_id(args.data.client_id)
 
       vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
+      vim.lsp.codelens.clear(client.id)
       -- for _, value in ipairs(keymaps) do
       --   local _, lhs, _, _ = unpack(value)
       --   vim.keymap.del("n", lhs, { buffer = bufnr })
@@ -180,31 +181,6 @@ local function config()
   } do
     lspconfig[server].setup(cfg)
   end
-
-  do
-    local extension_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/"
-    local codelldb_path = extension_path .. "adapter/codelldb"
-    local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
-    require("rust-tools").setup {
-      server = {
-        settings = {
-          ["rust-analyzer"] = {
-            checkOnSave = { command = "clippy", extraArgs = { "--", "-W", "clippy::pedantic" } },
-            diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
-          },
-        },
-      },
-      dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
-      tools = { inlay_hints = { auto = false } },
-    }
-  end
-
-  local null_ls = require "null-ls"
-  null_ls.setup {
-    sources = {
-      null_ls.builtins.formatting.stylua,
-    },
-  }
 end
 
 return {
@@ -216,13 +192,31 @@ return {
       "williamboman/mason-lspconfig.nvim",
 
       -- lsp extras
-      "jose-elias-alvarez/null-ls.nvim",
       "lvimuser/lsp-inlayhints.nvim",
 
       -- language support
       "b0o/SchemaStore.nvim",
       "folke/neodev.nvim",
-      "simrat39/rust-tools.nvim",
+      {
+        "simrat39/rust-tools.nvim",
+        config = function()
+          local extension_path = vim.fn.stdpath "data" .. "/mason/packages/codelldb/extension/"
+          local codelldb_path = extension_path .. "adapter/codelldb"
+          local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
+          require("rust-tools").setup {
+            server = {
+              settings = {
+                ["rust-analyzer"] = {
+                  checkOnSave = { command = "clippy", extraArgs = { "--", "-W", "clippy::pedantic" } },
+                  diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
+                },
+              },
+            },
+            dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
+            tools = { inlay_hints = { auto = false } },
+          }
+        end,
+      },
     },
     config = config,
   },
