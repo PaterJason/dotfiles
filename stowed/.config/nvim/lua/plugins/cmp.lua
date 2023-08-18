@@ -6,9 +6,6 @@ local M = {
     "saadparwaiz1/cmp_luasnip",
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-nvim-lsp-signature-help",
-    "hrsh7th/cmp-cmdline",
-    "hrsh7th/cmp-path",
-    "hrsh7th/cmp-buffer",
     "PaterJason/cmp-conjure",
     "rcarriga/cmp-dap",
   },
@@ -19,10 +16,8 @@ function M.config()
   local luasnip = require "luasnip"
 
   require("luasnip.loaders.from_vscode").lazy_load()
-  vim.keymap.set("i", "<C-l>", "<Plug>luasnip-expand-or-jump")
-  vim.keymap.set("s", "<C-l>", "<Plug>luasnip-expand-or-jump")
-  vim.keymap.set("i", "<C-h>", "<Plug>luasnip-jump-prev")
-  vim.keymap.set("s", "<C-h>", "<Plug>luasnip-jump-prev")
+  vim.keymap.set({"i", "s"}, "<C-l>", "<Plug>luasnip-expand-or-jump")
+  vim.keymap.set({"i", "s"}, "<C-h>", "<Plug>luasnip-jump-prev")
 
   cmp.setup {
     enabled = function()
@@ -41,33 +36,13 @@ function M.config()
       ["<CR>"] = cmp.mapping.confirm { select = true },
     },
     sources = cmp.config.sources({
-      { name = "path" },
-    }, {
       { name = "nvim_lsp_signature_help" },
       { name = "luasnip" },
       { name = "nvim_lsp" },
     }, {
       { name = "conjure" },
-    }, {
-      { name = "buffer" },
     }),
   }
-
-  cmp.setup.cmdline({ "/", "?" }, {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources {
-      { name = "buffer" },
-    },
-  })
-
-  cmp.setup.cmdline(":", {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      { name = "path" },
-    }, {
-      { name = "cmdline" },
-    }),
-  })
 
   cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
     sources = cmp.config.sources {

@@ -1,4 +1,4 @@
-local augroup = vim.api.nvim_create_augroup("JPConfig", {})
+local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
 -- vim.api.nvim_create_autocmd("FocusGained", {
 --   group = augroup,

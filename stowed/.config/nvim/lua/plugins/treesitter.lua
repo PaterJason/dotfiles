@@ -38,19 +38,7 @@ local function config()
     },
   }
 
-  require("treesitter-context").setup {
-    enable = true,
-    patterns = {
-      json = {
-        "pair",
-      },
-      clojure = {
-        "list_lit",
-        "map_lit",
-        "vec_lit",
-      },
-    },
-  }
+  require("treesitter-context").setup {}
   vim.keymap.set("n", "[C", function()
     require("treesitter-context").go_to_context()
   end, { silent = true })
@@ -58,17 +46,17 @@ end
 
 return {
   {
-    "PaterJason/nvim-treesitter-sexp",
-    config = function()
-      require("treesitter-sexp").setup {}
-    end,
-  },
-  {
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
       "nvim-treesitter/nvim-treesitter-textobjects",
       "nvim-treesitter/nvim-treesitter-context",
       "nvim-treesitter/nvim-treesitter-refactor",
+      {
+        "PaterJason/nvim-treesitter-sexp",
+        config = function()
+          require("treesitter-sexp").setup {}
+        end,
+      },
     },
     build = ":TSUpdate",
     config = config,

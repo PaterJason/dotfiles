@@ -1,21 +1,6 @@
 local function config()
-  require("neodev").setup {}
   local ih = require "lsp-inlayhints"
   ih.setup()
-
-  require("mason").setup {
-    ui = {
-      width = 0.8,
-      height = 0.8,
-      icons = {
-        package_installed = "✓",
-        package_pending = "➜",
-        package_uninstalled = "✗",
-      },
-    },
-  }
-  require("mason-lspconfig").setup()
-  vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
 
   local lspconfig = require "lspconfig"
 
@@ -26,6 +11,10 @@ local function config()
     callback = function(args)
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+      if string.match(vim.fs.basename(vim.api.nvim_buf_get_name(bufnr)), "^conjure%-log%-%d+%.%a+$") then
+        vim.diagnostic.disable(bufnr)
+      end
 
       vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
       ih.on_attach(client, bufnr, false)
@@ -61,7 +50,7 @@ local function config()
           { callback = vim.lsp.buf.document_highlight, group = attach_augroup, buffer = bufnr }
         )
         vim.api.nvim_create_autocmd(
-          "CursorMoved",
+          { "CursorMoved", "ModeChanged" },
           { callback = vim.lsp.buf.clear_references, group = attach_augroup, buffer = bufnr }
         )
       end
@@ -83,11 +72,7 @@ local function config()
 
       vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
       vim.lsp.codelens.clear(client.id)
-      -- for _, value in ipairs(keymaps) do
-      --   local _, lhs, _, _ = unpack(value)
-      --   vim.keymap.del("n", lhs, { buffer = bufnr })
-      -- end
-      -- vim.notify(client.name .. " detached", vim.log.levels.INFO)
+      vim.lsp.buf.clear_references()
     end,
   })
 
@@ -118,6 +103,10 @@ local function config()
           hint = { enable = true },
           format = { enable = false },
           telemetry = { enable = false },
+          workspace = {
+            checkThirdParty = false,
+            -- ignoreDir = { ".vscode", "conjure-log-*.lua" },
+          },
         },
       },
     },
@@ -188,15 +177,38 @@ return {
     "neovim/nvim-lspconfig",
     dependencies = {
       -- mason
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
+      {
+        "williamboman/mason.nvim",
+        dependencies = { "williamboman/mason-lspconfig.nvim" },
+        build = ":MasonUpdate",
+        config = function()
+          require("mason").setup {
+            ui = {
+              width = 0.8,
+              height = 0.8,
+              icons = {
+                package_installed = "✓",
+                package_pending = "➜",
+                package_uninstalled = "✗",
+              },
+            },
+          }
+          require("mason-lspconfig").setup()
+          vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
+        end,
+      },
 
       -- lsp extras
       "lvimuser/lsp-inlayhints.nvim",
 
       -- language support
       "b0o/SchemaStore.nvim",
-      "folke/neodev.nvim",
+      {
+        "folke/neodev.nvim",
+        config = function()
+          require("neodev").setup {}
+        end,
+      },
       {
         "simrat39/rust-tools.nvim",
         config = function()
@@ -219,5 +231,13 @@ return {
       },
     },
     config = config,
+  },
+  {
+    "j-hui/fidget.nvim",
+    tag = "legacy",
+    event = "LspAttach",
+    config = function()
+      require("fidget").setup {}
+    end,
   },
 }

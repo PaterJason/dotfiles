@@ -6,9 +6,9 @@ local function config()
   dapui.setup {
     icons = { expanded = "-", collapsed = "+" },
   }
-  dap.listeners.after.event_initialized["dapui_config"] = function()
-    dapui.open {}
-  end
+  dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+  dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+  dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
   dap.adapters.firefox = {
     type = "executable",
@@ -45,7 +45,6 @@ local function config()
     dap.close()
   end, { desc = "Quit" })
   vim.keymap.set("n", "<leader>dr", dap.repl.toggle, { desc = "Toggle Repl" })
-  vim.keymap.set("n", "<leader>dv", "<cmd>DapVirtualTextToggle<CR>", { desc = "Toggle virtual text" })
 
   vim.keymap.set("n", "<leader>de", dapui.eval, { desc = "Eval" })
   vim.keymap.set("v", "<leader>de", dapui.eval, { desc = "Eval" })

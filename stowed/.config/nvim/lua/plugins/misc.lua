@@ -33,10 +33,10 @@ return {
   {
     "nvim-tree/nvim-web-devicons",
     priority = 1000,
-    opts = {},
+    config = function()
+      require("nvim-web-devicons").setup {}
+    end,
   },
-  -- Keymaps
-  "christoomey/vim-tmux-navigator",
 
   -- Util
   {

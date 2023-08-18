@@ -4,13 +4,10 @@ return {
     "lewis6991/gitsigns.nvim",
     dependencies = "nvim-lua/plenary.nvim",
     opts = {
-      linehl = false,
       numhl = true,
-      show_deleted = false,
       signcolumn = false,
-      word_diff = false,
       on_attach = function(bufnr)
-        local gs = require "gitsigns"
+        local gs = package.loaded.gitsigns
         local function map(mode, l, r, opts)
           opts = opts or {}
           opts.buffer = bufnr
@@ -35,6 +32,7 @@ return {
         -- Text object
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
       end,
+      preview_config = { border = "none" },
     },
   },
 }
