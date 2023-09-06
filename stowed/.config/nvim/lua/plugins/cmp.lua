@@ -16,8 +16,8 @@ function M.config()
   local luasnip = require "luasnip"
 
   require("luasnip.loaders.from_vscode").lazy_load()
-  vim.keymap.set({"i", "s"}, "<C-l>", "<Plug>luasnip-expand-or-jump")
-  vim.keymap.set({"i", "s"}, "<C-h>", "<Plug>luasnip-jump-prev")
+  vim.keymap.set({ "i", "s" }, "<C-l>", "<Plug>luasnip-expand-or-jump")
+  vim.keymap.set({ "i", "s" }, "<C-h>", "<Plug>luasnip-jump-prev")
 
   cmp.setup {
     enabled = function()

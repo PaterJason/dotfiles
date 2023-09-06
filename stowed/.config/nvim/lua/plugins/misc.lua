@@ -62,13 +62,11 @@ return {
   {
     "Olical/conjure",
     init = function()
+      vim.g["conjure#completion#omnifunc"] = false
       vim.g["conjure#completion#fallback"] = nil
-      vim.g["conjure#completion#omnifunc"] = nil
-      vim.g["conjure#extract#tree_sitter#enabled"] = true
       vim.g["conjure#highlight#enabled"] = true
       vim.g["conjure#log#hud#border"] = "none"
       vim.g["conjure#mapping#doc_word"] = "K"
-      vim.g["conjure#completion#omnifunc"] = false
     end,
   },
   "clojure-vim/vim-jack-in",

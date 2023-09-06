@@ -51,12 +51,7 @@ return {
       "nvim-treesitter/nvim-treesitter-textobjects",
       "nvim-treesitter/nvim-treesitter-context",
       "nvim-treesitter/nvim-treesitter-refactor",
-      {
-        "PaterJason/nvim-treesitter-sexp",
-        config = function()
-          require("treesitter-sexp").setup {}
-        end,
-      },
+      "PaterJason/nvim-treesitter-sexp",
     },
     build = ":TSUpdate",
     config = config,
