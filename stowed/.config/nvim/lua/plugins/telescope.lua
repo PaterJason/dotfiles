@@ -38,17 +38,23 @@ local function config()
   telescope.load_extension "ui-select"
   telescope.load_extension "dap"
 
-  vim.keymap.set("n", "<leader><leader>", "<cmd>Telescope<CR>", { desc = "Telescope builtins" })
+  local nmap = function(keys, builtin, desc)
+    vim.keymap.set("n", keys, require("telescope.builtin")[builtin], { desc = desc })
+  end
 
-  vim.keymap.set("n", "<leader>sb", "<cmd>Telescope buffers<CR>", { desc = "Buffers" })
-  vim.keymap.set("n", "<leader>sc", "<cmd>Telescope current_buffer_fuzzy_find<CR>", { desc = "Current buffer" })
-  vim.keymap.set("n", "<leader>sf", "<cmd>Telescope find_files<CR>", { desc = "Find Files" })
-  vim.keymap.set("n", "<leader>sF", "<cmd>Telescope file_browser<CR>", { desc = "File Browser" })
-  vim.keymap.set("n", "<leader>sg", "<cmd>Telescope live_grep<CR>", { desc = "Grep" })
-  vim.keymap.set("n", "<leader>sG", "<cmd>Telescope grep_string<CR>", { desc = "Grep string" })
-  vim.keymap.set("n", "<leader>sh", "<cmd>Telescope help_tags<CR>", { desc = "Help" })
-  vim.keymap.set("n", "<leader>sl", "<cmd>Telescope loclist<CR>", { desc = "Loclist" })
-  vim.keymap.set("n", "<leader>sq", "<cmd>Telescope quickfix<CR>", { desc = "Quickfix" })
+  nmap("<leader><leader>", "builtin", "Telescope Builtins")
+  nmap("<leader>/", "current_buffer_fuzzy_find", "[/] Search current buffer")
+  nmap("<leader>gf", "git_files", "Search [G]it [F]iles")
+  nmap("<leader>gs", "git_status", "Search [G]it [S]tatus")
+  nmap("<leader>sb", "buffers", "[S]earch [B]uffers")
+  nmap("<leader>sd", "diagnostics", "[S]earch [D]iagnostics")
+  nmap("<leader>sf", "find_files", "[S]earch [F]iles")
+  nmap("<leader>sg", "live_grep", "[S]earch by [G]rep")
+  nmap("<leader>sh", "help_tags", "[S]earch [H]elp")
+  nmap("<leader>sl", "loclist", "[S]earch [L]ocation list")
+  nmap("<leader>sq", "quickfix", "[S]earch current [W]ord")
+  nmap("<leader>sr", "resume", "[S]earch [R]esume")
+  nmap("<leader>sw", "grep_string", "[S]earch [Q]uickfix list")
 end
 
 return {

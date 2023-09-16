@@ -19,32 +19,43 @@ local function config()
       vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
       ih.on_attach(client, bufnr, false)
 
-      local caps = client.server_capabilities
+      local capabilities = client.server_capabilities
 
       local t = package.loaded["telescope.builtin"]
       for _, value in ipairs {
-        { "callHierarchyProvider", "<leader>li", t.lsp_incoming_calls, "Incoming calls" },
-        { "callHierarchyProvider", "<leader>lo", t.lsp_outgoing_calls, "Outgoing calls" },
-        { "codeActionProvider", "<leader>a", vim.lsp.buf.code_action, "Code actions" },
-        { "declarationProvider", "gD", vim.lsp.buf.declaration, "Declaration" },
-        { "definitionProvider", "gd", t.lsp_definitions, "Goto Definition" },
-        { "documentFormattingProvider", "<leader>lf", vim.lsp.buf.format, "Format" },
-        { "documentSymbolProvider", "<leader>ls", t.lsp_document_symbols, "Document symbols" },
-        { "hoverProvider", "K", vim.lsp.buf.hover, "Hover" },
-        { "implementationProvider", "gI", t.lsp_implementations, "Implementation" },
-        { "referencesProvider", "gr", t.lsp_references, "References" },
-        { "renameProvider", "<leader>r", vim.lsp.buf.rename, "Rename" },
-        { "signatureHelpProvider", "gK", vim.lsp.buf.signature_help, "Signature help" },
-        { "typeDefinitionProvider", "<leader>ld", t.lsp_type_definitions, "Type definitions" },
-        { "workspaceSymbolProvider", "<leader>lw", t.lsp_workspace_symbols, "Workspace symbols" },
+        { "renameProvider", "<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame" },
+        { "codeActionProvider", "<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction" },
+
+        { "definitionProvider", "gd", t.lsp_definitions, "[G]oto [D]efinition" },
+        { "referencesProvider", "gr", t.lsp_references, "[G]oto [R]eferences" },
+        { "implementationProvider", "gI", t.lsp_implementations, "[G]oto [I]mplementation" },
+        { "typeDefinitionProvider", "<leader>D", t.lsp_type_definitions, "Type [D]efinition" },
+        { "documentSymbolProvider", "<leader>ds", t.lsp_document_symbols, "[D]ocument [S]ymbols" },
+        { "workspaceSymbolProvider", "<leader>ws", t.lsp_workspace_symbols, "[W]orkspace [S]ymbols" },
+
+        { "hoverProvider", "K", vim.lsp.buf.hover, "Hover Documentation" },
+        { "signatureHelpProvider", "<C-k>", vim.lsp.buf.signature_help, "Signature Documentation" },
+
+        { "declarationProvider", "gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration" },
+        { "workspace", "<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder" },
+        { "workspace", "<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder" },
+        {
+          "workspace",
+          "<leader>wl",
+          function()
+            vim.notify(table.concat(vim.lsp.buf.list_workspace_folders(), ","))
+          end,
+          "[W]orkspace [L]ist Folders",
+        },
+        { "documentFormattingProvider", "<leader>f", vim.lsp.buf.format, "Format" },
       } do
         local cap, lhs, rhs, desc = unpack(value)
-        if caps[cap] then
+        if capabilities[cap] then
           vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
         end
       end
 
-      if caps.documentHighlightProvider then
+      if capabilities.documentHighlightProvider then
         vim.api.nvim_create_autocmd(
           "CursorHold",
           { callback = vim.lsp.buf.document_highlight, group = attach_augroup, buffer = bufnr }
@@ -54,7 +65,7 @@ local function config()
           { callback = vim.lsp.buf.clear_references, group = attach_augroup, buffer = bufnr }
         )
       end
-      if caps.codeLensProvider then
+      if capabilities.codeLensProvider then
         vim.api.nvim_create_autocmd(
           { "BufEnter", "TextChanged", "InsertLeave" },
           { callback = vim.lsp.codelens.refresh, group = attach_augroup, buffer = bufnr }
@@ -76,99 +87,89 @@ local function config()
     end,
   })
 
-  lspconfig.util.default_config.capabilities =
-    vim.tbl_extend("force", lspconfig.util.default_config.capabilities, require("cmp_nvim_lsp").default_capabilities())
-  lspconfig.util.default_config.capabilities.textDocument.colorProvider = { dynamicRegistration = true }
+  lspconfig.util.default_config.capabilities = require("cmp_nvim_lsp").default_capabilities(lspconfig.util.default_config.capabilities)
 
-  for server, cfg in pairs {
+  local server_settings = {
     cssls = {},
     eslint = {},
     html = {},
     jsonls = {
-      settings = {
-        json = {
-          schemas = require("schemastore").json.schemas(),
-          validate = { enable = true },
-        },
+      json = {
+        schemas = require("schemastore").json.schemas(),
+        validate = { enable = true },
       },
     },
     bashls = {},
     clojure_lsp = {},
     lua_ls = {
-      settings = {
-        Lua = {
-          completion = {
-            callSnippet = "Replace",
-          },
-          hint = { enable = true },
-          format = { enable = false },
-          telemetry = { enable = false },
-          workspace = {
-            checkThirdParty = false,
-            -- ignoreDir = { ".vscode", "conjure-log-*.lua" },
-          },
+      Lua = {
+        completion = {
+          callSnippet = "Replace",
+        },
+        hint = { enable = true },
+        format = { enable = false },
+        telemetry = { enable = false },
+        workspace = {
+          checkThirdParty = false,
+          -- ignoreDir = { ".vscode", "conjure-log-*.lua" },
         },
       },
     },
     texlab = {
-      settings = {
-        texlab = {
-          build = { onSave = true, forwardSearchAfter = true },
-          forwardSearch = {
-            onSave = true,
-            executable = "zathura",
-            args = { "--synctex-forward", "%l:1:%f", "%p" },
-          },
-          chktex = { onEdit = true, onOpenAndSave = true },
+      texlab = {
+        build = { onSave = true, forwardSearchAfter = true },
+        forwardSearch = {
+          onSave = true,
+          executable = "zathura",
+          args = { "--synctex-forward", "%l:1:%f", "%p" },
         },
+        chktex = { onEdit = true, onOpenAndSave = true },
       },
     },
     taplo = {},
     tsserver = {
-      settings = {
-        typescript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = false,
-            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayEnumMemberValueHints = true,
-          },
+      typescript = {
+        inlayHints = {
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = false,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
         },
-        javascript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = false,
-            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayEnumMemberValueHints = true,
-          },
+      },
+      javascript = {
+        inlayHints = {
+          includeInlayParameterNameHints = "all",
+          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = false,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
         },
       },
     },
     yamlls = {
-      settings = {
-        yaml = {
-          schemas = require("schemastore").yaml.schemas(),
-        },
+      yaml = {
+        schemas = require("schemastore").yaml.schemas(),
       },
     },
     lemminx = {
       settings = {
-        xml = {
-          catalogs = { vim.fs.normalize "$HOME/.config/fontconfig/catalog.xml" },
-        },
+        catalogs = { vim.fs.normalize "$HOME/.config/fontconfig/catalog.xml" },
       },
     },
     marksman = {},
-  } do
-    lspconfig[server].setup(cfg)
+  }
+  for server, settings in pairs(server_settings) do
+    lspconfig[server].setup {
+      capabilities = capabilities,
+      settings = settings,
+    }
   end
 end
 
@@ -194,7 +195,7 @@ return {
             },
           }
           require("mason-lspconfig").setup()
-          vim.keymap.set("n", "<leader>m", "<cmd>Mason<CR>", { desc = "Mason" })
+          vim.keymap.set("n", "<leader>m", "<Cmd>Mason<CR>", { desc = "Mason" })
         end,
       },
 

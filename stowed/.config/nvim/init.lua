@@ -26,4 +26,4 @@ require("lazy").setup("plugins", {
     fallback = true,
   },
 })
-vim.keymap.set("n", "<leader>p", "<cmd>Lazy<CR>", { desc = "Plugins" })
+vim.keymap.set("n", "<leader>p", "<Cmd>Lazy<CR>", { desc = "Plugins" })

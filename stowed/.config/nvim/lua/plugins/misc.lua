@@ -55,7 +55,9 @@ return {
   -- Edit
   {
     "mbbill/undotree",
-    keys = { { "<leader>u", "<cmd>UndotreeToggle<CR>", desc = "Undotree" } },
+    config = function()
+      vim.keymap.set("n", "<leader>u", "<Cmd>UndotreeToggle<CR>", { desc = "Undotree" })
+    end,
   },
 
   -- Clojure
@@ -75,7 +77,7 @@ return {
     "gpanders/nvim-parinfer",
     config = function()
       vim.g.parinfer_enabled = false
-      vim.keymap.set("n", "<leader>tp", "<cmd>ParinferToggle!<CR>", { desc = "Toggle Parinfer" })
+      vim.keymap.set("n", "<leader>tp", "<Cmd>ParinferToggle!<CR>", { desc = "Toggle Parinfer" })
     end,
   },
 }
