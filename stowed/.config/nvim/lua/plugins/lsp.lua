@@ -87,7 +87,8 @@ local function config()
     end,
   })
 
-  lspconfig.util.default_config.capabilities = require("cmp_nvim_lsp").default_capabilities(lspconfig.util.default_config.capabilities)
+  lspconfig.util.default_config.capabilities =
+    require("cmp_nvim_lsp").default_capabilities(lspconfig.util.default_config.capabilities)
 
   local server_settings = {
     cssls = {},
