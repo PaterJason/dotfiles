@@ -16,7 +16,7 @@ local function config()
   }
   dap.configurations.javascript = {
     {
-      name = "Debug with Firefox (Javascript)",
+      name = "Debug with Firefox",
       type = "firefox",
       request = "launch",
       reAttach = true,
@@ -24,16 +24,30 @@ local function config()
       webRoot = "${workspaceFolder}",
     },
   }
-  dap.configurations.typescript = {
+  dap.configurations.typescript = dap.configurations.javascript
+
+  dap.adapters.codelldb = {
+    type = "server",
+    port = "${port}",
+    executable = {
+      command = "codelldb",
+      args = { "--port", "${port}" },
+    },
+  }
+  dap.configurations.cpp = {
     {
-      name = "Debug with Firefox (Typescript)",
-      type = "firefox",
+      name = "Launch file",
+      type = "codelldb",
       request = "launch",
-      reAttach = true,
-      url = "http://localhost:3000",
-      webRoot = "${workspaceFolder}",
+      program = function()
+        return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+      end,
+      cwd = "${workspaceFolder}",
+      stopOnEntry = false,
     },
   }
+  dap.configurations.c = dap.configurations.cpp
+  dap.configurations.rust = dap.configurations.cpp
 
   -- Mappings
   vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
