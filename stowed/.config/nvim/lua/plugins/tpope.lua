@@ -9,4 +9,5 @@ return {
   "tpope/vim-eunuch",
   "tpope/vim-repeat",
   "tpope/vim-sleuth",
+  "tpope/vim-vinegar",
 }

@@ -38,20 +38,6 @@ return {
     end,
   },
 
-  -- Util
-  {
-    "ggandor/leap.nvim",
-    dependencies = {
-      "ggandor/leap-ast.nvim",
-    },
-    config = function()
-      require("leap").set_default_keymaps()
-      vim.keymap.set({ "n", "x", "o" }, "<C-S>", function()
-        require("leap-ast").leap()
-      end, {})
-    end,
-  },
-
   -- Edit
   {
     "mbbill/undotree",

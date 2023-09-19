@@ -76,8 +76,6 @@ return {
       },
     }
 
-    require("mini.doc").setup {}
-
     require("mini.pairs").setup {}
 
     require("mini.statusline").setup {}
