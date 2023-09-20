@@ -1,13 +1,7 @@
-if test -d ~/.local/bin
-    set PATH ~/.local/bin $PATH
-end
-if test -d ~/.cargo/bin
-    set PATH ~/.cargo/bin $PATH
-end
-if test -d ~/.npm-packages/bin
-    set -gx NPM_PACKAGES "$HOME/.npm-packages"
-    set PATH ~/.npm-packages/bin $PATH
-end
+fish_add_path ~/.local/bin
+fish_add_path ~/.cargo/bin
+set -gx NPM_PACKAGES "$HOME/.npm-packages"
+fish_add_path ~/.npm-packages/bin
 
 if status --is-interactive
     set -g fish_greeting
