@@ -16,7 +16,7 @@ return {
     }
 
     require("mini.bufremove").setup {}
-    vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete Buffer" })
+    vim.keymap.set("n", "<leader>bd", require("mini.bufremove").delete, { desc = "Delete Buffer" })
 
     local miniclue = require "mini.clue"
     miniclue.setup {
