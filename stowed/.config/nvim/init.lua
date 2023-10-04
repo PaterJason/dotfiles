@@ -25,5 +25,8 @@ require("lazy").setup("plugins", {
     patterns = { "PaterJason" },
     fallback = true,
   },
+  change_detection = {
+    notify = false,
+  },
 })
 vim.keymap.set("n", "<leader>p", "<Cmd>Lazy<CR>", { desc = "Plugins" })
