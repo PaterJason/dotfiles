@@ -1,7 +1,29 @@
-local function config()
+---@type LazySpec
+local M = {
+  "nvim-treesitter/nvim-treesitter",
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    "nvim-treesitter/nvim-treesitter-context",
+    "PaterJason/nvim-treesitter-sexp",
+  },
+  build = ":TSUpdate",
+}
+
+function M.config()
+  local ensure_installed = {
+    "comment",
+    "regex",
+  }
+  for name, type in vim.fs.dir(vim.fs.joinpath(vim.env.VIMRUNTIME, "queries")) do
+    if type == "directory" then
+      ensure_installed[#ensure_installed + 1] = name
+    end
+  end
+
+  ---@diagnostic disable-next-line: missing-fields
   require("nvim-treesitter.configs").setup {
-    ensure_installed = "all",
-    ignore_install = { "comment" },
+    ensure_installed = ensure_installed,
+    auto_install = true,
     highlight = {
       enable = true,
       additional_vim_regex_highlighting = false,
@@ -18,42 +40,11 @@ local function config()
     indent = {
       enable = true,
     },
-    refactor = {
-      smart_rename = {
-        enable = true,
-        keymaps = {
-          smart_rename = "gnr",
-        },
-      },
-      navigation = {
-        enable = true,
-        keymaps = {
-          goto_definition = "gnd",
-          list_definitions = "gnD",
-          list_definitions_toc = "gO",
-          goto_previous_usage = "[g",
-          goto_next_usage = "]g",
-        },
-      },
-    },
   }
 
-  require("treesitter-context").setup {}
-  vim.keymap.set("n", "[C", function()
+  vim.keymap.set("n", "gC", function()
     require("treesitter-context").go_to_context()
   end, { silent = true })
 end
 
-return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "nvim-treesitter/nvim-treesitter-context",
-      "nvim-treesitter/nvim-treesitter-refactor",
-      "PaterJason/nvim-treesitter-sexp",
-    },
-    build = ":TSUpdate",
-    config = config,
-  },
-}
+return M

@@ -1,3 +1,4 @@
+---@type LazySpec
 return {
   "tpope/vim-fugitive",
   {
@@ -6,15 +7,8 @@ return {
     config = function()
       local gitsigns = require "gitsigns"
       gitsigns.setup {
-        numhl = true,
         signcolumn = false,
-        signs = {
-          add = { show_count = false },
-          change = { show_count = false },
-          delete = { show_count = true },
-          topdelete = { show_count = true },
-          changedelete = { show_count = true },
-        },
+        numhl = true,
         on_attach = function(bufnr)
           local function map(mode, l, r, opts)
             opts = opts or {}
@@ -43,20 +37,26 @@ return {
           end, { expr = true, buffer = bufnr, desc = "Jump to previous hunk" })
 
           -- Actions
-          map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
-          map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
+          map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
+          map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })
+          map("v", "<leader>hs", function()
+            gitsigns.stage_hunk { vim.fn.line ".", vim.fn.line "v" }
+          end, { desc = "Stage hunk" })
+          map("v", "<leader>hr", function()
+            gitsigns.reset_hunk { vim.fn.line ".", vim.fn.line "v" }
+          end, { desc = "Reset hunk" })
           map("n", "<leader>hu", gitsigns.undo_stage_hunk, { desc = "Undo stage hunk" })
-          map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
-          map("n", "<leader>hi", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
-          map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diffthis" })
+          map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
+          map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
+          map("n", "<leader>hp", gitsigns.preview_hunk_inline, { desc = "Preview hunk" })
           map("n", "<leader>hb", function()
             gitsigns.blame_line { full = true }
           end, { desc = "Blame line" })
+          map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diffthis" })
 
           -- Text object
           map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
         end,
-        preview_config = { border = "none" },
       }
     end,
   },

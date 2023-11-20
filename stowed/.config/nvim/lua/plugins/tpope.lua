@@ -1,3 +1,4 @@
+---@type LazySpec
 return {
   "tpope/vim-abolish",
   {
@@ -6,8 +7,6 @@ return {
       vim.g.dispatch_no_maps = 1
     end,
   },
-  "tpope/vim-eunuch",
   "tpope/vim-repeat",
   "tpope/vim-sleuth",
-  "tpope/vim-vinegar",
 }

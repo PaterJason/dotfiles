@@ -1,1 +1,1 @@
-lua require "jp.gui"
+set guifont=Monospace:h10

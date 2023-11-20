@@ -1,33 +1,21 @@
+---@type LazySpec
 return {
   {
-    "catppuccin/nvim",
-    name = "catppuccin",
+    "rose-pine/neovim",
+    name = "rose-pine",
     priority = 1000,
     config = function()
-      require("catppuccin").setup {
-        flavour = "latte",
-        background = {
-          light = "latte",
-          dark = "mocha",
-        },
-        integrations = {
-          cmp = true,
-          gitsigns = true,
-          leap = true,
-          markdown = true,
-          mason = true,
-          mini = true,
-          semantic_tokens = true,
-          treesitter = true,
-          treesitter_context = true,
-          which_key = true,
-
-          dap = { enabled = true, enable_ui = true },
-          native_lsp = { enabled = true },
-          telescope = { enabled = true },
-        },
+      vim.o.background = "light"
+      require("rose-pine").setup {
+        variant = "auto",
+        dark_variant = "main",
+        bold_vert_split = false,
+        dim_nc_background = false,
+        disable_background = false,
+        disable_float_background = false,
+        disable_italics = false,
       }
-      vim.cmd.colorscheme "catppuccin"
+      vim.cmd.colorscheme "rose-pine"
     end,
   },
   {
@@ -50,20 +38,12 @@ return {
   {
     "Olical/conjure",
     init = function()
+      vim.g["conjure#client_on_load"] = false
       vim.g["conjure#completion#omnifunc"] = false
-      vim.g["conjure#completion#fallback"] = nil
       vim.g["conjure#highlight#enabled"] = true
-      vim.g["conjure#log#hud#border"] = "none"
+      vim.g["conjure#log#hud#border"] = "solid"
       vim.g["conjure#mapping#doc_word"] = "K"
     end,
   },
   "clojure-vim/vim-jack-in",
-
-  {
-    "gpanders/nvim-parinfer",
-    config = function()
-      vim.g.parinfer_enabled = false
-      vim.keymap.set("n", "<leader>tp", "<Cmd>ParinferToggle!<CR>", { desc = "Toggle Parinfer" })
-    end,
-  },
 }

@@ -1,14 +1,22 @@
-local function config()
-  local dap = require "dap"
-  local dapui = require "dapui"
+---@type LazySpec
+local M = {
+  "mfussenegger/nvim-dap",
+}
 
-  -- UI
-  dapui.setup {
-    icons = { expanded = "-", collapsed = "+" },
-  }
-  dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-  dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-  dap.listeners.before.event_exited["dapui_config"] = dapui.close
+function M.config()
+  local dap = require "dap"
+  local widgets = require "dap.ui.widgets"
+  dap.defaults.fallback.terminal_win_cmd = "tabnew"
+
+  vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+  vim.keymap.set("n", "<Leader>dr", dap.repl.toggle, { desc = "Toggle repl" })
+  vim.keymap.set({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
+  vim.keymap.set("n", "<Leader>df", function()
+    widgets.centered_float(widgets.frames)
+  end, { desc = "Frames" })
+  vim.keymap.set("n", "<Leader>ds", function()
+    widgets.centered_float(widgets.scopes)
+  end, { desc = "Scopes" })
 
   dap.adapters.firefox = {
     type = "executable",
@@ -40,7 +48,7 @@ local function config()
       type = "codelldb",
       request = "launch",
       program = function()
-        return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+        return vim.fn.input("Path to executable: ", vim.uv.cwd() .. "/", "file")
       end,
       cwd = "${workspaceFolder}",
       stopOnEntry = false,
@@ -48,29 +56,6 @@ local function config()
   }
   dap.configurations.c = dap.configurations.cpp
   dap.configurations.rust = dap.configurations.cpp
-
-  -- Mappings
-  vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-  vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
-  vim.keymap.set("n", "<leader>dC", dap.run_to_cursor, { desc = "Run to cursor" })
-  vim.keymap.set("n", "<leader>dn", dap.step_over, { desc = "Next" })
-  vim.keymap.set("n", "<leader>dq", function()
-    dap.terminate()
-    dap.close()
-  end, { desc = "Quit" })
-  vim.keymap.set("n", "<leader>dr", dap.repl.toggle, { desc = "Toggle Repl" })
-
-  vim.keymap.set("n", "<leader>de", dapui.eval, { desc = "Eval" })
-  vim.keymap.set("v", "<leader>de", dapui.eval, { desc = "Eval" })
-  vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "Toggle UI" })
 end
 
-return {
-  {
-    "mfussenegger/nvim-dap",
-    dependencies = {
-      "rcarriga/nvim-dap-ui",
-    },
-    config = config,
-  },
-}
+return M

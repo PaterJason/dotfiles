@@ -1,31 +1,36 @@
+---@type LazySpec
 local M = {
   "hrsh7th/nvim-cmp",
   dependencies = {
-    "L3MON4D3/LuaSnip",
-    "rafamadriz/friendly-snippets",
-    "saadparwaiz1/cmp_luasnip",
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-nvim-lsp-signature-help",
     "PaterJason/cmp-conjure",
-    "rcarriga/cmp-dap",
   },
 }
 
 function M.config()
   local cmp = require "cmp"
-  local luasnip = require "luasnip"
 
-  require("luasnip.loaders.from_vscode").lazy_load()
-  vim.keymap.set({ "i", "s" }, "<C-l>", "<Plug>luasnip-expand-or-jump")
-  vim.keymap.set({ "i", "s" }, "<C-h>", "<Plug>luasnip-jump-prev")
+  vim.keymap.set({ "i", "s" }, "<Tab>", function()
+    if vim.snippet.jumpable(1) then
+      return "<Cmd>lua vim.snippet.jump(1)<CR>"
+    else
+      return "<Tab>"
+    end
+  end, { expr = true })
+  vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+    if vim.snippet.jumpable(-1) then
+      return "<Cmd>lua vim.snippet.jump(-1)<CR>"
+    else
+      return "<S-Tab>"
+    end
+  end, { expr = true })
 
+  ---@diagnostic disable-next-line: missing-fields
   cmp.setup {
-    enabled = function()
-      return vim.api.nvim_buf_get_option(0, "buftype") ~= "prompt" or require("cmp_dap").is_dap_buffer()
-    end,
     snippet = {
       expand = function(args)
-        luasnip.lsp_expand(args.body)
+        vim.snippet.expand(args.body)
       end,
     },
     mapping = cmp.mapping.preset.insert {
@@ -37,18 +42,11 @@ function M.config()
     },
     sources = cmp.config.sources({
       { name = "nvim_lsp_signature_help" },
-      { name = "luasnip" },
       { name = "nvim_lsp" },
     }, {
       { name = "conjure" },
     }),
   }
-
-  cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
-    sources = cmp.config.sources {
-      { name = "dap" },
-    },
-  })
 end
 
 return M
