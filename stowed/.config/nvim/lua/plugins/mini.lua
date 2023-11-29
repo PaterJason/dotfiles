@@ -33,7 +33,7 @@ function M.config()
 
   require("mini.bufremove").setup {}
   vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
-  vim.keymap.set("n", "<leader>bd", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
+  vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
 
   local miniclue = require "mini.clue"
   miniclue.setup {

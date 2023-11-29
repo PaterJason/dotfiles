@@ -2,7 +2,7 @@ require "jp.options"
 require "jp.lsp"
 
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-if vim.loop.fs_stat(lazypath) then
+if not vim.loop.fs_stat(lazypath) then
   vim
     .system({
       "git",
