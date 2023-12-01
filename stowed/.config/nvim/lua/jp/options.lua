@@ -26,9 +26,7 @@ o.relativenumber = true
 o.splitbelow = true
 o.splitright = true
 o.termguicolors = true
-
 o.wrap = false
-o.fillchars = "eob: "
 
 -- Editing
 o.ignorecase = true
@@ -46,10 +44,12 @@ o.splitkeep = "screen"
 o.pumheight = 16
 o.listchars = "tab:| ,trail:·,extends:…,precedes:…,nbsp:␣"
 o.list = true
+o.fillchars = "eob: ,fold: "
 
 -- Folds
 o.foldcolumn = "auto"
+o.foldnestmax = 10
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-o.foldtext = "v:lua.vim.treesitter.foldtext()"
+o.foldtext = "v:lua.require'jp.call'.foldtext()"
 
 vim.cmd.packadd "cfilter"
