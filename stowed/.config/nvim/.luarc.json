@@ -14,6 +14,7 @@
       "~/.local/share/nvim/lazy/mini.nvim/lua",
       "~/.local/share/nvim/lazy/nvim-cmp/lua",
       "~/.local/share/nvim/lazy/nvim-dap/lua",
+      "~/.local/share/nvim/lazy/nvim-lint/lua/lint.lua",
       "~/.local/share/nvim/lazy/nvim-lspconfig/lua",
       "~/.local/share/nvim/lazy/nvim-treesitter/lua",
       "~/.local/share/nvim/lazy/nvim-web-devicons/lua/nvim-web-devicons.lua",
