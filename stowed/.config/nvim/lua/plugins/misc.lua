@@ -5,7 +5,6 @@ return {
     name = "rose-pine",
     priority = 1000,
     config = function()
-      vim.o.background = "light"
       require("rose-pine").setup {
         variant = "auto",
         dark_variant = "main",
@@ -23,14 +22,6 @@ return {
     priority = 1000,
     config = function()
       require("nvim-web-devicons").setup {}
-    end,
-  },
-
-  -- Edit
-  {
-    "mbbill/undotree",
-    config = function()
-      vim.keymap.set("n", "<leader>u", "<Cmd>UndotreeToggle<CR>", { desc = "Undotree" })
     end,
   },
 

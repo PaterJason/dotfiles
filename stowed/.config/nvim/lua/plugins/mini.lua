@@ -135,7 +135,9 @@ function M.config()
   vim.keymap.set("n", "<leader>gh", MiniExtra.pickers.git_hunks, { desc = "Git hunks picker" })
 
   vim.keymap.set("n", "<leader>sd", MiniExtra.pickers.diagnostic, { desc = "Built-in diagnostic picker" })
-  vim.keymap.set("n", "<leader>/", MiniExtra.pickers.buf_lines, { desc = "Buffer lines picker" })
+  vim.keymap.set("n", "<leader>/", function()
+    MiniExtra.pickers.buf_lines { scope = "current" }
+  end, { desc = "Buffer lines picker" })
 
   vim.keymap.set("n", "<leader>sq", function()
     MiniExtra.pickers.list { scope = "quickfix" }

@@ -7,6 +7,5 @@ return {
       vim.g.dispatch_no_maps = 1
     end,
   },
-  "tpope/vim-repeat",
   "tpope/vim-sleuth",
 }

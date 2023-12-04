@@ -19,6 +19,7 @@ o.updatetime = 500
 opt.diffopt:append { "linematch:60", "vertical", "foldcolumn:0", "indent-heuristic" }
 
 -- Appearance
+o.background = "light"
 o.breakindent = true
 o.linebreak = true
 o.number = true
