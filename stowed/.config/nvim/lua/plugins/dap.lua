@@ -1,14 +1,22 @@
 ---@type LazySpec
 local M = {
   "mfussenegger/nvim-dap",
+  dependencies = {
+    "theHamsta/nvim-dap-virtual-text",
+  },
 }
 
 function M.config()
   local dap = require "dap"
+  require("nvim-dap-virtual-text").setup {
+    highlight_new_as_changed = true,
+  }
+
   local widgets = require "dap.ui.widgets"
   dap.defaults.fallback.terminal_win_cmd = "tabnew"
 
   vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+  vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue" })
   vim.keymap.set("n", "<Leader>dr", dap.repl.toggle, { desc = "Toggle repl" })
   vim.keymap.set({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
   vim.keymap.set("n", "<Leader>df", function()
@@ -56,6 +64,28 @@ function M.config()
   }
   dap.configurations.c = dap.configurations.cpp
   dap.configurations.rust = dap.configurations.cpp
+
+  dap.adapters.mix_task = {
+    type = "executable",
+    command = "elixir-ls-debugger",
+    args = {},
+  }
+  dap.configurations.elixir = {
+    {
+      type = "mix_task",
+      name = "mix test file",
+      task = "test",
+      taskArgs = { "--trace", "${file}" },
+      request = "launch",
+      startApps = true,
+      projectDir = "${workspaceFolder}",
+      requireFiles = {
+        "test/**/test_helper.exs",
+        "${file}",
+      },
+      excludeModules = { "Credo" },
+    },
+  }
 end
 
 return M

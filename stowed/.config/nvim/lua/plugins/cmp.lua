@@ -4,6 +4,7 @@ local M = {
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-nvim-lsp-signature-help",
+    "rcarriga/cmp-dap",
     "PaterJason/cmp-conjure",
   },
 }
@@ -28,6 +29,9 @@ function M.config()
 
   ---@diagnostic disable-next-line: missing-fields
   cmp.setup {
+    enabled = function()
+      return vim.bo.buftype ~= "prompt" or require("cmp_dap").is_dap_buffer()
+    end,
     snippet = {
       expand = function(args)
         vim.snippet.expand(args.body)
@@ -47,6 +51,12 @@ function M.config()
       { name = "conjure" },
     }),
   }
+
+  require("cmp").setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+    sources = {
+      { name = "dap" },
+    },
+  })
 end
 
 return M
