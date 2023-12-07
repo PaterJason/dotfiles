@@ -1,10 +1,18 @@
 vim.diagnostic.config {
   severity_sort = true,
   signs = false,
+  float = {
+    source = true,
+  },
 }
-
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+
+local methods = vim.lsp.protocol.Methods
+local handlers = vim.lsp.handlers
+
+handlers[methods.textDocument_documentSymbol] =
+  vim.lsp.with(handlers[methods.textDocument_documentSymbol], { loclist = true })
 
 local augroup = vim.api.nvim_create_augroup("JPConfigLsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("JPConfigLspAttach", {})
@@ -13,7 +21,6 @@ local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
   ---@cast client -?
   local bufnr = args.buf
-  local methods = vim.lsp.protocol.Methods
 
   -- Keymaps
   local mappings = {
@@ -43,7 +50,6 @@ local function attach(args)
     { methods.callHierarchy_incomingCalls, "<leader>ci", vim.lsp.buf.incoming_calls, "Incoming calls" },
     { methods.callHierarchy_outgoingCalls, "<leader>co", vim.lsp.buf.outgoing_calls, "Outgoing calls" },
     { methods.textDocument_references, "gr", vim.lsp.buf.references, "List References" },
-    { methods.textDocument_formatting, "<leader>f", vim.lsp.buf.format, "Format" },
 
     { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace Symbols" },
     { methods.textDocument_documentSymbol, "gO", vim.lsp.buf.document_symbol, "Document Symbols" },
