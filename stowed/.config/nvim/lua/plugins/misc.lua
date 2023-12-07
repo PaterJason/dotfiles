@@ -25,6 +25,15 @@ return {
     end,
   },
 
+  {
+    "stevearc/oil.nvim",
+    config = function()
+      require("oil").setup {}
+      vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory" })
+      vim.keymap.set("n", "_", "<Cmd>Oil .<CR>", { desc = "Open current directory" })
+    end,
+  },
+
   -- Clojure
   {
     "Olical/conjure",

@@ -104,13 +104,6 @@ function M.config()
     },
   }
 
-  require("mini.files").setup {}
-  vim.g.loaded_netrw = 1
-  vim.g.loaded_netrwPlugin = 1
-  vim.keymap.set("n", "-", function()
-    MiniFiles.open(nil, false)
-  end, { desc = "Open Mini Files" })
-
   require("mini.pairs").setup {}
 
   require("mini.pick").setup {
