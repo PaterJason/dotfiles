@@ -9,6 +9,12 @@ function M.config()
   require("mini.ai").setup {
     n_lines = 100,
     search_method = "cover",
+    mappings = {
+      around_next = "",
+      inside_next = "",
+      around_last = "",
+      inside_last = "",
+    },
     custom_textobjects = {
       f = false,
       B = MiniExtra.gen_ai_spec.buffer(),

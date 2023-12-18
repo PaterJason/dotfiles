@@ -27,6 +27,8 @@ function M.config()
     end
   end, { expr = true })
 
+  vim.api.nvim_create_autocmd("InsertLeave", { callback = vim.snippet.exit })
+
   ---@diagnostic disable-next-line: missing-fields
   cmp.setup {
     enabled = function()
