@@ -27,9 +27,6 @@ function M.config()
     end
   end, { expr = true })
 
-  vim.api.nvim_create_autocmd("InsertLeave", { callback = vim.snippet.exit })
-
-  ---@diagnostic disable-next-line: missing-fields
   cmp.setup {
     enabled = function()
       return vim.bo.buftype ~= "prompt" or require("cmp_dap").is_dap_buffer()
@@ -54,7 +51,6 @@ function M.config()
     }),
   }
 
-  ---@diagnostic disable-next-line: missing-fields
   require("cmp").setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
     sources = {
       { name = "dap" },
