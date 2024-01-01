@@ -13,6 +13,8 @@ local function lspconfig_config()
     end,
   })
 
+  local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
   ---@type table<string, lspconfig.Config>
   local server_settings = {
     cssls = {},
@@ -36,35 +38,8 @@ local function lspconfig_config()
           },
           hint = { enable = true },
           format = { enable = false },
-          telemetry = { enable = false },
         },
       },
-
-      ---@param client lsp.Client
-      on_init = function(client)
-        local cwd = vim.uv.cwd()
-        ---@cast cwd -?
-        if
-          vim.fs.basename(cwd) == "nvim"
-          or vim.iter(vim.fs.parents(cwd)):any(function(dir)
-            return vim.fs.basename(dir) == "nvim"
-          end)
-        then
-          client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
-            Lua = {
-              runtime = {
-                version = "LuaJIT",
-                pathStrict = true,
-              },
-              workspace = {
-                checkThirdParty = false,
-                library = { "$VIMRUNTIME/lua", "${3rd}/luv/library" },
-              },
-            },
-          })
-          client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-        end
-      end,
     },
     texlab = {
       settings = {
@@ -125,6 +100,7 @@ local function lspconfig_config()
     marksman = {},
   }
   for server, config in pairs(server_settings) do
+    config.capabilities = capabilities
     lspconfig[server].setup(config)
   end
 end
@@ -155,6 +131,12 @@ return {
 
       -- language support
       "b0o/SchemaStore.nvim",
+      {
+        "folke/neodev.nvim",
+        config = function()
+          require("neodev").setup {}
+        end,
+      },
     },
     config = lspconfig_config,
   },
