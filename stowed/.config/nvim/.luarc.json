@@ -4,27 +4,6 @@
     "version": "LuaJIT"
   },
   "workspace": {
-    "checkThirdParty": false,
-    "library": [
-      "$VIMRUNTIME/lua",
-      "${3rd}/luv/library",
-      "~/.local/share/nvim/lazy/gitsigns.nvim/lua",
-      "~/.local/share/nvim/lazy/lazy.nvim/lua",
-      "~/.local/share/nvim/lazy/mason.nvim/lua/mason",
-      "~/.local/share/nvim/lazy/mini.nvim/lua",
-      "~/.local/share/nvim/lazy/nvim-cmp/lua",
-      "~/.local/share/nvim/lazy/nvim-dap/lua",
-      "~/.local/share/nvim/lazy/nvim-lint/lua/lint.lua",
-      "~/.local/share/nvim/lazy/nvim-lspconfig/lua",
-      "~/.local/share/nvim/lazy/nvim-treesitter/lua",
-      "~/.local/share/nvim/lazy/nvim-web-devicons/lua/nvim-web-devicons.lua",
-      "~/.local/share/nvim/lazy/rose-pine/lua",
-      "~/.local/share/nvim/lazy/rustaceanvim/lua"
-    ],
-    "ignoreDir": [
-      ".vscode",
-      "test",
-      "lspconfig/server_configurations"
-    ]
+    "checkThirdParty": false
   }
 }

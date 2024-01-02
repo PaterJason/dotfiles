@@ -26,6 +26,7 @@ function M.config()
     widgets.centered_float(widgets.scopes)
   end, { desc = "Scopes" })
 
+  -- JavaScript & TypeScript
   dap.adapters.firefox = {
     type = "executable",
     command = "firefox-debug-adapter",
@@ -42,6 +43,7 @@ function M.config()
   }
   dap.configurations.typescript = dap.configurations.javascript
 
+  -- C, C++ & Rust
   dap.adapters.codelldb = {
     type = "server",
     port = "${port}",
@@ -64,28 +66,6 @@ function M.config()
   }
   dap.configurations.c = dap.configurations.cpp
   dap.configurations.rust = dap.configurations.cpp
-
-  dap.adapters.mix_task = {
-    type = "executable",
-    command = "elixir-ls-debugger",
-    args = {},
-  }
-  dap.configurations.elixir = {
-    {
-      type = "mix_task",
-      name = "mix test file",
-      task = "test",
-      taskArgs = { "--trace", "${file}" },
-      request = "launch",
-      startApps = true,
-      projectDir = "${workspaceFolder}",
-      requireFiles = {
-        "test/**/test_helper.exs",
-        "${file}",
-      },
-      excludeModules = { "Credo" },
-    },
-  }
 end
 
 return M
