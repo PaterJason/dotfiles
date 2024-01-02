@@ -30,15 +30,24 @@ o.wrap = false
 o.ignorecase = true
 o.infercase = true
 o.smartcase = true
-
+o.tabstop = 2
 o.completeopt = "menuone,noinsert,noselect"
 o.nrformats = "alpha,hex,bin,unsigned"
 
 -- Extra UI options
 o.pumheight = 16
-o.listchars = "tab:| ,trail:·,extends:…,precedes:…,nbsp:␣"
 o.list = true
-o.fillchars = "eob: ,fold: "
+opt.listchars = {
+  tab = "| ",
+  trail = "·",
+  nbsp = "␣",
+  extends = "…",
+  precedes = "…",
+}
+opt.fillchars = {
+  eob = " ",
+  fold = " ",
+}
 o.wildmode = "longest:full,full"
 
 -- Folds
