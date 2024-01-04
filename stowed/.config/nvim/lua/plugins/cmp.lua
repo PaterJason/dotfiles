@@ -36,6 +36,10 @@ function M.config()
         vim.snippet.expand(args.body)
       end,
     },
+    window = {
+      completion = cmp.config.window.bordered { border = "single" },
+      documentation = cmp.config.window.bordered { border = "single" },
+    },
     mapping = cmp.mapping.preset.insert {
       ["<C-d>"] = cmp.mapping.scroll_docs(8),
       ["<C-u>"] = cmp.mapping.scroll_docs(-8),

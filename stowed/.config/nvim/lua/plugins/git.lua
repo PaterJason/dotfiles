@@ -1,15 +1,18 @@
 ---@type LazySpec
 return {
-  "tpope/vim-fugitive",
+  {
+    "tpope/vim-fugitive",
+    dependencies = { "tpope/vim-rhubarb" },
+  },
   {
     "lewis6991/gitsigns.nvim",
-    dependencies = "nvim-lua/plenary.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local gitsigns = require "gitsigns"
       gitsigns.setup {
         signcolumn = false,
         numhl = true,
-        preview_config = { border = "solid" },
+        preview_config = { border = "single" },
         on_attach = function(bufnr)
           local function map(mode, l, r, opts)
             opts = opts or {}

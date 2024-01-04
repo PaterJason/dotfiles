@@ -1,9 +1,7 @@
 ---@type LazySpec
 local M = {
   "mfussenegger/nvim-dap",
-  dependencies = {
-    "theHamsta/nvim-dap-virtual-text",
-  },
+  dependencies = { "theHamsta/nvim-dap-virtual-text" },
 }
 
 function M.config()

@@ -29,9 +29,9 @@ return {
     "stevearc/oil.nvim",
     config = function()
       require("oil").setup {
-        float = { border = "solid" },
-        preview = { border = "solid" },
-        progress = { border = "solid" },
+        float = { border = "single" },
+        preview = { border = "single" },
+        progress = { border = "single" },
       }
       vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory" })
       vim.keymap.set("n", "_", "<Cmd>Oil .<CR>", { desc = "Open current directory" })
@@ -45,7 +45,6 @@ return {
       vim.g["conjure#client_on_load"] = false
       vim.g["conjure#completion#omnifunc"] = false
       vim.g["conjure#highlight#enabled"] = true
-      vim.g["conjure#log#hud#border"] = "solid"
       vim.g["conjure#mapping#doc_word"] = "K"
     end,
   },

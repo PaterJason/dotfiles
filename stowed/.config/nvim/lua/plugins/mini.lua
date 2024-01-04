@@ -88,7 +88,6 @@ function M.config()
     window = {
       config = {
         width = 60,
-        border = "solid",
       },
     },
   }
@@ -107,7 +106,6 @@ function M.config()
   require("mini.pairs").setup {}
 
   require("mini.pick").setup {
-    window = { config = { border = "solid" } },
     mappings = { choose_marked = "<C-q>" },
   }
   vim.ui.select = MiniPick.ui_select

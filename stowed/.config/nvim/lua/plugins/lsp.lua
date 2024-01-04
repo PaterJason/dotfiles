@@ -117,6 +117,7 @@ return {
         config = function()
           require("mason").setup {
             ui = {
+              border = "single",
               icons = {
                 package_installed = "✓",
                 package_pending = "➜",
@@ -125,7 +126,7 @@ return {
             },
           }
           require("mason-lspconfig").setup {}
-          vim.keymap.set("n", "<leader>m", "<Cmd>Mason<CR>", { desc = "Mason" })
+          vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
         end,
       },
 
@@ -154,14 +155,14 @@ return {
         tools = {
           hover_actions = {
             border = {
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
-              { " ", "NormalFloat" },
+              { "┌", "FloatBorder" },
+              { "─", "FloatBorder" },
+              { "┐", "FloatBorder" },
+              { "│", "FloatBorder" },
+              { "┘", "FloatBorder" },
+              { "─", "FloatBorder" },
+              { "└", "FloatBorder" },
+              { "│", "FloatBorder" },
             },
           },
         },

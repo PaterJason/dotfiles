@@ -7,12 +7,21 @@ vim.diagnostic.config {
 }
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
 local methods = vim.lsp.protocol.Methods
 local handlers = vim.lsp.handlers
 
 handlers[methods.textDocument_documentSymbol] =
   vim.lsp.with(handlers[methods.textDocument_documentSymbol], { loclist = true })
+handlers[methods.textDocument_hover] = vim.lsp.with(vim.lsp.handlers.hover, {
+  border = "single",
+  title = "Hover",
+})
+handlers[methods.textDocument_signatureHelp] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+  border = "single",
+  title = "Signature help",
+})
 
 local augroup = vim.api.nvim_create_augroup("JPConfigLsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("JPConfigLspAttach", {})

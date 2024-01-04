@@ -21,8 +21,12 @@ require("lazy").setup("plugins", {
     patterns = { "PaterJason" },
     fallback = true,
   },
+  ui = {
+    border = "single",
+    title = "lazy.nvim"
+  },
   change_detection = {
     notify = false,
   },
 })
-vim.keymap.set("n", "<leader>p", "<Cmd>Lazy<CR>", { desc = "Plugins" })
+vim.keymap.set("n", "<leader>p", vim.cmd.Lazy, { desc = "Plugins" })
