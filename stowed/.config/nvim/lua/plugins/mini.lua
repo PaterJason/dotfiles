@@ -103,6 +103,14 @@ function M.config()
     },
   }
 
+  require("mini.notify").setup {
+    lsp_progress = {
+      duration_last = 2500,
+      enable = true,
+    },
+  }
+  vim.notify = MiniNotify.make_notify()
+
   require("mini.pairs").setup {}
 
   require("mini.pick").setup {

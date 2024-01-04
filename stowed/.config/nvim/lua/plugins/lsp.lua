@@ -142,12 +142,6 @@ return {
     config = lspconfig_config,
   },
   {
-    "j-hui/fidget.nvim",
-    config = function()
-      require("fidget").setup {}
-    end,
-  },
-  {
     "mrcjkb/rustaceanvim",
     init = function()
       ---@type RustaceanOpts
