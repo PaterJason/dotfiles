@@ -58,6 +58,6 @@ o.foldtext = "v:lua.require'jp.call'.foldtext()"
 vim.cmd.packadd "cfilter"
 
 -- GUI
-if vim.fn.has("gui_running") == 1 then
+if vim.fn.has "gui_running" == 1 then
   vim.o.guifont = "Monospace:h10"
 end

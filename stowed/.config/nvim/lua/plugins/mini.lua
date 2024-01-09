@@ -108,6 +108,9 @@ function M.config()
       duration_last = 2500,
       enable = true,
     },
+    window = {
+      winblend = 0,
+    },
   }
   vim.notify = MiniNotify.make_notify()
 
