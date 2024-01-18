@@ -55,6 +55,11 @@ local function lspconfig_config()
         },
       },
     },
+    sqls = {
+      on_attach = function(client, bufnr)
+        require('sqls').on_attach(client, bufnr)
+      end
+    },
     texlab = {
       settings = {
         texlab = {
@@ -152,6 +157,7 @@ return {
           require("neodev").setup {}
         end,
       },
+      { "nanotee/sqls.nvim" },
     },
     config = lspconfig_config,
   },

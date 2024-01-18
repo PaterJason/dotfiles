@@ -7,6 +7,7 @@ local M = {
 
       lint.linters_by_ft = {
         fish = { "fish" },
+        sql = { "sqlfluff" }
       }
 
       local augroup = vim.api.nvim_create_augroup("nvim_lint", { clear = true })
@@ -25,6 +26,7 @@ local M = {
         formatters_by_ft = {
           fish = { "fish_indent" },
           lua = { "stylua" },
+          sql = { "sqlfluff" }
         },
       }
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"

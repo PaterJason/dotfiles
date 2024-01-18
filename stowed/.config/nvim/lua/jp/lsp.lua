@@ -2,7 +2,10 @@ vim.diagnostic.config {
   severity_sort = true,
   signs = false,
   float = {
+    border = "single",
+    header = "",
     source = true,
+    title = "Diagnostics",
   },
 }
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
@@ -12,8 +15,6 @@ vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagno
 local methods = vim.lsp.protocol.Methods
 local handlers = vim.lsp.handlers
 
-handlers[methods.textDocument_documentSymbol] =
-  vim.lsp.with(handlers[methods.textDocument_documentSymbol], { loclist = true })
 handlers[methods.textDocument_hover] = vim.lsp.with(vim.lsp.handlers.hover, {
   border = "single",
   title = "Hover",
