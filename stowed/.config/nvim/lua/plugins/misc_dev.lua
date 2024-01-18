@@ -3,32 +3,30 @@ local M = {
   {
     "mfussenegger/nvim-lint",
     config = function()
-      local lint = require "lint"
+      local lint = require("lint")
 
       lint.linters_by_ft = {
         fish = { "fish" },
-        sql = { "sqlfluff" }
+        sql = { "sqlfluff" },
       }
 
       local augroup = vim.api.nvim_create_augroup("nvim_lint", { clear = true })
       vim.api.nvim_create_autocmd({ "BufWritePost" }, {
         group = augroup,
-        callback = function()
-          lint.try_lint()
-        end,
+        callback = function() lint.try_lint() end,
       })
     end,
   },
   {
     "stevearc/conform.nvim",
     config = function()
-      require("conform").setup {
+      require("conform").setup({
         formatters_by_ft = {
           fish = { "fish_indent" },
           lua = { "stylua" },
-          sql = { "sqlfluff" }
+          sql = { "sqlfluff" },
         },
-      }
+      })
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 
       vim.api.nvim_create_user_command("Format", function(args)
@@ -40,7 +38,7 @@ local M = {
             ["end"] = { args.line2, end_line:len() },
           }
         end
-        require("conform").format { async = true, lsp_fallback = true, range = range }
+        require("conform").format({ async = true, lsp_fallback = true, range = range })
       end, { range = true, desc = "Format with conform.nvim" })
       vim.keymap.set({ "n", "v" }, "<Leader>f", ":Format<CR>", { silent = true, desc = "Format with conform.nvim" })
     end,

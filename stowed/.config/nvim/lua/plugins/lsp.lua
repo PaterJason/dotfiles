@@ -1,15 +1,13 @@
 local augroup = vim.api.nvim_create_augroup("UserConfigLspconfig", {})
 
 local function lspconfig_config()
-  local lspconfig = require "lspconfig"
+  local lspconfig = require("lspconfig")
 
   lspconfig.util.default_config.autostart = false
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = augroup,
     callback = function(args)
-      if vim.bo[args.buf].buftype == "" then
-        vim.cmd.LspStart()
-      end
+      if vim.bo[args.buf].buftype == "" then vim.cmd.LspStart() end
     end,
   })
 
@@ -56,9 +54,7 @@ local function lspconfig_config()
       },
     },
     sqls = {
-      on_attach = function(client, bufnr)
-        require('sqls').on_attach(client, bufnr)
-      end
+      on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end,
     },
     texlab = {
       settings = {
@@ -112,7 +108,7 @@ local function lspconfig_config()
     lemminx = {
       settings = {
         xml = {
-          catalogs = { vim.fs.normalize "~/.config/fontconfig/catalog.xml" },
+          catalogs = { vim.fs.normalize("~/.config/fontconfig/catalog.xml") },
         },
       },
     },
@@ -134,7 +130,7 @@ return {
         dependencies = { "williamboman/mason-lspconfig.nvim" },
         build = ":MasonUpdate",
         config = function()
-          require("mason").setup {
+          require("mason").setup({
             ui = {
               border = "single",
               icons = {
@@ -143,8 +139,8 @@ return {
                 package_uninstalled = "✗",
               },
             },
-          }
-          require("mason-lspconfig").setup {}
+          })
+          require("mason-lspconfig").setup({})
           vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
         end,
       },
@@ -153,9 +149,7 @@ return {
       "b0o/SchemaStore.nvim",
       {
         "folke/neodev.nvim",
-        config = function()
-          require("neodev").setup {}
-        end,
+        config = function() require("neodev").setup({}) end,
       },
       { "nanotee/sqls.nvim" },
     },
@@ -192,9 +186,7 @@ return {
         },
         dap = {
           adapter = require("dap").adapters.codelldb,
-          auto_generate_source_map = function()
-            return false
-          end,
+          auto_generate_source_map = function() return false end,
         },
       }
 
@@ -202,9 +194,7 @@ return {
         pattern = { "*.rs" },
         group = augroup,
         callback = function(args)
-          if vim.bo[args.buf].buftype == "" then
-            vim.cmd "RustAnalyzer start"
-          end
+          if vim.bo[args.buf].buftype == "" then vim.cmd("RustAnalyzer start") end
         end,
       })
     end,

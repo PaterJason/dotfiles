@@ -1,4 +1,4 @@
-vim.diagnostic.config {
+vim.diagnostic.config({
   severity_sort = true,
   signs = false,
   float = {
@@ -7,7 +7,7 @@ vim.diagnostic.config {
     source = true,
     title = "Diagnostics",
   },
-}
+})
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
@@ -129,29 +129,26 @@ local function select()
     },
     {
       text = "Toggle inlay hints",
-      on_choice = function()
-        vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0))
-      end,
+      on_choice = function() vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0)) end,
       method = methods.textDocument_inlayHint,
     },
   }
 
-  items = vim.tbl_filter(function(item)
-    return not vim.tbl_isempty(vim.lsp.get_clients {
-      bufnr = 0,
-      method = item.method,
-    })
-  end, items)
+  items = vim.tbl_filter(
+    function(item)
+      return not vim.tbl_isempty(vim.lsp.get_clients({
+        bufnr = 0,
+        method = item.method,
+      }))
+    end,
+    items
+  )
 
   vim.ui.select(items, {
-    format_item = function(item)
-      return item.text
-    end,
+    format_item = function(item) return item.text end,
     prompt = "LSP",
   }, function(choice)
-    if choice then
-      choice.on_choice()
-    end
+    if choice then choice.on_choice() end
   end)
 end
 
@@ -177,9 +174,7 @@ local function attach(args)
     {
       methods.workspace_workspaceFolders,
       "<leader>wl",
-      function()
-        vim.notify(table.concat(vim.lsp.buf.list_workspace_folders(), ", "))
-      end,
+      function() vim.notify(table.concat(vim.lsp.buf.list_workspace_folders(), ", ")) end,
       "List Workspace Folders",
     },
     { methods.textDocument_definition, "<leader>D", vim.lsp.buf.type_definition, "Type Definition" },
@@ -194,23 +189,19 @@ local function attach(args)
     {
       methods.textDocument_inlayHint,
       "<leader>ti",
-      function()
-        vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
-      end,
+      function() vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr)) end,
       "Toggle Inlay Hints",
     },
   }
   for _, value in ipairs(mappings) do
     local method, lhs, rhs, desc = unpack(value)
-    if client.supports_method(method) then
-      vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
-    end
+    if client.supports_method(method) then vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc }) end
   end
 
   vim.keymap.set("n", "<leader>l", select, { buffer = bufnr, desc = "Select LSP call" })
 
   -- Autocommands
-  vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
+  vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
   if client.supports_method(methods.textDocument_documentHighlight) then
     vim.api.nvim_create_autocmd(
       "CursorHold",
@@ -241,7 +232,7 @@ vim.api.nvim_create_autocmd("LspDetach", {
     local bufnr = args.buf
     local client = vim.lsp.get_client_by_id(args.data.client_id) or {}
 
-    vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }
+    vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
     vim.lsp.codelens.clear(client.id)
     vim.lsp.buf.clear_references()
   end,

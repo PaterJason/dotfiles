@@ -1,9 +1,7 @@
 local M = {}
 
 function M.foldtext()
-  if vim.opt_local.foldmethod:get() == "marker" then
-    return vim.fn.foldtext()
-  end
+  if vim.opt_local.foldmethod:get() == "marker" then return vim.fn.foldtext() end
 
   local foldtext = vim.treesitter.foldtext()
   if type(foldtext) == "table" then
@@ -13,9 +11,7 @@ function M.foldtext()
       }))
       :any(
         ---@param diagnostic Diagnostic
-        function(diagnostic)
-          return diagnostic.lnum + 1 >= vim.v.foldstart and diagnostic.lnum + 1 <= vim.v.foldend
-        end
+        function(diagnostic) return diagnostic.lnum + 1 >= vim.v.foldstart and diagnostic.lnum + 1 <= vim.v.foldend end
       )
 
     foldtext[#foldtext + 1] = {

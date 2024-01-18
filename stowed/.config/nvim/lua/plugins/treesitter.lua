@@ -16,13 +16,11 @@ function M.config()
     "regex",
   }
   for name, type in vim.fs.dir(vim.fs.joinpath(vim.env.VIMRUNTIME, "queries")) do
-    if type == "directory" then
-      ensure_installed[#ensure_installed + 1] = name
-    end
+    if type == "directory" then ensure_installed[#ensure_installed + 1] = name end
   end
 
   ---@diagnostic disable-next-line: missing-fields
-  require("nvim-treesitter.configs").setup {
+  require("nvim-treesitter.configs").setup({
     ensure_installed = ensure_installed,
     auto_install = true,
     highlight = {
@@ -63,11 +61,9 @@ function M.config()
         },
       },
     },
-  }
+  })
 
-  vim.keymap.set("n", "gC", function()
-    require("treesitter-context").go_to_context()
-  end, { silent = true })
+  vim.keymap.set("n", "gC", function() require("treesitter-context").go_to_context() end, { silent = true })
 
   vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
@@ -76,7 +72,7 @@ function M.config()
       local methods = vim.lsp.protocol.Methods
 
       if client.supports_method(methods.textDocument_documentHighlight) then
-        vim.cmd "TSBufDisable refactor.highlight_definitions"
+        vim.cmd("TSBufDisable refactor.highlight_definitions")
       end
     end,
   })
@@ -85,7 +81,7 @@ function M.config()
       local bufnr = args.buf
       local client = vim.lsp.get_client_by_id(args.data.client_id) or {}
 
-      vim.cmd "TSBufEnable refactor.highlight_definitions"
+      vim.cmd("TSBufEnable refactor.highlight_definitions")
     end,
   })
 end

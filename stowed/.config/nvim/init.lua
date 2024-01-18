@@ -1,7 +1,7 @@
-require "jp.options"
-require "jp.lsp"
+require("jp.options")
+require("jp.lsp")
 
-local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim
     .system({
@@ -17,13 +17,14 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 require("lazy").setup("plugins", {
   dev = {
-    path = vim.fs.normalize "~/src/nvim",
+    path = vim.fs.normalize("~/src/nvim"),
     patterns = { "PaterJason" },
     fallback = true,
   },
   ui = {
     border = "single",
     title = "lazy.nvim",
+    pills = false,
   },
   change_detection = {
     notify = false,

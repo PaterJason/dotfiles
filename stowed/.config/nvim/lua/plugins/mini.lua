@@ -4,9 +4,9 @@ local M = {
 }
 
 function M.config()
-  require("mini.extra").setup {}
+  require("mini.extra").setup({})
 
-  require("mini.ai").setup {
+  require("mini.ai").setup({
     n_lines = 100,
     search_method = "cover",
     mappings = {
@@ -23,26 +23,26 @@ function M.config()
       L = MiniExtra.gen_ai_spec.line(),
       N = MiniExtra.gen_ai_spec.number(),
     },
-  }
+  })
 
-  require("mini.align").setup {}
+  require("mini.align").setup({})
 
-  require("mini.basics").setup {
+  require("mini.basics").setup({
     options = { basic = false },
     mappings = { basic = false, option_toggle_prefix = "yo" },
     autocommands = { basic = true },
-  }
+  })
 
-  require("mini.bracketed").setup {
+  require("mini.bracketed").setup({
     comment = { suffix = "/", options = {} },
-  }
+  })
 
-  require("mini.bufremove").setup {}
+  require("mini.bufremove").setup({})
   vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
   vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
 
-  local miniclue = require "mini.clue"
-  miniclue.setup {
+  local miniclue = require("mini.clue")
+  miniclue.setup({
     triggers = {
       -- Leader triggers
       { mode = "n", keys = "<Leader>" },
@@ -90,20 +90,20 @@ function M.config()
         width = 60,
       },
     },
-  }
+  })
 
-  require("mini.comment").setup {}
+  require("mini.comment").setup({})
 
-  local hipatterns = require "mini.hipatterns"
-  hipatterns.setup {
+  local hipatterns = require("mini.hipatterns")
+  hipatterns.setup({
     highlighters = {
-      hex_color = hipatterns.gen_highlighter.hex_color {
+      hex_color = hipatterns.gen_highlighter.hex_color({
         style = "#",
-      },
+      }),
     },
-  }
+  })
 
-  require("mini.notify").setup {
+  require("mini.notify").setup({
     lsp_progress = {
       duration_last = 2500,
       enable = true,
@@ -111,25 +111,20 @@ function M.config()
     window = {
       winblend = 0,
     },
-  }
+  })
   vim.notify = MiniNotify.make_notify()
 
-  require("mini.pairs").setup {}
+  require("mini.pairs").setup({})
 
-  require("mini.pick").setup {
+  require("mini.pick").setup({
     mappings = { choose_marked = "<C-q>" },
-  }
+  })
   vim.ui.select = MiniPick.ui_select
-  vim.keymap.set("n", "<leader>sb", MiniPick.builtin.buffers, { desc = "Pick from buffers" })
-  vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files, { desc = "Pick from files" })
-  vim.keymap.set(
-    "n",
-    "<leader>sg",
-    MiniPick.builtin.grep_live,
-    { desc = "Pick from pattern matches with live feedback" }
-  )
-  vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help, { desc = "Pick from help tags" })
-  vim.keymap.set("n", "<leader>sr", MiniPick.builtin.resume, { desc = "Resume latest picker" })
+  vim.keymap.set("n", "<leader>sb", MiniPick.builtin.buffers, { desc = "Buffers" })
+  vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files, { desc = "Files" })
+  vim.keymap.set("n", "<leader>sg", MiniPick.builtin.grep_live, { desc = "Grep live" })
+  vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help, { desc = "Help tags" })
+  vim.keymap.set("n", "<leader>sr", MiniPick.builtin.resume, { desc = "Resume" })
 
   vim.keymap.set("n", "<leader>gf", MiniExtra.pickers.git_files, { desc = "Git files picker" })
   vim.keymap.set("n", "<leader>gb", MiniExtra.pickers.git_branches, { desc = "Git branches picker" })
@@ -137,16 +132,12 @@ function M.config()
   vim.keymap.set("n", "<leader>gh", MiniExtra.pickers.git_hunks, { desc = "Git hunks picker" })
 
   vim.keymap.set("n", "<leader>sd", MiniExtra.pickers.diagnostic, { desc = "Built-in diagnostic picker" })
-  vim.keymap.set("n", "<leader>/", function()
-    MiniExtra.pickers.buf_lines { scope = "current" }
-  end, { desc = "Buffer lines picker" })
-
-  vim.keymap.set("n", "<leader>sq", function()
-    MiniExtra.pickers.list { scope = "quickfix" }
-  end, { desc = "Pick from quickfix list" })
-  vim.keymap.set("n", "<leader>sl", function()
-    MiniExtra.pickers.list { scope = "location" }
-  end, { desc = "Pick from location list" })
+  vim.keymap.set(
+    "n",
+    "<leader>sl",
+    function() MiniExtra.pickers.buf_lines({ scope = "current" }) end,
+    { desc = "Buffer lines" }
+  )
 
   vim.keymap.set("n", "<leader><leader>", function()
     local items = {}
@@ -167,7 +158,7 @@ function M.config()
       },
     }
 
-    for _, pickers in ipairs { MiniPick.builtin, MiniExtra.pickers } do
+    for _, pickers in ipairs({ MiniPick.builtin, MiniExtra.pickers }) do
       for key, value in vim.spairs(pickers) do
         if scopes[key] then
           for _, scope in ipairs(scopes[key]) do
@@ -189,16 +180,14 @@ function M.config()
       end,
       prompt = "Pickers",
     }, function(choice)
-      if choice then
-        choice.callback { scope = choice.scope }
-      end
+      if choice then choice.callback({ scope = choice.scope }) end
     end)
   end, { desc = "Select picker" })
 
-  require("mini.surround").setup {
+  require("mini.surround").setup({
     n_lines = 100,
     search_method = "cover",
-  }
+  })
 end
 
 return M

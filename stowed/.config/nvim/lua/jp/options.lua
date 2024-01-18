@@ -7,12 +7,12 @@ g.maplocalleader = [[\]]
 o.clipboard = "unnamedplus"
 o.confirm = true
 o.dictionary = "/usr/share/dict/british-english"
-opt.grepformat:prepend "%f:%l:%c:%m"
+opt.grepformat:prepend("%f:%l:%c:%m")
 o.grepprg = "rg --vimgrep"
 o.spelllang = "en_gb"
 o.swapfile = false
 o.updatetime = 250
-opt.diffopt:append { "vertical", "algorithm:patience", "linematch:60" }
+opt.diffopt:append({ "vertical", "algorithm:patience", "linematch:60" })
 
 -- Appearance
 o.background = "light"
@@ -55,9 +55,7 @@ o.foldcolumn = "auto"
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 o.foldtext = "v:lua.require'jp.call'.foldtext()"
 
-vim.cmd.packadd "cfilter"
+vim.cmd.packadd("cfilter")
 
 -- GUI
-if vim.fn.has "gui_running" == 1 then
-  vim.o.guifont = "Monospace:h10"
-end
+if vim.fn.has("gui_running") == 1 then vim.o.guifont = "Monospace:h10" end
