@@ -26,6 +26,134 @@ handlers[methods.textDocument_signatureHelp] = vim.lsp.with(vim.lsp.handlers.sig
 local augroup = vim.api.nvim_create_augroup("JPConfigLsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("JPConfigLspAttach", {})
 
+local function select()
+  ---@type {text: string, on_choice: fun(), method: string}[]
+  local items = {
+    {
+      text = "Add workspace folder",
+      on_choice = vim.lsp.buf.add_workspace_folder,
+      method = methods.workspace_workspaceFolders,
+    },
+    -- {
+    --   text = "Clear references",
+    --   on_choice = vim.lsp.buf.clear_references,
+    --   method = methods.textDocument_documentHighlight,
+    -- },
+    {
+      text = "Code action",
+      on_choice = vim.lsp.buf.code_action,
+      method = methods.textDocument_codeAction,
+    },
+    {
+      text = "Declaration",
+      on_choice = vim.lsp.buf.declaration,
+      method = methods.textDocument_declaration,
+    },
+    {
+      text = "Definition",
+      on_choice = vim.lsp.buf.definition,
+      method = methods.textDocument_definition,
+    },
+    -- {
+    --   text = "Document highlight",
+    --   on_choice = vim.lsp.buf.document_highlight,
+    --   method = methods.textDocument_documentHighlight,
+    -- },
+    {
+      text = "Document symbol",
+      on_choice = vim.lsp.buf.document_symbol,
+      method = methods.textDocument_documentSymbol,
+    },
+    {
+      text = "Format",
+      on_choice = vim.lsp.buf.format,
+      method = methods.textDocument_formatting,
+    },
+    {
+      text = "Hover",
+      on_choice = vim.lsp.buf.hover,
+      method = methods.textDocument_hover,
+    },
+    {
+      text = "Implementation",
+      on_choice = vim.lsp.buf.implementation,
+      method = methods.textDocument_implementation,
+    },
+    {
+      text = "Incoming calls",
+      on_choice = vim.lsp.buf.incoming_calls,
+      method = methods.callHierarchy_incomingCalls,
+    },
+    {
+      text = "List workspace folders",
+      on_choice = function()
+        vim.notify("Workspace folders: " .. table.concat(vim.lsp.buf.list_workspace_folders(), ", "))
+      end,
+      method = methods.workspace_workspaceFolders,
+    },
+    {
+      text = "Outgoing calls",
+      on_choice = vim.lsp.buf.outgoing_calls,
+      method = methods.callHierarchy_outgoingCalls,
+    },
+    {
+      text = "References",
+      on_choice = vim.lsp.buf.references,
+      method = methods.textDocument_references,
+    },
+    {
+      text = "Remove workspace folder",
+      on_choice = vim.lsp.buf.remove_workspace_folder,
+      method = methods.workspace_workspaceFolders,
+    },
+    {
+      text = "Rename",
+      on_choice = vim.lsp.buf.rename,
+      method = methods.textDocument_rename,
+    },
+    {
+      text = "Signature help",
+      on_choice = vim.lsp.buf.signature_help,
+      method = methods.textDocument_signatureHelp,
+    },
+    {
+      text = "Type definition",
+      on_choice = vim.lsp.buf.type_definition,
+      method = methods.textDocument_typeDefinition,
+    },
+    {
+      text = "Workspace symbol",
+      on_choice = vim.lsp.buf.workspace_symbol,
+      method = methods.workspace_symbol,
+    },
+    {
+      text = "Toggle inlay hints",
+      on_choice = function()
+        vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0))
+      end,
+      method = methods.textDocument_inlayHint,
+    },
+  }
+
+  items = vim.tbl_filter(function(item)
+    return not vim.tbl_isempty(vim.lsp.get_clients {
+      bufnr = 0,
+      method = item.method,
+    })
+  end, items)
+
+  vim.ui.select(items, {
+    format_item = function(item)
+      return item.text
+    end,
+    prompt = "LSP",
+  }, function(choice)
+    if choice then
+      choice.on_choice()
+    end
+  end)
+end
+
 local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
   ---@cast client -?
@@ -77,6 +205,8 @@ local function attach(args)
       vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
     end
   end
+
+  vim.keymap.set("n", "<leader>l", select, { buffer = bufnr, desc = "Select LSP call" })
 
   -- Autocommands
   vim.api.nvim_clear_autocmds { group = attach_augroup, buffer = bufnr }

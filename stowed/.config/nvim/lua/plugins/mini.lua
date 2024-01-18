@@ -148,6 +148,53 @@ function M.config()
     MiniExtra.pickers.list { scope = "location" }
   end, { desc = "Pick from location list" })
 
+  vim.keymap.set("n", "<leader><leader>", function()
+    local items = {}
+    local scopes = {
+      buf_lines = { "all", "current" },
+      diagnostic = { "all", "current" },
+      git_files = { "tracked", "modified", "untracked", "ignored", "deleted" },
+      git_hunks = { "unstaged", "staged" },
+      list = { "quickfix", "location" },
+      lsp = {
+        "declaration",
+        "definition",
+        "document_symbol",
+        "implementation",
+        "references",
+        "type_definition",
+        "workspace_symbol",
+      },
+    }
+
+    for _, pickers in ipairs { MiniPick.builtin, MiniExtra.pickers } do
+      for key, value in vim.spairs(pickers) do
+        if scopes[key] then
+          for _, scope in ipairs(scopes[key]) do
+            items[#items + 1] = { builtin = key, callback = value, scope = scope }
+          end
+        else
+          items[#items + 1] = { builtin = key, callback = value }
+        end
+      end
+    end
+
+    vim.ui.select(items, {
+      format_item = function(item)
+        if item.scope then
+          return string.format("%s (%s)", item.builtin, item.scope)
+        else
+          return item.builtin
+        end
+      end,
+      prompt = "Pickers",
+    }, function(choice)
+      if choice then
+        choice.callback { scope = choice.scope }
+      end
+    end)
+  end, { desc = "Select picker" })
+
   require("mini.surround").setup {
     n_lines = 100,
     search_method = "cover",
