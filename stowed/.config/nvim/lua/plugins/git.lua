@@ -55,7 +55,7 @@ return {
           map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diffthis" })
 
           -- Text object
-          map({ "o", "x" }, "ih", gitsigns.select_hunk, { desc = "Select hunk" })
+          map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "Select hunk" })
         end,
       })
     end,

@@ -10,7 +10,7 @@ function M.foldtext()
         severity = { min = vim.diagnostic.severity.WARN },
       }))
       :any(
-        ---@param diagnostic Diagnostic
+        ---@param diagnostic vim.Diagnostic
         function(diagnostic) return diagnostic.lnum + 1 >= vim.v.foldstart and diagnostic.lnum + 1 <= vim.v.foldend end
       )
 
