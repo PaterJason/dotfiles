@@ -22,6 +22,7 @@ local M = {
     config = function()
       require("conform").setup({
         formatters_by_ft = {
+          clojure = { "zprint" },
           fish = { "fish_indent" },
           lua = { "stylua" },
           sql = { "sqlfluff" },
