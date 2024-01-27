@@ -1,12 +1,29 @@
 ---@type LazySpec
 return {
   {
-    "rose-pine/neovim",
-    name = "rose-pine",
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
     config = function()
-      require("rose-pine").setup({})
-      vim.cmd.colorscheme("rose-pine")
+      require("catppuccin").setup({
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false,
+        },
+        integrations = {
+          cmp = true,
+          dap = true,
+          gitsigns = true,
+          markdown = true,
+          mason = true,
+          mini = { enabled = true },
+          native_lsp = { enabled = true },
+          semantic_tokens = true,
+          treesitter = true,
+          treesitter_context = true,
+        },
+      })
+      vim.cmd.colorscheme("catppuccin")
     end,
   },
   {

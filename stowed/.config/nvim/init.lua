@@ -24,7 +24,6 @@ require("lazy").setup("plugins", {
   ui = {
     border = "single",
     title = "lazy.nvim",
-    pills = false,
   },
   change_detection = {
     notify = false,

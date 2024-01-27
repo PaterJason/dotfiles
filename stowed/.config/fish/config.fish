@@ -13,7 +13,7 @@ if status --is-interactive
         cat ~/.config/fish/fish_plugins | fisher install
     end
 
-    fish_config theme choose "Rosé Pine Dawn"
+    fish_config theme choose "Catppuccin Latte"
 end
 
 if type -q direnv
