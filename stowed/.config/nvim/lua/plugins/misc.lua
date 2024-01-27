@@ -32,19 +32,6 @@ return {
     config = function() require("nvim-web-devicons").setup({}) end,
   },
 
-  {
-    "stevearc/oil.nvim",
-    config = function()
-      require("oil").setup({
-        float = { border = "single" },
-        preview = { border = "single" },
-        progress = { border = "single" },
-      })
-      vim.keymap.set("n", "-", "<Cmd>Oil<CR>", { desc = "Open parent directory" })
-      vim.keymap.set("n", "_", "<Cmd>Oil .<CR>", { desc = "Open current directory" })
-    end,
-  },
-
   -- Clojure
   {
     "Olical/conjure",

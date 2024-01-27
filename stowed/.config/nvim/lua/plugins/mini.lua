@@ -94,12 +94,24 @@ function M.config()
 
   require("mini.comment").setup({})
 
+  require("mini.files").setup({
+    windows = {
+      max_number = 1,
+      width_focus = 80,
+    },
+  })
+  vim.keymap.set(
+    "n",
+    "-",
+    function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
+    { desc = "Open parent directory" }
+  )
+  vim.keymap.set("n", "-", function() MiniFiles.open(nil, false) end, { desc = "Open current directory" })
+
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
     highlighters = {
-      hex_color = hipatterns.gen_highlighter.hex_color({
-        style = "#",
-      }),
+      hex_color = hipatterns.gen_highlighter.hex_color({}),
     },
   })
 
@@ -157,7 +169,6 @@ function M.config()
         "workspace_symbol",
       },
     }
-
     for _, pickers in ipairs({ MiniPick.builtin, MiniExtra.pickers }) do
       for key, value in vim.spairs(pickers) do
         if scopes[key] then
@@ -169,7 +180,6 @@ function M.config()
         end
       end
     end
-
     vim.ui.select(items, {
       format_item = function(item)
         if item.scope then
@@ -184,10 +194,15 @@ function M.config()
     end)
   end, { desc = "Select picker" })
 
+  require("mini.statusline").setup({})
+  vim.o.showmode = false
+
   require("mini.surround").setup({
     n_lines = 100,
     search_method = "cover",
   })
+
+  require("mini.tabline").setup({})
 end
 
 return M
