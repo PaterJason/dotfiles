@@ -106,7 +106,7 @@ function M.config()
     function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
     { desc = "Open parent directory" }
   )
-  vim.keymap.set("n", "-", function() MiniFiles.open(nil, false) end, { desc = "Open current directory" })
+  vim.keymap.set("n", "_", function() MiniFiles.open(nil, false) end, { desc = "Open current directory" })
 
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
