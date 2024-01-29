@@ -2,44 +2,83 @@ shell:
   program: /bin/tmux
 font:
   size: 11
+
 colors:
-  primary:
-    background: "0xfaf4ed"
-    foreground: "0x575279"
-  cursor:
-    text: "0x575279"
-    cursor: "0xcecacd"
-  vi_mode_cursor:
-    text: "0x575279"
-    cursor: "0xcecacd"
-  line_indicator:
-    foreground: None
-    background: None
-  selection:
-    text: "0x575279"
-    background: "0xdfdad9"
-  normal:
-    black: "0xf2e9e1"
-    red: "0xb4637a"
-    green: "0x286983"
-    yellow: "0xea9d34"
-    blue: "0x56949f"
-    magenta: "0x907aa9"
-    cyan: "0xd7827e"
-    white: "0x575279"
-  bright:
-    black: "0x9893a5"
-    red: "0xb4637a"
-    green: "0x286983"
-    yellow: "0xea9d34"
-    blue: "0x56949f"
-    magenta: "0x907aa9"
-    cyan: "0xd7827e"
-    white: "0x575279"
-  hints:
-    start:
-      foreground: "#797593"
-      background: "#fffaf3"
-    end:
-      foreground: "#9893a5"
-      background: "#fffaf3"
+    # Default colors
+    primary:
+        background: "#EFF1F5" # base
+        foreground: "#4C4F69" # text
+        # Bright and dim foreground colors
+        dim_foreground: "#4C4F69" # text
+        bright_foreground: "#4C4F69" # text
+
+    # Cursor colors
+    cursor:
+        text: "#EFF1F5" # base
+        cursor: "#DC8A78" # rosewater
+    vi_mode_cursor:
+        text: "#EFF1F5" # base
+        cursor: "#7287FD" # lavender
+
+    # Search colors
+    search:
+        matches:
+            foreground: "#EFF1F5" # base
+            background: "#6C6F85" # subtext0
+        focused_match:
+            foreground: "#EFF1F5" # base
+            background: "#40A02B" # green
+        footer_bar:
+            foreground: "#EFF1F5" # base
+            background: "#6C6F85" # subtext0
+
+    # Keyboard regex hints
+    hints:
+        start:
+            foreground: "#EFF1F5" # base
+            background: "#DF8E1D" # yellow
+        end:
+            foreground: "#EFF1F5" # base
+            background: "#6C6F85" # subtext0
+
+    # Selection colors
+    selection:
+        text: "#EFF1F5" # base
+        background: "#DC8A78" # rosewater
+
+    # Normal colors
+    normal:
+        black: "#5C5F77" # subtext1
+        red: "#D20F39" # red
+        green: "#40A02B" # green
+        yellow: "#DF8E1D" # yellow
+        blue: "#1E66F5" # blue
+        magenta: "#EA76CB" # pink
+        cyan: "#179299" # teal
+        white: "#ACB0BE" # surface2
+
+    # Bright colors
+    bright:
+        black: "#6C6F85" # subtext0
+        red: "#D20F39" # red
+        green: "#40A02B" # green
+        yellow: "#DF8E1D" # yellow
+        blue: "#1E66F5" # blue
+        magenta: "#EA76CB" # pink
+        cyan: "#179299" # teal
+        white: "#BCC0CC" # surface1
+
+    # Dim colors
+    dim:
+        black: "#5C5F77" # subtext1
+        red: "#D20F39" # red
+        green: "#40A02B" # green
+        yellow: "#DF8E1D" # yellow
+        blue: "#1E66F5" # blue
+        magenta: "#EA76CB" # pink
+        cyan: "#179299" # teal
+        white: "#ACB0BE" # surface2
+
+    indexed_colors:
+        - { index: 16, color: "#FE640B" }
+        - { index: 17, color: "#DC8A78" }
