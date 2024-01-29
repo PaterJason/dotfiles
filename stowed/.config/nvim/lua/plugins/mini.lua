@@ -201,8 +201,6 @@ function M.config()
     n_lines = 100,
     search_method = "cover",
   })
-
-  require("mini.tabline").setup({})
 end
 
 return M
