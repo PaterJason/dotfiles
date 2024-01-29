@@ -1,0 +1,4 @@
+{:aliases
+ {:dev/env {:extra-paths ["dev"]}
+  :cider-nrepl {:extra-deps {cider/cider-nrepl {:mvn/version "RELEASE"}}}
+  :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.repl/cider-middleware]"]}}
