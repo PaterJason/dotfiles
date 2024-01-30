@@ -161,33 +161,21 @@ return {
       ---@type RustaceanOpts
       vim.g.rustaceanvim = {
         tools = {
-          hover_actions = {
-            border = {
-              { "┌", "FloatBorder" },
-              { "─", "FloatBorder" },
-              { "┐", "FloatBorder" },
-              { "│", "FloatBorder" },
-              { "┘", "FloatBorder" },
-              { "─", "FloatBorder" },
-              { "└", "FloatBorder" },
-              { "│", "FloatBorder" },
-            },
-          },
+          hover_actions = { border = "single" },
         },
         server = {
           auto_attach = false,
           settings = {
             ["rust-analyzer"] = {
-              checkOnSave = { command = "clippy", extraArgs = { "--", "-W", "clippy::pedantic" } },
+              check = {
+                command = "clippy",
+                extraArgs = { "--", "-W", "clippy::pedantic" },
+              },
               diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
             },
           },
-          standalone = false,
         },
-        dap = {
-          adapter = require("dap").adapters.codelldb,
-          auto_generate_source_map = function() return false end,
-        },
+        dap = { autoload_configurations = true },
       }
 
       vim.api.nvim_create_autocmd("BufReadPost", {
