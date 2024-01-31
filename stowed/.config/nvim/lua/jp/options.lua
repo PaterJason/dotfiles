@@ -53,7 +53,7 @@ o.wildmode = "longest:full,full"
 -- Folds
 o.foldcolumn = "auto"
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-o.foldtext = "v:lua.require'jp.call'.foldtext()"
+o.foldtext = ""
 
 vim.cmd.packadd("cfilter")
 
