@@ -41,7 +41,12 @@ local M = {
         end
         require("conform").format({ async = true, lsp_fallback = true, range = range })
       end, { range = true, desc = "Format with conform.nvim" })
-      vim.keymap.set({ "n", "v" }, "<Leader>f", ":Format<CR>", { silent = true, desc = "Format with conform.nvim" })
+      vim.keymap.set(
+        { "n", "v" },
+        "<Leader>f",
+        ":Format<CR>",
+        { silent = true, desc = "Format with conform.nvim" }
+      )
     end,
   },
 }

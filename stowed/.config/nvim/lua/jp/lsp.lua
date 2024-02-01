@@ -8,7 +8,12 @@ vim.diagnostic.config({
     title = "Diagnostics",
   },
 })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set(
+  "n",
+  "<leader>e",
+  vim.diagnostic.open_float,
+  { desc = "Open floating diagnostic message" }
+)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
@@ -88,7 +93,9 @@ local function select()
     {
       text = "List workspace folders",
       on_choice = function()
-        vim.notify("Workspace folders: " .. table.concat(vim.lsp.buf.list_workspace_folders(), ", "))
+        vim.notify(
+          "Workspace folders: " .. table.concat(vim.lsp.buf.list_workspace_folders(), ", ")
+        )
       end,
       method = methods.workspace_workspaceFolders,
     },
@@ -164,7 +171,12 @@ local function attach(args)
     { methods.textDocument_hover, "K", vim.lsp.buf.hover, "Hover" },
     { methods.textDocument_implementation, "gI", vim.lsp.buf.implementation, "Implementations" },
     { methods.textDocument_signatureHelp, "<C-k>", vim.lsp.buf.signature_help, "Signature Help" },
-    { methods.workspace_workspaceFolders, "<leader>wa", vim.lsp.buf.add_workspace_folder, "Add Workspace Folder" },
+    {
+      methods.workspace_workspaceFolders,
+      "<leader>wa",
+      vim.lsp.buf.add_workspace_folder,
+      "Add Workspace Folder",
+    },
     {
       methods.workspace_workspaceFolders,
       "<leader>wr",
@@ -177,11 +189,26 @@ local function attach(args)
       function() vim.notify(table.concat(vim.lsp.buf.list_workspace_folders(), ", ")) end,
       "List Workspace Folders",
     },
-    { methods.textDocument_definition, "<leader>D", vim.lsp.buf.type_definition, "Type Definition" },
+    {
+      methods.textDocument_definition,
+      "<leader>D",
+      vim.lsp.buf.type_definition,
+      "Type Definition",
+    },
     { methods.textDocument_rename, "<leader>rn", vim.lsp.buf.rename, "Rename" },
     { methods.textDocument_codeAction, "<leader>ca", vim.lsp.buf.code_action, "Code Action" },
-    { methods.callHierarchy_incomingCalls, "<leader>ci", vim.lsp.buf.incoming_calls, "Incoming calls" },
-    { methods.callHierarchy_outgoingCalls, "<leader>co", vim.lsp.buf.outgoing_calls, "Outgoing calls" },
+    {
+      methods.callHierarchy_incomingCalls,
+      "<leader>ci",
+      vim.lsp.buf.incoming_calls,
+      "Incoming calls",
+    },
+    {
+      methods.callHierarchy_outgoingCalls,
+      "<leader>co",
+      vim.lsp.buf.outgoing_calls,
+      "Outgoing calls",
+    },
     { methods.textDocument_references, "gr", vim.lsp.buf.references, "List References" },
 
     { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace Symbols" },
@@ -195,7 +222,9 @@ local function attach(args)
   }
   for _, value in ipairs(mappings) do
     local method, lhs, rhs, desc = unpack(value)
-    if client.supports_method(method) then vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc }) end
+    if client.supports_method(method) then
+      vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
+    end
   end
 
   vim.keymap.set("n", "<leader>l", select, { buffer = bufnr, desc = "Select LSP call" })

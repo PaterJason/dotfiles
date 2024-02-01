@@ -17,8 +17,18 @@ function M.config()
   vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue" })
   vim.keymap.set("n", "<Leader>dr", dap.repl.toggle, { desc = "Toggle repl" })
   vim.keymap.set({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
-  vim.keymap.set("n", "<Leader>df", function() widgets.centered_float(widgets.frames) end, { desc = "Frames" })
-  vim.keymap.set("n", "<Leader>ds", function() widgets.centered_float(widgets.scopes) end, { desc = "Scopes" })
+  vim.keymap.set(
+    "n",
+    "<Leader>df",
+    function() widgets.centered_float(widgets.frames) end,
+    { desc = "Frames" }
+  )
+  vim.keymap.set(
+    "n",
+    "<Leader>ds",
+    function() widgets.centered_float(widgets.scopes) end,
+    { desc = "Scopes" }
+  )
 
   -- JavaScript & TypeScript
   dap.adapters.firefox = {
@@ -51,13 +61,52 @@ function M.config()
       name = "Launch file",
       type = "codelldb",
       request = "launch",
-      program = function() return vim.fn.input("Path to executable: ", vim.uv.cwd() .. "/", "file") end,
+      program = function()
+        return vim.fn.input({
+          prompt = "Path to executable: ",
+          default = vim.uv.cwd() .. "/",
+          completion = "file",
+        })
+      end,
       cwd = "${workspaceFolder}",
       stopOnEntry = false,
     },
   }
   dap.configurations.c = dap.configurations.cpp
   dap.configurations.rust = dap.configurations.cpp
+
+  -- Golang
+  dap.adapters.delve = {
+    type = "server",
+    port = "${port}",
+    executable = {
+      command = "dlv",
+      args = { "dap", "-l", "localhost:${port}" },
+    },
+  }
+  dap.configurations.go = {
+    {
+      type = "delve",
+      name = "Debug",
+      request = "launch",
+      program = "${file}",
+    },
+    {
+      type = "delve",
+      name = "Debug test", -- configuration for debugging test files
+      request = "launch",
+      mode = "test",
+      program = "${file}",
+    },
+    -- works with go.mod packages and sub packages
+    {
+      type = "delve",
+      name = "Debug test (go.mod)",
+      request = "launch",
+      mode = "test",
+      program = "./${relativeFileDirname}",
+    },
+  }
 end
 
 return M

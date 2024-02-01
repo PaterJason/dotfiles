@@ -51,7 +51,12 @@ return {
           map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
           map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
           map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
-          map("n", "<leader>hb", function() gitsigns.blame_line({ full = true }) end, { desc = "Blame line" })
+          map(
+            "n",
+            "<leader>hb",
+            function() gitsigns.blame_line({ full = true }) end,
+            { desc = "Blame line" }
+          )
           map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diffthis" })
 
           -- Text object

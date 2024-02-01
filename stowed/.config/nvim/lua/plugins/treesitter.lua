@@ -39,7 +39,12 @@ function M.config()
     },
   })
 
-  vim.keymap.set("n", "gC", function() require("treesitter-context").go_to_context() end, { silent = true })
+  vim.keymap.set(
+    "n",
+    "gC",
+    function() require("treesitter-context").go_to_context() end,
+    { silent = true }
+  )
 end
 
 return M

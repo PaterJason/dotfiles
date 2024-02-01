@@ -106,7 +106,12 @@ function M.config()
     function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
     { desc = "Open parent directory" }
   )
-  vim.keymap.set("n", "_", function() MiniFiles.open(nil, false) end, { desc = "Open current directory" })
+  vim.keymap.set(
+    "n",
+    "_",
+    function() MiniFiles.open(nil, false) end,
+    { desc = "Open current directory" }
+  )
 
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
@@ -139,11 +144,21 @@ function M.config()
   vim.keymap.set("n", "<leader>sr", MiniPick.builtin.resume, { desc = "Resume" })
 
   vim.keymap.set("n", "<leader>gf", MiniExtra.pickers.git_files, { desc = "Git files picker" })
-  vim.keymap.set("n", "<leader>gb", MiniExtra.pickers.git_branches, { desc = "Git branches picker" })
+  vim.keymap.set(
+    "n",
+    "<leader>gb",
+    MiniExtra.pickers.git_branches,
+    { desc = "Git branches picker" }
+  )
   vim.keymap.set("n", "<leader>gc", MiniExtra.pickers.git_commits, { desc = "Git commits picker" })
   vim.keymap.set("n", "<leader>gh", MiniExtra.pickers.git_hunks, { desc = "Git hunks picker" })
 
-  vim.keymap.set("n", "<leader>sd", MiniExtra.pickers.diagnostic, { desc = "Built-in diagnostic picker" })
+  vim.keymap.set(
+    "n",
+    "<leader>sd",
+    MiniExtra.pickers.diagnostic,
+    { desc = "Built-in diagnostic picker" }
+  )
   vim.keymap.set(
     "n",
     "<leader>sl",
