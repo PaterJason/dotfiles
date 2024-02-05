@@ -10,6 +10,11 @@ return {
           enable = true,
           additional_vim_regex_highlighting = false,
         },
+        custom_highlights = function(colors)
+          return {
+            NormalFloat = { bg = colors.none },
+          }
+        end,
         integrations = {
           cmp = true,
           dap = true,
