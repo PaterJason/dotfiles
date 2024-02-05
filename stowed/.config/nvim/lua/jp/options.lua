@@ -8,11 +8,11 @@ o.clipboard = "unnamedplus"
 o.confirm = true
 o.dictionary = "/usr/share/dict/british-english"
 opt.grepformat:prepend("%f:%l:%c:%m")
-o.grepprg = "rg --vimgrep"
+o.grepprg = "rg --vimgrep --smart-case"
 o.spelllang = "en_gb"
 o.swapfile = false
 o.updatetime = 250
-opt.diffopt:append({ "vertical", "algorithm:patience", "linematch:60" })
+opt.diffopt:append({ "vertical", "algorithm:histogram" })
 
 -- Appearance
 o.background = "light"
@@ -37,17 +37,8 @@ o.nrformats = "alpha,hex,bin,unsigned"
 -- Extra UI options
 o.pumheight = 16
 o.list = true
-opt.listchars = {
-  tab = "| ",
-  trail = "·",
-  nbsp = "␣",
-  extends = "…",
-  precedes = "…",
-}
-opt.fillchars = {
-  eob = " ",
-  fold = " ",
-}
+opt.listchars = { tab = "| ", trail = "·", nbsp = "␣", extends = "…", precedes = "…" }
+opt.fillchars = { eob = " ", fold = " " }
 o.wildmode = "longest:full,full"
 
 -- Folds

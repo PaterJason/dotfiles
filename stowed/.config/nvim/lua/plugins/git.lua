@@ -12,7 +12,6 @@ return {
       gitsigns.setup({
         signcolumn = false,
         numhl = true,
-        preview_config = { border = "single" },
         on_attach = function(bufnr)
           local function map(mode, l, r, opts)
             opts = opts or {}
