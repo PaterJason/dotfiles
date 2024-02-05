@@ -1,5 +1,5 @@
 {:binding {:force-nl? true}
  :map {:comma? false
        :force-nl? true}
- :style [:community :hiccup :respect-bl]
+ :style [:community :hiccup :how-to-ns :respect-bl]
  :width 100}
