@@ -131,7 +131,6 @@ return {
     dependencies = {
       {
         "williamboman/mason.nvim",
-        dependencies = { "williamboman/mason-lspconfig.nvim" },
         build = ":MasonUpdate",
         config = function()
           require("mason").setup({
@@ -144,7 +143,6 @@ return {
               },
             },
           })
-          require("mason-lspconfig").setup({})
           vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
         end,
       },
