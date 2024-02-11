@@ -74,8 +74,6 @@ function M.config()
       -- MiniBracketed
       { mode = "n", keys = "[" },
       { mode = "n", keys = "]" },
-      -- MiniSurround
-      { mode = "n", keys = "s" },
     },
     clues = {
       miniclue.gen_clues.builtin_completion(),
@@ -213,9 +211,23 @@ function M.config()
   vim.o.showmode = false
 
   require("mini.surround").setup({
+    mappings = {
+      add = "ys",
+      delete = "ds",
+      find = "",
+      find_left = "",
+      highlight = "",
+      replace = "cs",
+      update_n_lines = "",
+      suffix_last = "",
+      suffix_next = "",
+    },
     n_lines = 100,
     search_method = "cover",
   })
+  vim.keymap.del("x", "ys")
+  vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
+  vim.keymap.set("n", "yss", "ys_", { remap = true })
 end
 
 return M
