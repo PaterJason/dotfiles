@@ -1,15 +1,14 @@
----@type LazySpec
-local M = {
-  "hrsh7th/nvim-cmp",
-  dependencies = {
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-nvim-lsp-signature-help",
-    "rcarriga/cmp-dap",
-    "PaterJason/cmp-conjure",
-  },
-}
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "hrsh7th/nvim-cmp",
+    depends = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-nvim-lsp-signature-help",
+      "rcarriga/cmp-dap",
+      "PaterJason/cmp-conjure",
+    },
+  })
 
-function M.config()
   local cmp = require("cmp")
 
   vim.keymap.set({ "i", "s" }, "<Tab>", function()
@@ -56,6 +55,4 @@ function M.config()
       { name = "dap" },
     },
   })
-end
-
-return M
+end)

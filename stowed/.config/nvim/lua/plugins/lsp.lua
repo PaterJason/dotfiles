@@ -1,11 +1,37 @@
-local augroup = vim.api.nvim_create_augroup("UserConfigLspconfig", {})
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "neovim/nvim-lspconfig",
+    depends = {
+      {
+        source = "williamboman/mason.nvim",
+        hooks = { post_checkout = function() vim.cmd("MasonUpdate") end },
+      },
+      "b0o/SchemaStore.nvim",
+      "folke/neodev.nvim",
+      "nanotee/sqls.nvim",
+    },
+    hooks = {},
+  })
 
-local function lspconfig_config()
+  require("neodev").setup({})
+
+  require("mason").setup({
+    ui = {
+      border = "single",
+      icons = {
+        package_installed = "✓",
+        package_pending = "➜",
+        package_uninstalled = "✗",
+      },
+    },
+  })
+  vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
+
   local lspconfig = require("lspconfig")
 
   lspconfig.util.default_config.autostart = false
   vim.api.nvim_create_autocmd("BufReadPost", {
-    group = augroup,
+    group = "JPConfigLsp",
     callback = function(args)
       if vim.bo[args.buf].buftype == "" then vim.cmd.LspStart() end
     end,
@@ -36,24 +62,6 @@ local function lspconfig_config()
           },
           hint = { enable = true },
           format = { enable = false },
-          workspace = {
-            checkThirdParty = false,
-            ignoreDir = {
-              "/*/*/",
-              "!**/types.lua",
-              "!**/types/",
-              "!/*/*/init.lua",
-              -- "!/vim/",
-
-              "!/dap/ui/",
-              "/cmp_*/",
-              "/conjure/",
-              "/gitsigns/",
-              "/mason-*/",
-              "/nvim-web-devicons/",
-              "/schemastore/catalog.lua",
-            },
-          },
         },
       },
     },
@@ -122,71 +130,38 @@ local function lspconfig_config()
     config.capabilities = capabilities
     lspconfig[server].setup(config)
   end
-end
+end)
 
----@type LazySpec
-return {
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      {
-        "williamboman/mason.nvim",
-        build = ":MasonUpdate",
-        config = function()
-          require("mason").setup({
-            ui = {
-              border = "single",
-              icons = {
-                package_installed = "✓",
-                package_pending = "➜",
-                package_uninstalled = "✗",
-              },
-            },
-          })
-          vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
-        end,
-      },
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "mrcjkb/rustaceanvim",
+  })
 
-      -- language support
-      "b0o/SchemaStore.nvim",
-      {
-        "folke/neodev.nvim",
-        config = function() require("neodev").setup({}) end,
-      },
-      { "nanotee/sqls.nvim" },
+  ---@type RustaceanOpts
+  vim.g.rustaceanvim = {
+    tools = {
+      hover_actions = { border = "single" },
     },
-    config = lspconfig_config,
-  },
-  {
-    "mrcjkb/rustaceanvim",
-    init = function()
-      ---@type RustaceanOpts
-      vim.g.rustaceanvim = {
-        tools = {
-          hover_actions = { border = "single" },
-        },
-        server = {
-          auto_attach = false,
-          settings = {
-            ["rust-analyzer"] = {
-              check = {
-                command = "clippy",
-                extraArgs = { "--", "-W", "clippy::pedantic" },
-              },
-              diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
-            },
+    server = {
+      auto_attach = false,
+      settings = {
+        ["rust-analyzer"] = {
+          check = {
+            command = "clippy",
+            extraArgs = { "--", "-W", "clippy::pedantic" },
           },
+          diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
         },
-        dap = { autoload_configurations = true },
-      }
+      },
+    },
+    dap = { autoload_configurations = true },
+  }
 
-      vim.api.nvim_create_autocmd("BufReadPost", {
-        pattern = { "*.rs" },
-        group = augroup,
-        callback = function(args)
-          if vim.bo[args.buf].buftype == "" then vim.cmd("RustAnalyzer start") end
-        end,
-      })
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    pattern = { "*.rs" },
+    group = "JPConfigLsp",
+    callback = function(args)
+      if vim.bo[args.buf].buftype == "" then vim.cmd("RustAnalyzer start") end
     end,
-  },
-}
+  })
+end)

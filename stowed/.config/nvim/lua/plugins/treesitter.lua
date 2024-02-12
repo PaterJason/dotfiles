@@ -1,14 +1,13 @@
----@type LazySpec
-local M = {
-  "nvim-treesitter/nvim-treesitter",
-  dependencies = {
-    "nvim-treesitter/nvim-treesitter-context",
-    "PaterJason/nvim-treesitter-sexp",
-  },
-  build = ":TSUpdate",
-}
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "nvim-treesitter/nvim-treesitter",
+    depends = {
+      "nvim-treesitter/nvim-treesitter-context",
+      "PaterJason/nvim-treesitter-sexp",
+    },
+    hooks = { post_checkout = function() vim.cmd("TSUpdate") end },
+  })
 
-function M.config()
   local ensure_installed = {
     "comment",
     "regex",
@@ -45,6 +44,4 @@ function M.config()
     function() require("treesitter-context").go_to_context() end,
     { silent = true }
   )
-end
-
-return M
+end)

@@ -1,10 +1,9 @@
----@type LazySpec
-local M = {
-  "mfussenegger/nvim-dap",
-  dependencies = { "theHamsta/nvim-dap-virtual-text" },
-}
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "mfussenegger/nvim-dap",
+    depends = { "theHamsta/nvim-dap-virtual-text" },
+  })
 
-function M.config()
   local dap = require("dap")
   require("nvim-dap-virtual-text").setup({
     highlight_new_as_changed = true,
@@ -107,6 +106,4 @@ function M.config()
       program = "./${relativeFileDirname}",
     },
   }
-end
-
-return M
+end)

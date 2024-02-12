@@ -1,46 +1,50 @@
----@type LazySpec
-local M = {
-  "echasnovski/mini.nvim",
-}
+MiniDeps.now(function() require("mini.extra").setup({}) end)
 
-function M.config()
-  require("mini.extra").setup({})
+MiniDeps.now(
+  function()
+    require("mini.ai").setup({
+      n_lines = 100,
+      search_method = "cover",
+      mappings = { around_next = "", inside_next = "", around_last = "", inside_last = "" },
+      custom_textobjects = {
+        f = false,
+        B = MiniExtra.gen_ai_spec.buffer(),
+        D = MiniExtra.gen_ai_spec.diagnostic(),
+        I = MiniExtra.gen_ai_spec.indent(),
+        L = MiniExtra.gen_ai_spec.line(),
+        N = MiniExtra.gen_ai_spec.number(),
+      },
+    })
+  end
+)
 
-  require("mini.ai").setup({
-    n_lines = 100,
-    search_method = "cover",
-    mappings = {
-      around_next = "",
-      inside_next = "",
-      around_last = "",
-      inside_last = "",
-    },
-    custom_textobjects = {
-      f = false,
-      B = MiniExtra.gen_ai_spec.buffer(),
-      D = MiniExtra.gen_ai_spec.diagnostic(),
-      I = MiniExtra.gen_ai_spec.indent(),
-      L = MiniExtra.gen_ai_spec.line(),
-      N = MiniExtra.gen_ai_spec.number(),
-    },
-  })
+MiniDeps.now(function() require("mini.align").setup({}) end)
 
-  require("mini.align").setup({})
+MiniDeps.now(
+  function()
+    require("mini.basics").setup({
+      options = { basic = false },
+      mappings = { basic = false, option_toggle_prefix = "yo" },
+      autocommands = { basic = true },
+    })
+  end
+)
 
-  require("mini.basics").setup({
-    options = { basic = false },
-    mappings = { basic = false, option_toggle_prefix = "yo" },
-    autocommands = { basic = true },
-  })
+MiniDeps.now(
+  function()
+    require("mini.bracketed").setup({
+      comment = { suffix = "/", options = {} },
+    })
+  end
+)
 
-  require("mini.bracketed").setup({
-    comment = { suffix = "/", options = {} },
-  })
-
+MiniDeps.now(function()
   require("mini.bufremove").setup({})
   vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
   vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
+end)
 
+MiniDeps.now(function()
   local miniclue = require("mini.clue")
   miniclue.setup({
     triggers = {
@@ -89,9 +93,11 @@ function M.config()
       },
     },
   })
+end)
 
-  require("mini.comment").setup({})
+MiniDeps.now(function() require("mini.comment").setup({}) end)
 
+MiniDeps.now(function()
   require("mini.files").setup({
     windows = {
       max_number = 1,
@@ -110,14 +116,18 @@ function M.config()
     function() MiniFiles.open(nil, false) end,
     { desc = "Open current directory" }
   )
+end)
 
+MiniDeps.now(function()
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
     highlighters = {
       hex_color = hipatterns.gen_highlighter.hex_color({}),
     },
   })
+end)
 
+MiniDeps.now(function()
   require("mini.notify").setup({
     lsp_progress = {
       duration_last = 2500,
@@ -128,9 +138,11 @@ function M.config()
     },
   })
   vim.notify = MiniNotify.make_notify()
+end)
 
-  require("mini.pairs").setup({})
+MiniDeps.now(function() require("mini.pairs").setup({}) end)
 
+MiniDeps.now(function()
   require("mini.pick").setup({
     mappings = { choose_marked = "<C-q>" },
   })
@@ -206,10 +218,14 @@ function M.config()
       if choice then choice.callback({ scope = choice.scope }) end
     end)
   end, { desc = "Select picker" })
+end)
 
+MiniDeps.now(function()
   require("mini.statusline").setup({})
   vim.o.showmode = false
+end)
 
+MiniDeps.now(function()
   require("mini.surround").setup({
     mappings = {
       add = "ys",
@@ -228,6 +244,4 @@ function M.config()
   vim.keymap.del("x", "ys")
   vim.keymap.set("x", "S", [[:<C-u>lua MiniSurround.add('visual')<CR>]], { silent = true })
   vim.keymap.set("n", "yss", "ys_", { remap = true })
-end
-
-return M
+end)

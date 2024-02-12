@@ -1,9 +1,5 @@
----@type LazySpec
-return {
-  "tpope/vim-abolish",
-  {
-    "tpope/vim-dispatch",
-    init = function() vim.g.dispatch_no_maps = 1 end,
-  },
-  "tpope/vim-sleuth",
-}
+MiniDeps.now(function()
+  MiniDeps.add({ source = "tpope/vim-abolish" })
+
+  MiniDeps.add({ source = "tpope/vim-sleuth" })
+end)
