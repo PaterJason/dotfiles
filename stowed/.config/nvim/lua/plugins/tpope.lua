@@ -1,4 +1,4 @@
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({ source = "tpope/vim-abolish" })
 
   MiniDeps.add({ source = "tpope/vim-sleuth" })

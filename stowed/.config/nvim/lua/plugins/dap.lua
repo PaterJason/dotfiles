@@ -74,7 +74,7 @@ MiniDeps.now(function()
   dap.configurations.c = dap.configurations.cpp
   dap.configurations.rust = dap.configurations.cpp
 
-  -- Golang
+  -- Go
   dap.adapters.delve = {
     type = "server",
     port = "${port}",

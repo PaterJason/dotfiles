@@ -1,4 +1,4 @@
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({ source = "mfussenegger/nvim-lint" })
 
   local lint = require("lint")
@@ -15,7 +15,7 @@ MiniDeps.now(function()
   })
 end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({ source = "stevearc/conform.nvim" })
 
   require("conform").setup({

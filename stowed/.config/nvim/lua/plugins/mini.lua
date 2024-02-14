@@ -1,6 +1,6 @@
-MiniDeps.now(function() require("mini.extra").setup({}) end)
+MiniDeps.later(function() require("mini.extra").setup({}) end)
 
-MiniDeps.now(
+MiniDeps.later(
   function()
     require("mini.ai").setup({
       n_lines = 100,
@@ -18,9 +18,9 @@ MiniDeps.now(
   end
 )
 
-MiniDeps.now(function() require("mini.align").setup({}) end)
+MiniDeps.later(function() require("mini.align").setup({}) end)
 
-MiniDeps.now(
+MiniDeps.later(
   function()
     require("mini.basics").setup({
       options = { basic = false },
@@ -30,7 +30,7 @@ MiniDeps.now(
   end
 )
 
-MiniDeps.now(
+MiniDeps.later(
   function()
     require("mini.bracketed").setup({
       comment = { suffix = "/", options = {} },
@@ -38,13 +38,13 @@ MiniDeps.now(
   end
 )
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   require("mini.bufremove").setup({})
   vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
   vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
 end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   local miniclue = require("mini.clue")
   miniclue.setup({
     triggers = {
@@ -95,9 +95,9 @@ MiniDeps.now(function()
   })
 end)
 
-MiniDeps.now(function() require("mini.comment").setup({}) end)
+MiniDeps.later(function() require("mini.comment").setup({}) end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   require("mini.files").setup({
     windows = {
       max_number = 1,
@@ -118,7 +118,7 @@ MiniDeps.now(function()
   )
 end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
     highlighters = {
@@ -140,9 +140,9 @@ MiniDeps.now(function()
   vim.notify = MiniNotify.make_notify()
 end)
 
-MiniDeps.now(function() require("mini.pairs").setup({}) end)
+MiniDeps.later(function() require("mini.pairs").setup({}) end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   require("mini.pick").setup({
     mappings = { choose_marked = "<C-q>" },
   })
@@ -220,12 +220,7 @@ MiniDeps.now(function()
   end, { desc = "Select picker" })
 end)
 
-MiniDeps.now(function()
-  require("mini.statusline").setup({})
-  vim.o.showmode = false
-end)
-
-MiniDeps.now(function()
+MiniDeps.later(function()
   require("mini.surround").setup({
     mappings = {
       add = "ys",

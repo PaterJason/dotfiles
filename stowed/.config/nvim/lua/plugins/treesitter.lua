@@ -1,4 +1,4 @@
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({
     source = "nvim-treesitter/nvim-treesitter",
     depends = {
@@ -42,6 +42,6 @@ MiniDeps.now(function()
     "n",
     "gC",
     function() require("treesitter-context").go_to_context() end,
-    { silent = true }
+    { silent = true, desc = "Go to context" }
   )
 end)

@@ -1,4 +1,4 @@
-MiniDeps.now(
+MiniDeps.later(
   function()
     MiniDeps.add({
       source = "tpope/vim-fugitive",
@@ -6,7 +6,7 @@ MiniDeps.now(
   end
 )
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({
     source = "lewis6991/gitsigns.nvim",
   })

@@ -1,4 +1,4 @@
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({
     source = "neovim/nvim-lspconfig",
     depends = {
@@ -132,7 +132,7 @@ MiniDeps.now(function()
   end
 end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({
     source = "mrcjkb/rustaceanvim",
   })
