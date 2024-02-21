@@ -5,7 +5,6 @@ MiniDeps.later(function()
 
   lint.linters_by_ft = {
     fish = { "fish" },
-    sql = { "sqlfluff" },
   }
 
   local augroup = vim.api.nvim_create_augroup("nvim_lint", { clear = true })
@@ -23,7 +22,23 @@ MiniDeps.later(function()
       clojure = { "zprint" },
       fish = { "fish_indent" },
       lua = { "stylua" },
-      sql = { "sqlfluff" },
+
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
+      vue = { "prettier" },
+      css = { "prettier" },
+      scss = { "prettier" },
+      less = { "prettier" },
+      html = { "prettier" },
+      json = { "prettier" },
+      jsonc = { "prettier" },
+      yaml = { "prettier" },
+      markdown = { "prettier" },
+      ["markdown.mdx"] = { "prettier" },
+      graphql = { "prettier" },
+      handlebars = { "prettier" },
     },
   })
   vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
