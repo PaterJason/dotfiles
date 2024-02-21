@@ -25,7 +25,7 @@ MiniDeps.later(
     require("mini.basics").setup({
       options = { basic = false },
       mappings = { basic = false, option_toggle_prefix = "yo" },
-      autocommands = { basic = true },
+      autocommands = { basic = false },
     })
   end
 )

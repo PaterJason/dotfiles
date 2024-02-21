@@ -22,6 +22,9 @@ MiniDeps.later(function()
     auto_install = true,
     highlight = {
       enable = true,
+      disable = function(lang, bufnr)
+        return vim.b[bufnr].bigfile == true
+      end,
       additional_vim_regex_highlighting = false,
     },
     incremental_selection = {
