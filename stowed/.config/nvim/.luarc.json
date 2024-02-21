@@ -2,5 +2,21 @@
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
   "runtime": {
     "version": "LuaJIT"
+  },
+  "workspace": {
+    "checkThirdParty": false,
+    "ignoreDir": [
+      "/*/*/",
+      "!**/types.lua",
+      "!**/types/",
+      "!/*/*/init.lua",
+      "!/dap/ui/",
+      "/cmp_*/",
+      "/conjure/",
+      "/gitsigns/",
+      "/mason-*/",
+      "/nvim-web-devicons/",
+      "/schemastore/catalog.lua"
+    ]
   }
 }
