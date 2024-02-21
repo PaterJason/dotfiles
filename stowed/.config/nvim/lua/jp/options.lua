@@ -1,5 +1,7 @@
 local g, o, opt = vim.g, vim.o, vim.opt
 
+vim.loader.enable()
+
 g.mapleader = " "
 g.maplocalleader = [[\]]
 
@@ -10,9 +12,10 @@ o.dictionary = "/usr/share/dict/british-english"
 opt.grepformat:prepend("%f:%l:%c:%m")
 o.grepprg = "rg --vimgrep --smart-case"
 o.spelllang = "en_gb"
+o.spelloptions = "camel"
 o.swapfile = false
 o.updatetime = 250
-opt.diffopt:append({ "vertical", "algorithm:histogram" })
+opt.diffopt:append({ "vertical", "algorithm:histogram", "indent-heuristic" })
 
 -- Appearance
 o.background = "light"
@@ -21,6 +24,7 @@ o.linebreak = true
 o.showbreak = "↵ "
 o.number = true
 o.relativenumber = true
+opt.shortmess:append("I")
 o.splitbelow = true
 o.splitright = true
 o.splitkeep = "screen"
