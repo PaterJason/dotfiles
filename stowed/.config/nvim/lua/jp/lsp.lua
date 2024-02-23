@@ -135,6 +135,11 @@ local function select()
       method = methods.workspace_symbol,
     },
     {
+      text = "Run code lens",
+      on_choice = function() vim.lsp.codelens.run() end,
+      method = methods.textDocument_codeLens,
+    },
+    {
       text = "Toggle inlay hints",
       on_choice = function() vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0)) end,
       method = methods.textDocument_inlayHint,
@@ -196,7 +201,7 @@ local function attach(args)
       "Type Definition",
     },
     { methods.textDocument_rename, "<leader>rn", vim.lsp.buf.rename, "Rename" },
-    { methods.textDocument_codeAction, "<leader>ca", vim.lsp.buf.code_action, "Code Action" },
+    { methods.textDocument_codeAction, "<leader>ca", vim.lsp.buf.code_action, "Code action" },
     {
       methods.callHierarchy_incomingCalls,
       "<leader>ci",
@@ -211,14 +216,15 @@ local function attach(args)
     },
     { methods.textDocument_references, "gr", vim.lsp.buf.references, "List References" },
 
-    { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace Symbols" },
-    { methods.textDocument_documentSymbol, "gO", vim.lsp.buf.document_symbol, "Document Symbols" },
+    { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace symbols" },
+    { methods.textDocument_documentSymbol, "gO", vim.lsp.buf.document_symbol, "Document symbols" },
     {
       methods.textDocument_inlayHint,
       "<leader>ti",
       function() vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr)) end,
       "Toggle Inlay Hints",
     },
+    { methods.textDocument_codeLens, "<leader>cr", vim.lsp.codelens.run, "Run code lens" },
   }
   for _, value in ipairs(mappings) do
     local method, lhs, rhs, desc = unpack(value)
