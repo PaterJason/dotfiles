@@ -18,7 +18,7 @@ if not vim.loop.fs_stat(mini_path) then
 end
 
 require("mini.deps").setup({ path = { package = path_package } })
-MiniDeps.now(function()
+MiniDeps.later(function()
   vim.keymap.set("n", "<leader>pc", vim.cmd.DepsClean, { desc = "Clean" })
   vim.keymap.set("n", "<leader>pl", vim.cmd.DepsShowLog, { desc = "Show Log" })
   vim.keymap.set("n", "<leader>pu", vim.cmd.DepsUpdate, { desc = "Update" })

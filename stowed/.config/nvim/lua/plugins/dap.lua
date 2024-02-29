@@ -1,4 +1,4 @@
-MiniDeps.now(function()
+MiniDeps.later(function()
   MiniDeps.add({
     source = "mfussenegger/nvim-dap",
     depends = { "theHamsta/nvim-dap-virtual-text" },

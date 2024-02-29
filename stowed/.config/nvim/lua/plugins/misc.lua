@@ -43,7 +43,7 @@ MiniDeps.now(function()
   require("nvim-web-devicons").setup({})
 end)
 
-MiniDeps.now(function()
+MiniDeps.later(function()
   vim.g["conjure#client_on_load"] = false
   vim.g["conjure#completion#omnifunc"] = false
   vim.g["conjure#highlight#enabled"] = true
