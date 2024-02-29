@@ -7,16 +7,16 @@ create({ "TextYankPost" }, {
   desc = "Highlight on yank",
 })
 
-create({ "BufReadPre" }, {
-  callback = function(info)
-    local stat = vim.uv.fs_stat(info.match)
-    if stat and stat.size > 262144 then
-      vim.b.bigfile = true
-      vim.b.did_ftplugin = 1
-      -- vim.cmd.filetype("off")
-      vim.cmd.syntax("off")
-    end
-  end,
-  group = augroup,
-  desc = "Large files",
-})
+-- create({ "BufReadPre" }, {
+--   callback = function(info)
+--     local stat = vim.uv.fs_stat(info.match)
+--     if stat and stat.size > 1048576 then
+--       vim.b[info.buf].bigfile = true
+--       vim.b[info.buf].did_ftplugin = 1
+--       vim.cmd.filetype("off")
+--       vim.cmd.syntax("off")
+--     end
+--   end,
+--   group = augroup,
+--   desc = "Large files",
+-- })
