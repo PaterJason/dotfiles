@@ -33,9 +33,7 @@ MiniDeps.later(function()
   vim.api.nvim_create_autocmd("BufReadPost", {
     group = "JPConfigLsp",
     callback = function(args)
-      if vim.bo[args.buf].buftype == "" and vim.b[args.buf].bigfile ~= true then
-        vim.cmd.LspStart()
-      end
+      if vim.bo[args.buf].buftype == "" then vim.cmd.LspStart() end
     end,
   })
 
@@ -55,7 +53,6 @@ MiniDeps.later(function()
       },
     },
     bashls = {},
-    clojure_lsp = {},
     lua_ls = {
       settings = {
         Lua = {
