@@ -1,11 +1,5 @@
 MiniDeps.now(function()
   MiniDeps.add({
-    source = "nvim-lua/plenary.nvim",
-  })
-end)
-
-MiniDeps.now(function()
-  MiniDeps.add({
     source = "catppuccin/nvim",
     name = "catppuccin",
   })
