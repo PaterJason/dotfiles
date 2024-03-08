@@ -1,14 +1,26 @@
 [user]
 	email = jasonbipaterson@gmail.com
 	name = Jason Paterson
-[pull]
-	rebase = false
 [core]
 	excludesfile = ~/.gitexcludes
+[pull]
+	rebase = interactive
+[push]
+	autosetupremote = true
+[merge]
+	conflictStyle = zdiff3
 [rebase]
 	autosquash = true
+	autostash = true
+[log]
+	date = iso
 [fetch]
 	prune = true
+	pruneTags = true
 [diff]
-	indentHeuristic = true
 	algorithm = histogram
+	indentHeuristic = true
+[help]
+	autoCorrect = prompt
+[url "git@github.com:"]
+	pushInsteadOf = "https://github.com/"
