@@ -98,7 +98,25 @@ end)
 MiniDeps.later(function() require("mini.comment").setup({}) end)
 
 MiniDeps.later(function()
+  require("mini.diff").setup({})
+  vim.keymap.set(
+    "n",
+    "<leader>td",
+    function() MiniDiff.toggle_overlay(0) end,
+    { desc = "toggle diff overlay" }
+  )
+end)
+
+MiniDeps.now(function()
+  vim.g.loaded_netrw = 1
+  vim.g.loaded_netrwPlugin = 1
   require("mini.files").setup({
+    mappings = {
+      go_in = "L",
+      go_in_plus = "l",
+      go_out = "H",
+      go_out_plus = "h",
+    },
     windows = {
       max_number = 1,
       width_focus = 80,
@@ -126,6 +144,8 @@ MiniDeps.later(function()
     },
   })
 end)
+
+MiniDeps.later(function() require("mini.jump").setup({}) end)
 
 MiniDeps.now(function()
   require("mini.notify").setup({

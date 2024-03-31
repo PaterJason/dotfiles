@@ -139,10 +139,9 @@ MiniDeps.later(function()
   ---@type RustaceanOpts
   vim.g.rustaceanvim = {
     tools = {
-      hover_actions = { border = "single" },
+      hover_actions = { replace_builtin_hover = false },
     },
     server = {
-      auto_attach = false,
       settings = {
         ["rust-analyzer"] = {
           check = {
@@ -153,14 +152,5 @@ MiniDeps.later(function()
         },
       },
     },
-    dap = { autoload_configurations = true },
   }
-
-  vim.api.nvim_create_autocmd("BufReadPost", {
-    pattern = { "*.rs" },
-    group = "JPConfigLsp",
-    callback = function(args)
-      if vim.bo[args.buf].buftype == "" then vim.cmd("RustAnalyzer start") end
-    end,
-  })
 end)

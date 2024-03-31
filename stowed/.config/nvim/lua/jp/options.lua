@@ -15,7 +15,7 @@ o.spelllang = "en_gb"
 o.spelloptions = "camel"
 o.swapfile = false
 o.updatetime = 250
-opt.diffopt:append({ "vertical", "algorithm:histogram", "indent-heuristic" })
+opt.diffopt:append({ "vertical", "algorithm:histogram", "indent-heuristic", "linematch:60" })
 
 -- Appearance
 o.background = "light"
