@@ -2,30 +2,13 @@ MiniDeps.later(function()
   MiniDeps.add({
     source = "neovim/nvim-lspconfig",
     depends = {
-      {
-        source = "williamboman/mason.nvim",
-        hooks = { post_checkout = function() vim.cmd("MasonUpdate") end },
-      },
       "b0o/SchemaStore.nvim",
       "folke/neodev.nvim",
       "nanotee/sqls.nvim",
     },
-    hooks = {},
   })
 
   require("neodev").setup({})
-
-  require("mason").setup({
-    ui = {
-      border = "single",
-      icons = {
-        package_installed = "✓",
-        package_pending = "➜",
-        package_uninstalled = "✗",
-      },
-    },
-  })
-  vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
 
   local lspconfig = require("lspconfig")
 
@@ -53,6 +36,7 @@ MiniDeps.later(function()
       },
     },
     bashls = {},
+    gopls = {},
     lua_ls = {
       settings = {
         Lua = {
@@ -129,6 +113,25 @@ MiniDeps.later(function()
     config.capabilities = capabilities
     lspconfig[server].setup(config)
   end
+end)
+
+MiniDeps.later(function()
+  MiniDeps.add({
+    source = "williamboman/mason.nvim",
+    hooks = { post_checkout = function() vim.cmd("MasonUpdate") end },
+  })
+
+  require("mason").setup({
+    ui = {
+      border = "single",
+      icons = {
+        package_installed = "✓",
+        package_pending = "➜",
+        package_uninstalled = "✗",
+      },
+    },
+  })
+  vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
 end)
 
 MiniDeps.later(function()

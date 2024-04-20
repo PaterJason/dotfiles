@@ -4,6 +4,7 @@ vim.filetype.add({
   },
   filename = {
     [".zprintrc"] = "clojure",
+    ["zathurarc"] = "zathurarc",
   },
 })
 

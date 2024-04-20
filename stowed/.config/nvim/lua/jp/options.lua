@@ -27,7 +27,6 @@ o.relativenumber = true
 opt.shortmess:append("I")
 o.splitbelow = true
 o.splitright = true
-o.splitkeep = "screen"
 o.wrap = false
 
 -- Editing
@@ -46,8 +45,11 @@ opt.fillchars = { eob = " ", fold = " " }
 o.wildmode = "longest:full,full"
 
 -- Folds
-o.foldcolumn = "auto"
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+o.foldmethod = "expr"
+o.foldcolumn = "auto"
+o.foldlevelstart = 99
+o.foldnestmax = 10
 o.foldtext = ""
 
 vim.cmd.packadd("cfilter")

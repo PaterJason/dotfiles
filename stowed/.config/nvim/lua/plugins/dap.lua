@@ -1,20 +1,20 @@
 MiniDeps.later(function()
   MiniDeps.add({
     source = "mfussenegger/nvim-dap",
-    depends = { "theHamsta/nvim-dap-virtual-text" },
   })
 
   local dap = require("dap")
-  require("nvim-dap-virtual-text").setup({
-    highlight_new_as_changed = true,
-  })
-
   local widgets = require("dap.ui.widgets")
   dap.defaults.fallback.terminal_win_cmd = "tabnew"
 
   vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
   vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue" })
-  vim.keymap.set("n", "<Leader>dr", dap.repl.toggle, { desc = "Toggle repl" })
+  vim.keymap.set(
+    "n",
+    "<Leader>dr",
+    function() dap.repl.toggle({ height = 10 }) end,
+    { desc = "Toggle repl" }
+  )
   vim.keymap.set({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
   vim.keymap.set(
     "n",
@@ -25,7 +25,7 @@ MiniDeps.later(function()
   vim.keymap.set(
     "n",
     "<Leader>ds",
-    function() widgets.centered_float(widgets.scopes) end,
+    function() widgets.sidebar(widgets.scopes, { width = 50 }).toggle() end,
     { desc = "Scopes" }
   )
 

@@ -4,19 +4,6 @@
     "version": "LuaJIT"
   },
   "workspace": {
-    "checkThirdParty": false,
-    "ignoreDir": [
-      "/*/*/",
-      "!**/types.lua",
-      "!**/types/",
-      "!/*/*/init.lua",
-      "!/dap/ui/",
-      "/cmp_*/",
-      "/conjure/",
-      "/gitsigns/",
-      "/mason-*/",
-      "/nvim-web-devicons/",
-      "/schemastore/catalog.lua"
-    ]
+    "checkThirdParty": false
   }
 }
