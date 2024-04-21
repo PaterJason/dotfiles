@@ -103,7 +103,7 @@ MiniDeps.later(function()
     "n",
     "<leader>td",
     function() MiniDiff.toggle_overlay(0) end,
-    { desc = "toggle diff overlay" }
+    { desc = "Toggle diff overlay" }
   )
 end)
 
@@ -194,6 +194,12 @@ MiniDeps.later(function()
     "<leader>sl",
     function() MiniExtra.pickers.buf_lines({ scope = "current" }) end,
     { desc = "Buffer lines" }
+  )
+  vim.keymap.set(
+    "n",
+    "<leader>sq",
+    function() MiniExtra.pickers.list({ scope = "quickfix" }) end,
+    { desc = "Quickfix list" }
   )
 
   vim.keymap.set("n", "<leader><leader>", function()

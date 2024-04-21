@@ -13,7 +13,7 @@ MiniDeps.later(function()
     "regex",
     "luap",
     "luadoc",
-    "printf"
+    "printf",
   }
   for name, type in vim.fs.dir(vim.fs.joinpath(vim.env.VIMRUNTIME, "queries")) do
     if type == "directory" then ensure_installed[#ensure_installed + 1] = name end

@@ -238,10 +238,14 @@ local function attach(args)
   -- Autocommands
   vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
   if client.supports_method(methods.textDocument_documentHighlight) then
-    vim.api.nvim_create_autocmd(
-      "CursorHold",
-      { callback = vim.lsp.buf.document_highlight, group = attach_augroup, buffer = bufnr }
-    )
+    vim.api.nvim_create_autocmd("CursorHold", {
+      callback = function()
+        vim.lsp.buf.clear_references()
+        vim.lsp.buf.document_highlight()
+      end,
+      group = attach_augroup,
+      buffer = bufnr,
+    })
     vim.api.nvim_create_autocmd(
       { "CursorMoved", "ModeChanged", "BufLeave" },
       { callback = vim.lsp.buf.clear_references, group = attach_augroup, buffer = bufnr }
