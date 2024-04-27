@@ -1,3 +1,4 @@
+-- Diagnostics
 vim.diagnostic.config({
   severity_sort = true,
   signs = false,
@@ -17,14 +18,15 @@ vim.keymap.set(
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
+-- LSP
 local methods = vim.lsp.protocol.Methods
 local handlers = vim.lsp.handlers
 
-handlers[methods.textDocument_hover] = vim.lsp.with(vim.lsp.handlers.hover, {
+handlers[methods.textDocument_hover] = vim.lsp.with(handlers.hover, {
   border = "single",
   title = "Hover",
 })
-handlers[methods.textDocument_signatureHelp] = vim.lsp.with(vim.lsp.handlers.signature_help, {
+handlers[methods.textDocument_signatureHelp] = vim.lsp.with(handlers.signature_help, {
   border = "single",
   title = "Signature help",
 })
@@ -93,8 +95,10 @@ local function select()
     {
       text = "List workspace folders",
       on_choice = function()
+        local folders = vim.lsp.buf.list_workspace_folders()
         vim.notify(
-          "Workspace folders: " .. table.concat(vim.lsp.buf.list_workspace_folders(), ", ")
+          #folders == 0 and "No workspace folders"
+            or "Workspace folders:\n" .. table.concat(folders, "\n")
         )
       end,
       method = methods.workspace_workspaceFolders,
@@ -184,53 +188,27 @@ local function attach(args)
     { methods.textDocument_declaration, "gD", vim.lsp.buf.declaration, "Jump to declaration" },
     { methods.textDocument_definition, "gd", vim.lsp.buf.definition, "Jump to definition" },
     { methods.textDocument_hover, "K", vim.lsp.buf.hover, "Hover" },
-    { methods.textDocument_implementation, "gI", vim.lsp.buf.implementation, "Implementations" },
-    { methods.textDocument_signatureHelp, "<C-k>", vim.lsp.buf.signature_help, "Signature Help" },
     {
-      methods.workspace_workspaceFolders,
-      "<leader>wa",
-      vim.lsp.buf.add_workspace_folder,
-      "Add Workspace Folder",
+      methods.textDocument_documentSymbol,
+      "gO",
+      function()
+        vim.lsp.buf.document_symbol({
+          on_list = function(options)
+            options.title = options.title .. " TOC"
+            vim.fn.setloclist(0, {}, " ", options)
+            vim.cmd.lopen()
+          end,
+        })
+      end,
+      "Document symbols",
     },
-    {
-      methods.workspace_workspaceFolders,
-      "<leader>wr",
-      vim.lsp.buf.remove_workspace_folder,
-      "Remove Workspace Folder",
-    },
-    {
-      methods.workspace_workspaceFolders,
-      "<leader>wl",
-      function() vim.notify(table.concat(vim.lsp.buf.list_workspace_folders(), ", ")) end,
-      "List Workspace Folders",
-    },
-    {
-      methods.textDocument_definition,
-      "<leader>D",
-      vim.lsp.buf.type_definition,
-      "Type Definition",
-    },
-    {
-      methods.callHierarchy_incomingCalls,
-      "<leader>ci",
-      vim.lsp.buf.incoming_calls,
-      "Incoming calls",
-    },
-    {
-      methods.callHierarchy_outgoingCalls,
-      "<leader>co",
-      vim.lsp.buf.outgoing_calls,
-      "Outgoing calls",
-    },
-    { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace symbols" },
-    { methods.textDocument_documentSymbol, "gO", vim.lsp.buf.document_symbol, "Document symbols" },
     {
       methods.textDocument_inlayHint,
       "<leader>ti",
       function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
-      "Toggle Inlay Hints",
+      "Toggle inlay hints",
     },
-    { methods.textDocument_codeLens, "<leader>cr", vim.lsp.codelens.run, "Run code lens" },
+    { methods.textDocument_codeLens, "crl", vim.lsp.codelens.run, "Run code lens" },
   }
   for _, value in ipairs(mappings) do
     local method, lhs, rhs, desc = unpack(value)
