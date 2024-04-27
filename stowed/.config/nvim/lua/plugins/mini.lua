@@ -78,6 +78,8 @@ MiniDeps.later(function()
       -- MiniBracketed
       { mode = "n", keys = "[" },
       { mode = "n", keys = "]" },
+      -- LSP
+      { mode = "n", keys = "cr" },
     },
     clues = {
       miniclue.gen_clues.builtin_completion(),

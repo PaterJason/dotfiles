@@ -33,3 +33,5 @@ require("plugins.lsp")
 require("plugins.misc_dev")
 require("plugins.tpope")
 require("plugins.treesitter")
+
+require("clj-tools").setup()

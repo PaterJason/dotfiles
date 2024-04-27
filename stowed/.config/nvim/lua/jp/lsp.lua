@@ -125,6 +125,16 @@ local function select()
       method = methods.textDocument_signatureHelp,
     },
     {
+      text = "Subtypes",
+      on_choice = function() vim.lsp.buf.typehierarchy("subtypes") end,
+      method = methods.typeHierarchy_subtypes,
+    },
+    {
+      text = "Supertypes",
+      on_choice = function() vim.lsp.buf.typehierarchy("supertypes") end,
+      method = methods.typeHierarchy_supertypes,
+    },
+    {
       text = "Type definition",
       on_choice = vim.lsp.buf.type_definition,
       method = methods.textDocument_typeDefinition,
@@ -141,7 +151,7 @@ local function select()
     },
     {
       text = "Toggle inlay hints",
-      on_choice = function() vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0)) end,
+      on_choice = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
       method = methods.textDocument_inlayHint,
     },
   }
@@ -200,8 +210,6 @@ local function attach(args)
       vim.lsp.buf.type_definition,
       "Type Definition",
     },
-    { methods.textDocument_rename, "<leader>rn", vim.lsp.buf.rename, "Rename" },
-    { methods.textDocument_codeAction, "<leader>ca", vim.lsp.buf.code_action, "Code action" },
     {
       methods.callHierarchy_incomingCalls,
       "<leader>ci",
@@ -214,14 +222,12 @@ local function attach(args)
       vim.lsp.buf.outgoing_calls,
       "Outgoing calls",
     },
-    { methods.textDocument_references, "gr", vim.lsp.buf.references, "List References" },
-
     { methods.workspace_symbol, "<leader>ws", vim.lsp.buf.workspace_symbol, "Workspace symbols" },
     { methods.textDocument_documentSymbol, "gO", vim.lsp.buf.document_symbol, "Document symbols" },
     {
       methods.textDocument_inlayHint,
       "<leader>ti",
-      function() vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr)) end,
+      function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
       "Toggle Inlay Hints",
     },
     { methods.textDocument_codeLens, "<leader>cr", vim.lsp.codelens.run, "Run code lens" },
