@@ -106,19 +106,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     ---@cast client -?
-    local bufnr = args.buf
-
     if client.name == "clojure_lsp" then
       vim.lsp.commands["code-lens-references"] = function(command, ctx)
         local method = vim.lsp.protocol.Methods.textDocument_references
         local uri, row, col = unpack(command.arguments)
-        if client then
-          client.request(method, {
-            textDocument = { uri = uri },
-            position = { line = row - 1, character = col - 1 },
-            context = { includeDeclaration = true },
-          }, vim.lsp.handlers[method], ctx.bufnr)
-        end
+        client.request(method, {
+          textDocument = { uri = uri },
+          position = { line = row - 1, character = col - 1 },
+          context = { includeDeclaration = true },
+        }, vim.lsp.handlers[method], ctx.bufnr)
       end
     end
 
