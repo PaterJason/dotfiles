@@ -9,12 +9,6 @@ vim.diagnostic.config({
     title = "Diagnostics",
   },
 })
-vim.keymap.set(
-  "n",
-  "<leader>e",
-  vim.diagnostic.open_float,
-  { desc = "Open floating diagnostic message" }
-)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
@@ -185,9 +179,6 @@ local function attach(args)
 
   -- Keymaps
   local mappings = {
-    { methods.textDocument_declaration, "gD", vim.lsp.buf.declaration, "Jump to declaration" },
-    { methods.textDocument_definition, "gd", vim.lsp.buf.definition, "Jump to definition" },
-    { methods.textDocument_hover, "K", vim.lsp.buf.hover, "Hover" },
     {
       methods.textDocument_documentSymbol,
       "gO",
