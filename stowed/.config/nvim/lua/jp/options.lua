@@ -5,6 +5,12 @@ vim.loader.enable()
 g.mapleader = " "
 g.maplocalleader = [[\]]
 
+-- Disable remote plugin providers
+g.loaded_python3_provider = 0
+g.loaded_ruby_provider = 0
+g.loaded_perl_provider = 0
+g.loaded_node_provider = 0
+
 -- General
 o.clipboard = "unnamedplus"
 o.confirm = true
