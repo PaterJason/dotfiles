@@ -91,7 +91,7 @@ MiniDeps.later(function()
     },
     window = {
       config = {
-        width = 60,
+        width = "auto",
       },
     },
   })
@@ -175,16 +175,6 @@ MiniDeps.later(function()
   vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help, { desc = "Help tags" })
   vim.keymap.set("n", "<leader>sr", MiniPick.builtin.resume, { desc = "Resume" })
 
-  vim.keymap.set("n", "<leader>gf", MiniExtra.pickers.git_files, { desc = "Git files picker" })
-  vim.keymap.set(
-    "n",
-    "<leader>gb",
-    MiniExtra.pickers.git_branches,
-    { desc = "Git branches picker" }
-  )
-  vim.keymap.set("n", "<leader>gc", MiniExtra.pickers.git_commits, { desc = "Git commits picker" })
-  vim.keymap.set("n", "<leader>gh", MiniExtra.pickers.git_hunks, { desc = "Git hunks picker" })
-
   vim.keymap.set(
     "n",
     "<leader>sd",
@@ -207,8 +197,8 @@ MiniDeps.later(function()
   vim.keymap.set("n", "<leader><leader>", function()
     local items = {}
     local scopes = {
-      buf_lines = { "all", "current" },
-      diagnostic = { "all", "current" },
+      buf_lines = { "current", "all" },
+      diagnostic = { "current", "all" },
       git_files = { "tracked", "modified", "untracked", "ignored", "deleted" },
       git_hunks = { "unstaged", "staged" },
       list = { "quickfix", "location" },
@@ -222,15 +212,23 @@ MiniDeps.later(function()
         "workspace_symbol",
       },
     }
-    for _, pickers in ipairs({ MiniPick.builtin, MiniExtra.pickers }) do
-      for key, value in vim.spairs(pickers) do
-        if scopes[key] then
-          for _, scope in ipairs(scopes[key]) do
-            items[#items + 1] = { builtin = key, callback = value, scope = scope }
-          end
-        else
-          items[#items + 1] = { builtin = key, callback = value }
+    local disabled = {
+      "cli",
+      "hipatterns",
+      "hl_groups",
+      "treesitter",
+      "visit_paths",
+      "visit_labels",
+    }
+    for key, value in vim.spairs(MiniPick.registry) do
+      if vim.tbl_contains(disabled, key) then
+        -- Do nothing
+      elseif scopes[key] then
+        for _, scope in ipairs(scopes[key]) do
+          items[#items + 1] = { builtin = key, callback = value, scope = scope }
         end
+      else
+        items[#items + 1] = { builtin = key, callback = value }
       end
     end
     vim.ui.select(items, {
