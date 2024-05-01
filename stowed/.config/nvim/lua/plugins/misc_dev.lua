@@ -19,26 +19,9 @@ MiniDeps.later(function()
 
   require("conform").setup({
     formatters_by_ft = {
-      clojure = { "zprint" },
+      -- clojure = { "zprint" },
       fish = { "fish_indent" },
       lua = { "stylua" },
-
-      javascript = { "prettier" },
-      javascriptreact = { "prettier" },
-      typescript = { "prettier" },
-      typescriptreact = { "prettier" },
-      vue = { "prettier" },
-      css = { "prettier" },
-      scss = { "prettier" },
-      less = { "prettier" },
-      html = { "prettier" },
-      json = { "prettier" },
-      jsonc = { "prettier" },
-      yaml = { "prettier" },
-      markdown = { "prettier" },
-      ["markdown.mdx"] = { "prettier" },
-      graphql = { "prettier" },
-      handlebars = { "prettier" },
     },
   })
   vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
