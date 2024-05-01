@@ -69,9 +69,11 @@ function M.open_cljdoc()
     function(err, result, context, config)
       if result then
         local element = result.elements[1]
-        local url =
-          string.format("https://clojuredocs.org/%s/%s", element.element.to, element.element.name)
-        vim.ui.open(url)
+        local ns = element.definition.ns
+        if ns and string.match(ns, "^clojure%.") then
+          local url = string.format("https://clojuredocs.org/%s/%s", ns, element.definition.name)
+          vim.ui.open(url)
+        end
       end
     end,
     0
@@ -91,11 +93,9 @@ function M.lsp_start()
   vim.lsp.start({
     name = "clojure_lsp",
     cmd = { "clojure-lsp" },
-    root_dir = vim.fs.dirname(
-      vim.fs.find(
-        { "project.clj", "deps.edn", "build.boot", "shadow-cljs.edn", ".git", "bb.edn" },
-        { upward = true }
-      )[1]
+    root_dir = vim.fs.root(
+      0,
+      { "project.clj", "deps.edn", "build.boot", "shadow-cljs.edn", ".git", "bb.edn" }
     ),
     capabilities = capabilities,
   })
@@ -135,6 +135,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
       complete = function(arg_lead, cmd_line, cursor_pos)
         return vim.tbl_filter(function(s) return s:sub(1, #arg_lead) == arg_lead end, commands)
       end,
+    })
+
+    vim.api.nvim_buf_create_user_command(0, "CljDoc", function(info) M.open_cljdoc() end, {
+      desc = "Open ClojureDocs",
+      nargs = 0,
     })
   end,
 })

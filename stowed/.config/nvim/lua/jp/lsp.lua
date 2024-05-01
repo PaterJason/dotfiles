@@ -176,6 +176,7 @@ local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
   ---@cast client -?
   local bufnr = args.buf
+  local file = args.file
 
   -- Keymaps
   local mappings = {
@@ -188,6 +189,7 @@ local function attach(args)
             options.title = options.title .. " TOC"
             vim.fn.setloclist(0, {}, " ", options)
             vim.cmd.lopen()
+            vim.w.qf_toc = file
           end,
         })
       end,
@@ -227,11 +229,12 @@ local function attach(args)
     )
   end
   if client.supports_method(methods.textDocument_codeLens) then
-    vim.api.nvim_create_autocmd(
-      { "BufEnter", "TextChanged", "InsertLeave" },
-      { callback = vim.lsp.codelens.refresh, group = attach_augroup, buffer = bufnr }
-    )
-    vim.lsp.codelens.refresh()
+    vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
+      callback = function() vim.lsp.codelens.refresh({ bufnr = bufnr }) end,
+      group = attach_augroup,
+      buffer = bufnr,
+    })
+    vim.lsp.codelens.refresh({ bufnr = bufnr })
   end
 end
 

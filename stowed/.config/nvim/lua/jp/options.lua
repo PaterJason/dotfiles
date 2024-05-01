@@ -1,15 +1,17 @@
 local g, o, opt = vim.g, vim.o, vim.opt
 
+-- Enables the experimental Lua module loader
 vim.loader.enable()
-
-g.mapleader = " "
-g.maplocalleader = [[\]]
 
 -- Disable remote plugin providers
 g.loaded_python3_provider = 0
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_node_provider = 0
+
+-- Leader maps
+g.mapleader = " "
+g.maplocalleader = [[\]]
 
 -- General
 o.clipboard = "unnamedplus"
@@ -33,7 +35,6 @@ o.relativenumber = true
 opt.shortmess:append("I")
 o.splitbelow = true
 o.splitright = true
-o.wrap = false
 
 -- Editing
 o.ignorecase = true

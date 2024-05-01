@@ -3,12 +3,9 @@ MiniDeps.later(function()
     source = "neovim/nvim-lspconfig",
     depends = {
       "b0o/SchemaStore.nvim",
-      "folke/neodev.nvim",
       "nanotee/sqls.nvim",
     },
   })
-
-  require("neodev").setup({})
 
   local lspconfig = require("lspconfig")
 
@@ -27,6 +24,7 @@ MiniDeps.later(function()
     cssls = {},
     eslint = {},
     html = {},
+    htmx = {},
     jsonls = {
       settings = {
         json = {
@@ -36,7 +34,25 @@ MiniDeps.later(function()
       },
     },
     bashls = {},
-    gopls = {},
+    gopls = {
+      settings = {
+        gopls = {
+          codelenses = {
+            gc_details = true,
+          },
+          usePlaceholders = true,
+          hints = {
+            assignVariableTypes = true,
+            compositeLiteralFields = true,
+            compositeLiteralTypes = true,
+            constantValues = true,
+            functionTypeParameters = true,
+            parameterNames = true,
+            rangeVariableTypes = true,
+          },
+        },
+      },
+    },
     lua_ls = {
       settings = {
         Lua = {
@@ -47,6 +63,33 @@ MiniDeps.later(function()
           format = { enable = false },
         },
       },
+      on_init = function(client)
+        local path = client.workspace_folders[1].name
+        if vim.uv.fs_stat(vim.fs.joinpath(path, "init.lua")) then
+          local library = vim.api.nvim_get_runtime_file("lua/", true)
+          library[1] = "${3rd}/luv/library"
+          client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+            workspace = {
+              library = library,
+              ignoreDir = {
+                "/catppuccin/*/",
+                "catppuccin*.lua",
+                "/cmp_*/",
+                "/conform/formatters/",
+                "/conjure/",
+                "/lint/linters/",
+                "/lspconfig/server_configurations/",
+                "/mason-*/",
+                "/nvim-web-devicons/",
+                "/schemastore/catalog.lua",
+                "/neodev.nvim/",
+                "/rustaceanvim/",
+                "/sqls/",
+              },
+            },
+          })
+        end
+      end,
     },
     sqls = {
       on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end,
