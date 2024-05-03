@@ -12,14 +12,14 @@ MiniDeps.later(function()
   local cmp = require("cmp")
 
   vim.keymap.set({ "i", "s" }, "<Tab>", function()
-    if vim.snippet.jumpable(1) then
+    if vim.snippet.active({ direction = 1 }) then
       return "<Cmd>lua vim.snippet.jump(1)<CR>"
     else
       return "<Tab>"
     end
   end, { expr = true })
   vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
-    if vim.snippet.jumpable(-1) then
+    if vim.snippet.active({ direction = -1 }) then
       return "<Cmd>lua vim.snippet.jump(-1)<CR>"
     else
       return "<S-Tab>"
