@@ -94,6 +94,7 @@ MiniDeps.later(function()
     sqls = {
       on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end,
     },
+    templ = {},
     texlab = {
       settings = {
         texlab = {
