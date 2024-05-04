@@ -36,11 +36,6 @@ local function select()
       on_choice = vim.lsp.buf.add_workspace_folder,
       method = methods.workspace_workspaceFolders,
     },
-    -- {
-    --   text = "Clear references",
-    --   on_choice = vim.lsp.buf.clear_references,
-    --   method = methods.textDocument_documentHighlight,
-    -- },
     {
       text = "Code action",
       on_choice = vim.lsp.buf.code_action,
@@ -56,11 +51,6 @@ local function select()
       on_choice = vim.lsp.buf.definition,
       method = methods.textDocument_definition,
     },
-    -- {
-    --   text = "Document highlight",
-    --   on_choice = vim.lsp.buf.document_highlight,
-    --   method = methods.textDocument_documentHighlight,
-    -- },
     {
       text = "Document symbol",
       on_choice = vim.lsp.buf.document_symbol,
@@ -149,7 +139,7 @@ local function select()
     },
     {
       text = "Toggle inlay hints",
-      on_choice = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
+      on_choice = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({})) end,
       method = methods.textDocument_inlayHint,
     },
   }
@@ -171,6 +161,12 @@ local function select()
     if choice then choice.on_choice() end
   end)
 end
+
+vim.keymap.set("n", "<leader>ti", function()
+  local is_enabled = vim.lsp.inlay_hint.is_enabled({})
+  vim.lsp.inlay_hint.enable(not is_enabled)
+  vim.notify("Inlay hints " .. (is_enabled and "disabled" or "enabled"))
+end, { desc = "Toggle inlay hints" })
 
 local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
@@ -194,12 +190,6 @@ local function attach(args)
         })
       end,
       "Document symbols",
-    },
-    {
-      methods.textDocument_inlayHint,
-      "<leader>ti",
-      function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end,
-      "Toggle inlay hints",
     },
     { methods.textDocument_codeLens, "crl", vim.lsp.codelens.run, "Run code lens" },
   }
