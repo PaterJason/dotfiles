@@ -64,8 +64,7 @@ MiniDeps.later(function()
         },
       },
       on_init = function(client)
-        local path = client.workspace_folders[1].name
-        if vim.uv.fs_stat(vim.fs.joinpath(path, "init.lua")) then
+        if vim.uv.fs_stat(vim.fs.joinpath(client.root_dir, "init.lua")) then
           local library = vim.api.nvim_get_runtime_file("lua/", true)
           library[1] = "${3rd}/luv/library"
           client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
@@ -183,7 +182,6 @@ MiniDeps.later(function()
     source = "mrcjkb/rustaceanvim",
   })
 
-  ---@type RustaceanOpts
   vim.g.rustaceanvim = {
     tools = {
       hover_actions = { replace_builtin_hover = false },
