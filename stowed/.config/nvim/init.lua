@@ -1,5 +1,6 @@
 require("jp.options")
 require("jp.autocmds")
+require("jp.keymaps")
 require("jp.lsp")
 
 local path_package = vim.fn.stdpath("data") .. "/site"
