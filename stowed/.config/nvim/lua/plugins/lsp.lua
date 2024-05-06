@@ -79,6 +79,7 @@ MiniDeps.later(function()
                 "/lint/linters/",
                 "/lspconfig/server_configurations/",
                 "/mason-*/",
+                "/mason/*/",
                 "/nvim-web-devicons/",
                 "/schemastore/catalog.lua",
                 "/neodev.nvim/",
