@@ -191,7 +191,10 @@ local function attach(args)
       end,
       "Document symbols",
     },
+    { methods.textDocument_references, "gr", vim.lsp.buf.references, "References" },
     { methods.textDocument_codeLens, "crl", vim.lsp.codelens.run, "Run code lens" },
+    { methods.textDocument_rename, "crn", vim.lsp.buf.rename, "Rename" },
+    { methods.textDocument_codeAction, "crr", vim.lsp.buf.code_action, "Code action" },
   }
   for _, value in ipairs(mappings) do
     local method, lhs, rhs, desc = unpack(value)

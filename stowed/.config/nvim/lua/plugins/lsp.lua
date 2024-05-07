@@ -9,14 +9,6 @@ MiniDeps.later(function()
 
   local lspconfig = require("lspconfig")
 
-  lspconfig.util.default_config.autostart = false
-  vim.api.nvim_create_autocmd("BufReadPost", {
-    group = "JPConfigLsp",
-    callback = function(args)
-      if vim.bo[args.buf].buftype == "" then vim.cmd.LspStart() end
-    end,
-  })
-
   local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
   ---@type table<string, lspconfig.Config>

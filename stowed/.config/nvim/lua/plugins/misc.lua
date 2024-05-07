@@ -38,6 +38,6 @@ MiniDeps.later(function()
   vim.g["conjure#highlight#enabled"] = true
   vim.g["conjure#mapping#doc_word"] = "K"
   MiniDeps.add({
-    source = "Olical/conjure",
+    source = "PaterJason/conjure",
   })
 end)

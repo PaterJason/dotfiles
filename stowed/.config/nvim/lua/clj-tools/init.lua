@@ -145,10 +145,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 function M.setup()
-  vim.api.nvim_create_autocmd("BufReadPost", {
+  vim.api.nvim_create_autocmd("FileType", {
     group = "JPConfigLsp",
+    pattern = { "clojure", "edn" },
     callback = function(args)
-      if vim.bo.filetype == "clojure" and vim.bo[args.buf].buftype == "" then M.lsp_start() end
+      if vim.bo[args.buf].buftype ~= "nofile" then M.lsp_start() end
     end,
   })
 end
