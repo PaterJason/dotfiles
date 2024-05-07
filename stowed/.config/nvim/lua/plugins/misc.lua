@@ -5,10 +5,6 @@ MiniDeps.now(function()
   })
 
   require("catppuccin").setup({
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
     custom_highlights = function(colors)
       return {
         NormalFloat = { bg = colors.none },
@@ -17,11 +13,10 @@ MiniDeps.now(function()
     integrations = {
       cmp = true,
       dap = true,
-      gitsigns = true,
       markdown = true,
       mason = true,
       mini = { enabled = true },
-      native_lsp = { enabled = true },
+      native_lsp = { enabled = true, inlay_hints = { background = true } },
       semantic_tokens = true,
       treesitter = true,
       treesitter_context = true,
