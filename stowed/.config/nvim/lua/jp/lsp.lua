@@ -113,14 +113,9 @@ local function select()
       method = methods.textDocument_signatureHelp,
     },
     {
-      text = "Subtypes",
-      on_choice = function() vim.lsp.buf.typehierarchy("subtypes") end,
-      method = methods.typeHierarchy_subtypes,
-    },
-    {
-      text = "Supertypes",
-      on_choice = function() vim.lsp.buf.typehierarchy("supertypes") end,
-      method = methods.typeHierarchy_supertypes,
+      text = "Type hierarchy",
+      on_choice = vim.lsp.buf.typehierarchy,
+      method = methods.textDocument_prepareTypeHierarchy,
     },
     {
       text = "Type definition",
