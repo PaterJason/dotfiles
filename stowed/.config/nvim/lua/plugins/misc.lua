@@ -22,7 +22,7 @@ MiniDeps.now(function()
       treesitter_context = true,
     },
   })
-  vim.cmd.colorscheme("catppuccin")
+  vim.cmd("colorscheme catppuccin")
 end)
 
 MiniDeps.now(function()

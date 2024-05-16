@@ -179,7 +179,7 @@ local function attach(args)
           on_list = function(options)
             options.title = options.title .. " TOC"
             vim.fn.setloclist(0, {}, " ", options)
-            vim.cmd.lopen()
+            vim.cmd("lopen")
             vim.w.qf_toc = file
           end,
         })

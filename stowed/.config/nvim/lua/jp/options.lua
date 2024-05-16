@@ -17,7 +17,6 @@ g.maplocalleader = [[\]]
 o.clipboard = "unnamedplus"
 o.confirm = true
 o.dictionary = "/usr/share/dict/british-english"
-opt.grepformat:prepend("%f:%l:%c:%m")
 o.grepprg = "rg --vimgrep --smart-case"
 o.spelllang = "en_gb"
 o.spelloptions = "camel"
@@ -58,7 +57,7 @@ o.foldlevelstart = 99
 o.foldnestmax = 10
 o.foldtext = ""
 
-vim.cmd.packadd("cfilter")
+vim.cmd("packadd cfilter")
 
 -- GUI
 if vim.fn.has("gui_running") == 1 then vim.o.guifont = "Monospace:h10" end
