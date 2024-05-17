@@ -48,13 +48,9 @@ end)
 MiniDeps.later(function()
   MiniDeps.add({ source = "rafamadriz/friendly-snippets" })
 
-  local dir
-  for _, d in ipairs(vim.api.nvim_list_runtime_paths()) do
-    if vim.fs.basename(d) == "friendly-snippets" then
-      dir = d
-      break
-    end
-  end
+  local dir = vim
+    .iter(vim.api.nvim_list_runtime_paths())
+    :find(function(d) return vim.fs.basename(d) == "friendly-snippets" end)
   local package_json = vim.fn.json_decode(vim.fn.readfile(vim.fs.joinpath(dir, "package.json")))
 
   ---@class FriendlySnippet
@@ -77,24 +73,25 @@ MiniDeps.later(function()
     if snippets ~= nil then return snippets end
 
     local snippet_info = package_json.contributes.snippets
-    local paths = {}
-    for _, value in ipairs(snippet_info) do
-      local language = value.language
-      if type(language) == "string" then
-        if language == lang then paths[#paths + 1] = value.path end
-      else
-        if vim.list_contains(language, lang) then paths[#paths + 1] = value.path end
-      end
-    end
-
     snippets = {}
-    for _, path in ipairs(paths) do
-      for key, value in vim.spairs(vim.fn.json_decode(vim.fn.readfile(vim.fs.joinpath(dir, path)))) do
-        value.key = key
-        snippets[#snippets + 1] = value
-      end
-    end
-    lang_snippets[lang] = snippets
+    vim
+      .iter(snippet_info)
+      :map(function(value)
+        local language = value.language
+        if
+          (type(language) == "string" and language == lang)
+          or (vim.islist(language) and vim.list_contains(language, lang))
+        then
+          return value.path
+        end
+      end)
+      :each(function(path)
+        local json_tbl = vim.fn.json_decode(vim.fn.readfile(vim.fs.joinpath(dir, path)))
+        for key, value in vim.spairs(json_tbl) do
+          value.key = key
+          snippets[#snippets + 1] = value
+        end
+      end)
     return snippets
   end
 
