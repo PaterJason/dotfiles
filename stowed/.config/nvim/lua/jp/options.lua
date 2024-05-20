@@ -40,6 +40,7 @@ o.ignorecase = true
 o.infercase = true
 o.smartcase = true
 o.tabstop = 2
+o.shiftwidth = 0
 o.completeopt = "menuone,noinsert,noselect"
 o.nrformats = "alpha,hex,bin,unsigned"
 

@@ -30,13 +30,7 @@ MiniDeps.later(
   end
 )
 
-MiniDeps.later(
-  function()
-    require("mini.bracketed").setup({
-      comment = { suffix = "/", options = {} },
-    })
-  end
-)
+MiniDeps.later(function() require("mini.bracketed").setup({}) end)
 
 MiniDeps.later(function()
   require("mini.bufremove").setup({})
@@ -96,8 +90,6 @@ MiniDeps.later(function()
     },
   })
 end)
-
-MiniDeps.later(function() require("mini.comment").setup({}) end)
 
 MiniDeps.later(function()
   require("mini.diff").setup({})
@@ -195,7 +187,6 @@ MiniDeps.later(function()
   )
 
   vim.keymap.set("n", "<leader><leader>", function()
-    local items = {}
     local scopes = {
       buf_lines = { "current", "all" },
       diagnostic = { "current", "all" },
@@ -220,6 +211,7 @@ MiniDeps.later(function()
       "visit_paths",
       "visit_labels",
     }
+    local items = {}
     for key, value in vim.spairs(MiniPick.registry) do
       if vim.tbl_contains(disabled, key) then
         -- Do nothing

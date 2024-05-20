@@ -92,12 +92,11 @@ MiniDeps.later(function()
     },
     {
       type = "delve",
-      name = "Debug test", -- configuration for debugging test files
+      name = "Debug test",
       request = "launch",
       mode = "test",
       program = "${file}",
     },
-    -- works with go.mod packages and sub packages
     {
       type = "delve",
       name = "Debug test (go.mod)",
