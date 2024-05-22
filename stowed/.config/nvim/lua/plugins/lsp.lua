@@ -58,7 +58,7 @@ MiniDeps.later(function()
       on_init = function(client)
         if vim.uv.fs_stat(vim.fs.joinpath(client.root_dir, "init.lua")) then
           local library = vim.api.nvim_get_runtime_file("lua/", true)
-          library[1] = "${3rd}/luv/library"
+          library[#library+1] = "${3rd}/luv/library"
           client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
             workspace = {
               library = library,
