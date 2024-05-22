@@ -21,11 +21,13 @@ function M.connect(host, port)
 
   client:connect(host, port, function(err)
     assert(not err, err)
-    client:read_start(function(err, chunk)
+    client:read_start(function(err, bdata)
       assert(not err, err)
-      if chunk then
-        vim.print("READING_RAW", chunk)
-        vim.print("READING", bencode.decode(chunk))
+      if bdata then
+        vim.schedule(function()
+          local data, _ = bencode.decode(bdata)
+          vim.print("READING", data)
+        end)
       else
         client:close()
       end
