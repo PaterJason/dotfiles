@@ -25,10 +25,8 @@ function M.encode(obj)
     end
     return s .. "e"
   end
-  vim.notify("Bencode encoding failed", vim.log.levels.ERROR)
+  vim.notify("Failed to encode bencode", vim.log.levels.ERROR)
 end
-
--- M.encode({ bar = "spam", foo = 42 })
 
 ---@param s string
 ---@param index integer?
@@ -80,7 +78,7 @@ function M.decode(s, index)
     return dict, index
   end
 
-  vim.notify("Failed to decode", vim.log.levels.ERROR)
+  vim.notify("Failed to decode bencode", vim.log.levels.ERROR)
   return nil, index
 end
 

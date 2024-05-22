@@ -11,7 +11,7 @@ vim.api.nvim_buf_create_user_command(0, "NreplConnect", function(info)
   end
 
   ---@type uv.uv_tcp_t
-  CLIENT = require("nrepl.net").connect(host, port)
+  CLIENT = require("nrepl.client").connect(host, port)
 end, {})
 
 vim.api.nvim_buf_create_user_command(0, "NreplOp", function(info)
@@ -21,7 +21,7 @@ vim.api.nvim_buf_create_user_command(0, "NreplOp", function(info)
   local op = fargs[1]
   local args = vim.list_slice(fargs, 2)
 
-  require("nrepl.net").write(client, {
+  require("nrepl.client").write(client, {
     op = op,
   })
 end, {
