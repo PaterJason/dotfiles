@@ -74,7 +74,7 @@ function M.connect(host, port)
   client:connect(host, port, function(err)
     assert(not err, err)
 
-    str_buf = ""
+    local str_buf = ""
     client:read_start(function(err, chunk)
       assert(not err, err)
       if chunk then
