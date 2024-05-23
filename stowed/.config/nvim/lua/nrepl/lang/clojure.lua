@@ -27,4 +27,7 @@ vim.api.nvim_buf_create_user_command(0, "NreplOp", function(info)
 end, {
   range = true,
   nargs = "+",
+  complete = function(arg_lead, cmd_line, cursor_pos)
+    return vim.tbl_keys(STATE.ops)
+  end,
 })

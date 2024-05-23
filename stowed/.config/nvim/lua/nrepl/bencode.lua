@@ -35,11 +35,7 @@ function M.decode(s, index)
   index = index or 1
   local head = string.sub(s, index, index)
 
-  if head == "" then
-    return nil, index
-  elseif head == "e" then
-    return nil, index + 1
-  elseif head == "i" then
+  if head == "i" then
     local start, _end = string.find(s, "^i%-?%d+e", index)
     if start == nil or _end == nil then
       vim.notify("Failed to decode number", vim.log.levels.ERROR)
@@ -53,14 +49,21 @@ function M.decode(s, index)
       return nil, index
     end
     local len = tonumber(string.sub(s, start, _end - 1))
-    return string.sub(s, _end + 1, _end + len), _end + len + 1
+    local ret_s = string.sub(s, _end + 1, _end + len)
+    if string.len(ret_s) < len then return nil, index end
+    return ret_s, _end + len + 1
   elseif head == "l" then
     local list = {}
     index = index + 1
     while true do
+      if string.sub(s, index, index) == "e" then
+        index = index + 1
+        break
+      end
+
       local decoded_s, i = M.decode(s, index)
       index = i
-      if decoded_s == nil then break end
+      if decoded_s == nil then return nil, index end
       list[#list + 1] = decoded_s
     end
     return list, index
@@ -68,17 +71,25 @@ function M.decode(s, index)
     local dict = {}
     index = index + 1
     while true do
-      local key, i = M.decode(s, index)
-      if key == nil then return dict, i end
+      if string.sub(s, index, index) == "e" then
+        index = index + 1
+        break
+      end
 
+      local key, i = M.decode(s, index)
+      if key == nil then return nil, i end
       local value, j = M.decode(s, i)
+      if value == nil then return nil, j end
       index = j
       dict[key] = value
     end
     return dict, index
   end
 
-  vim.notify("Failed to decode bencode", vim.log.levels.ERROR)
+  vim.schedule(function()
+    vim.notify("Failed to decode bencode", vim.log.levels.ERROR)
+    vim.print("BENCODE: ", s)
+  end)
   return nil, index
 end
 
