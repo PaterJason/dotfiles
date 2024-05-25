@@ -26,30 +26,30 @@ vim.api.nvim_create_user_command("NreplOp", function(info)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
-    local _, arg_n = string.gsub(string.sub(cmd_line, 1, cursor_pos), " ", "")
-    local state = require("nrepl.state")
-    if arg_n == 1 then
-      local ops = vim.tbl_get(state, "server", "ops")
-      if ops == nil then return end
-      return vim
-        .iter(state.server.ops)
-        :map(function(key, _) return key end)
-        :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
-        :totable()
-    elseif arg_n > 1 then
-      local op = vim.split(cmd_line, " ", { plain = true })[2]
-      local op_desc = vim.tbl_get(state, "server", "ops", op)
-      if op_desc == nil then return end
-      local op_params = {}
-      vim.list_extend(op_params, vim.tbl_keys(op_desc.requires))
-      vim.list_extend(op_params, vim.tbl_keys(op_desc.optional))
-
-      return vim
-        .iter(op_params)
-        :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
-        :totable()
-    end
+    local ops = require("nrepl.state").server.ops
+    return vim
+      .iter(ops)
+      :map(function(key, value)
+        if value.requires == nil or vim.tbl_isempty(value.requires) then return key end
+      end)
+      :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+      :totable()
   end,
+})
+
+vim.api.nvim_create_user_command("NreplWrite", function(info)
+  local client = require("nrepl.state").client
+  if client == nil then
+    vim.notify("No nREPL client connected", vim.log.levels.WARN)
+    return
+  end
+
+  local args = info.args
+  local data = vim.fn.eval(args)
+  require("nrepl.tcp").write(client, data)
+end, {
+  nargs = 1,
+  complete = "expression",
 })
 
 local action = require("nrepl.action")

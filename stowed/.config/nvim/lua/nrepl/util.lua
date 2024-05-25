@@ -17,7 +17,6 @@ function M.get_log_buf(session)
   end
 end
 
-
 function M.append_log(session, s)
   local buf = M.get_log_buf(session)
   local text = vim.split(s, "\n", { plain = true })

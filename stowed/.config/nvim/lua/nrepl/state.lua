@@ -10,7 +10,7 @@
 
 ---@type Nrepl.State
 local M = {
-  server = {}
+  server = {},
 }
 
 return M

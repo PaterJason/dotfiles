@@ -20,19 +20,6 @@ function M.connect(host, port)
   if client then state.client = client end
 end
 
-function M.eval_buf()
-  local text = vim.api.nvim_buf_get_lines(0, 0, -1, true)
-  local file = vim.fn.expand("%:p")
-
-  tcp.write(state.client, {
-    op = "eval",
-    code = table.concat(text, "\n"),
-    session = state.session,
-
-    file = file,
-  })
-end
-
 function M.eval_input()
   vim.ui.input(
     { prompt = "=> " },
@@ -41,6 +28,7 @@ function M.eval_input()
         op = "eval",
         code = input,
         session = state.session,
+        id = "eval_input",
       })
     end
   )
@@ -60,10 +48,24 @@ function M.eval_tsnode()
     op = "eval",
     code = text,
     session = state.session,
-
+    id = "eval_tsnode",
     file = file,
     line = row,
     column = col,
+  })
+end
+
+function M.load_file()
+  local text = vim.api.nvim_buf_get_lines(0, 0, -1, true)
+  local file_path = vim.fn.expand("%:p")
+
+  tcp.write(state.client, {
+    op = "load-file",
+    id = "load_file",
+    session = state.session,
+    file = table.concat(text, "\n"),
+    ["file-path"] = file_path,
+    ["file-name"] = vim.fs.basename(file_path),
   })
 end
 

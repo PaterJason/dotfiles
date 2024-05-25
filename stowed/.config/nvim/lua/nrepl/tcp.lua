@@ -26,6 +26,8 @@ local read_handlers = {
       return true
     end
   end,
+  -- debugging handler
+  function(data) vim.print("DEBUG HANDLER", data) end,
   -- op: ls-sessions
   function(data)
     if data.sessions then
@@ -34,8 +36,13 @@ local read_handlers = {
       return true
     end
   end,
-  -- debugging handler
-  function(data) vim.print("DEBUG HANDLER", data) end,
+  -- op: ls-sessions
+  function(data)
+    if data["new-session"] then
+      M.write(state.client, { op = "ls-sessions" })
+      return true
+    end
+  end,
   -- op: eval
   function(data)
     if data.ex then
