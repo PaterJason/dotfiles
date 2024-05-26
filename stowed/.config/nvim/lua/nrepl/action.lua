@@ -1,11 +1,12 @@
 local util = require("nrepl.util")
+local config = require("nrepl.config")
 local tcp = require("nrepl.tcp")
 local state = require("nrepl.state")
 
 M = {}
 
----@param host string?
----@param port string?
+---@param host? string
+---@param port? string
 function M.connect(host, port)
   host = host or "localhost"
   if port == nil then
@@ -21,58 +22,41 @@ function M.connect(host, port)
   if client then state.client = client end
 end
 
----@param session string?
-function M.clone(session)
+function M.close()
+  local client = state.client
+  if client then client:close() end
+end
+
+---@param session? string
+function M.clone_session(session)
   tcp.write(state.client, {
     op = "clone",
-    session = session,
     id = util.msg_id.session_modify,
+    session = session,
   })
 end
 
----@param session string
-function M.close(session)
+---@param session? string
+function M.close_session(session)
   if session then
     tcp.write(state.client, {
       op = "close",
-      session = session,
       id = util.msg_id.session_modify,
+      session = session,
     })
   else
-    vim.ui.select(state.server.sessions, {
-      prompt = "Select session",
-      format_item = function(item)
-        local current_session = state.session
-        if item == current_session then
-          return item .. " (current)"
-        else
-          return item
-        end
-      end,
-    }, function(item)
-      if item then M.close(item) end
-    end)
+    util.select_session(M.close)
   end
 end
 
----@param session string
+---@param session? string
 function M.set_session(session)
-  if session == nil then
-    vim.ui.select(state.server.sessions, {
-      prompt = "Select session",
-      format_item = function(item)
-        local current_session = state.session
-        if item == current_session then
-          return item .. " (current)"
-        else
-          return item
-        end
-      end,
-    }, function(item)
+  if session then
+    state.session = session
+  else
+    util.select_session(function(item)
       if item then state.session = item end
     end)
-  else
-    state.session = session
   end
 end
 
@@ -82,16 +66,16 @@ function M.eval_input()
     function(input)
       tcp.write(state.client, {
         op = "eval",
+        id = util.msg_id.eval,
         code = input,
         session = state.session,
-        id = "eval_input",
       })
     end
   )
 end
 
-function M.eval_tsnode()
-  local node = vim.treesitter.get_node()
+function M.eval_cursor()
+  local node = util.get_ts_node("elem", { cursor = true, last = true })
   if node == nil then
     vim.notify("No  TS node", vim.log.levels.WARN)
     return
@@ -102,13 +86,25 @@ function M.eval_tsnode()
 
   tcp.write(state.client, {
     op = "eval",
+    id = util.msg_id.eval,
     code = text,
     session = state.session,
-    id = "eval_tsnode",
+    ns = util.get_ts_text("ns"),
     file = file,
     line = row,
     column = col,
   })
+end
+
+function M.interrupt(session)
+  if session then
+    tcp.write(state.client, {
+      op = "interrupt",
+      session = session,
+    })
+  else
+    util.select_session(M.interrupt)
+  end
 end
 
 function M.load_file()
@@ -117,7 +113,7 @@ function M.load_file()
 
   tcp.write(state.client, {
     op = "load-file",
-    id = "load_file",
+    id = util.msg_id.load_file,
     session = state.session,
     file = table.concat(text, "\n"),
     ["file-path"] = file_path,
@@ -125,20 +121,35 @@ function M.load_file()
   })
 end
 
----@param sym string
-function M.lookup(sym)
+function M.lookup_definition()
+  local sym = util.get_ts_text("sym", { cursor = true })
+  if sym then
+    tcp.write(state.client, {
+      op = "lookup",
+      id = util.msg_id.lookup_definition,
+      sym = util.get_ts_text("sym", { cursor = true }),
+      ns = util.get_ts_text("ns"),
+    })
+  else
+    vim.notify("No valid symbol found at cursor position", vim.log.levels.WARN)
+  end
+end
+
+function M.lookup_hover()
+  local sym = util.get_ts_text("sym", { cursor = true })
   if sym then
     tcp.write(state.client, {
       op = "lookup",
       id = util.msg_id.lookup_hover,
-      sym = sym,
+      sym = util.get_ts_text("sym", { cursor = true }),
+      ns = util.get_ts_text("ns"),
     })
   else
-    vim.ui.input({
-      prompt = "Symbol: ",
-    }, function(input)
-      if input then vim.lookup(input) end
-    end)
+    vim.lsp.util.open_floating_preview(
+      { "No valid symbol found at cursor position" },
+      "",
+      config.floating_preview
+    )
   end
 end
 

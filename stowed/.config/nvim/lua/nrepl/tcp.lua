@@ -44,6 +44,13 @@ end
 
 ---@type Nrepl.Handler[]
 local read_handlers = {
+  -- error
+  function(data)
+    if data.err then
+      util.append_log(data.session, data.err)
+      return true
+    end
+  end,
   -- op: describe
   function(data)
     if data.ops then
@@ -73,7 +80,14 @@ local read_handlers = {
       return true
     end
   end,
-  -- op: lookup, id: hover
+  -- op: lookup, definition
+  function(data)
+    if data.id == util.msg_id.lookup_definition and data.info then
+      util.definition(data.info)
+      return true
+    end
+  end,
+  -- op: lookup, hover
   function(data)
     if data.id == util.msg_id.lookup_hover and data.info then
       util.hover_doc(data.info)

@@ -1,5 +1,3 @@
-local util = require("nrepl.util")
-
 vim.api.nvim_create_user_command("NreplOp", function(info)
   local client = require("nrepl.state").client
   if client == nil then
@@ -26,6 +24,7 @@ vim.api.nvim_create_user_command("NreplOp", function(info)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
+    local util = require("nrepl.util")
     local ops = require("nrepl.state").server.ops
     return vim
       .iter(ops)
@@ -60,8 +59,9 @@ vim.api.nvim_create_user_command("Nrepl", function(info)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
-    local _, arg_n = string.gsub(string.sub(cmd_line, 1, cursor_pos), " ", "")
+    local util = require("nrepl.util")
     local server = require("nrepl.state").server
+    local _, arg_n = string.gsub(string.sub(cmd_line, 1, cursor_pos), " ", "")
     if arg_n == 1 then
       return vim
         .iter(action)
