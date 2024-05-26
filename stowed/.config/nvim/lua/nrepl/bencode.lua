@@ -29,7 +29,7 @@ function M.encode(obj)
 end
 
 ---@param s string
----@param index integer?
+---@param index? integer
 ---@return any, integer
 function M.decode(s, index)
   index = index or 1
@@ -68,7 +68,7 @@ function M.decode(s, index)
     end
     return list, index
   elseif head == "d" then
-    local dict = {}
+    local dict = vim.empty_dict()
     index = index + 1
     while true do
       if string.sub(s, index, index) == "e" then
