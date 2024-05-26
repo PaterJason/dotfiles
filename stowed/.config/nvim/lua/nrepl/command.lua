@@ -60,10 +60,23 @@ vim.api.nvim_create_user_command("Nrepl", function(info)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
-    return vim
-      .iter(action)
-      :map(function(key, _) return key end)
-      :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
-      :totable()
+    local _, arg_n = string.gsub(string.sub(cmd_line, 1, cursor_pos), " ", "")
+    local server = require("nrepl.state").server
+    if arg_n == 1 then
+      return vim
+        .iter(action)
+        :map(function(key, _) return key end)
+        :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+        :totable()
+    elseif arg_n == 2 and server then
+      local act = vim.split(cmd_line, " ", { plain = true })[2]
+      if vim.list_contains({ "set_session", "clone", "close", "log" }, act) then
+        return vim
+          .iter(server.sessions)
+          :map(function(key, _) return key end)
+          :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+          :totable()
+      end
+    end
   end,
 })

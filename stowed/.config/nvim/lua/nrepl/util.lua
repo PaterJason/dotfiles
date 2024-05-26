@@ -1,5 +1,12 @@
 local state = require("nrepl.state")
+local config = require("nrepl.config")
 local M = {}
+
+M.msg_id = {
+  lookup_hover = "nvim-lookup-hover",
+  session_modify = "nvim-session-modify",
+  session_refresh = "nvim-session-refresh",
+}
 
 ---@param session? string
 ---@return integer
@@ -25,6 +32,17 @@ end
 
 function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
   return function(value) return string.sub(value, 1, string.len(arg_lead)) == arg_lead end
+end
+
+function M.hover_doc(info)
+  local content = {
+    info.ns .. "/" .. info.name,
+  }
+  if info["arglists-str"] then table.insert(content, info["arglists-str"]) end
+  if info.added then table.insert(content, "Available since " .. info.added) end
+  if info.doc then table.insert(content, info.doc) end
+
+  vim.lsp.util.open_floating_preview(content, "", config.floating_preview)
 end
 
 return M

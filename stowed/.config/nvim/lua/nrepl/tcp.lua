@@ -4,18 +4,43 @@ local state = require("nrepl.state")
 
 local M = {}
 
+---@alias Nrepl.Handler fun(data: any):boolean
+
+---@param handlers Nrepl.Handler[]
+---@param data any
+local function run_handlers(handlers, data)
+  for _, handler in ipairs(handlers) do
+    if handler(data) then break end
+  end
+end
+
+---@type Nrepl.Handler[]
+local write_handlers = {
+  function(data)
+    if data.op == "close" then
+      local buf = util.get_log_buf(data.session)
+      vim.api.nvim_buf_delete(buf, {})
+
+      if state.session == data.session then state.session = nil end
+    end
+  end,
+}
+
 ---@param client uv.uv_tcp_t
 ---@param obj any
 function M.write(client, obj)
   local data = bencode.encode(obj)
   if data then
     client:write(data, function(err)
-      if err then vim.print("Write ERROR", err) end
+      if err then
+        vim.print("Write ERROR", err)
+        return
+      end
+
+      vim.schedule(function() run_handlers(write_handlers, obj) end)
     end)
   end
 end
-
----@alias Nrepl.Handler fun(data: any):boolean
 
 ---@type Nrepl.Handler[]
 local read_handlers = {
@@ -23,6 +48,8 @@ local read_handlers = {
   function(data)
     if data.ops then
       state.server.ops = data.ops
+      state.server.aux = data.aux
+      state.server.versions = data.versions
       return true
     end
   end,
@@ -30,16 +57,26 @@ local read_handlers = {
   function(data) vim.print("DEBUG HANDLER", data) end,
   -- op: ls-sessions
   function(data)
-    if data.sessions then
+    if data.id == util.msg_id.session_refresh and data.sessions then
       state.server.sessions = data.sessions
       if state.session == nil then state.session = data.sessions[1] end
       return true
     end
   end,
-  -- op: ls-sessions
+  -- op: sessions
   function(data)
-    if data["new-session"] then
-      M.write(state.client, { op = "ls-sessions" })
+    if data.id == util.msg_id.session_modify then
+      M.write(state.client, {
+        op = "ls-sessions",
+        id = util.msg_id.session_refresh,
+      })
+      return true
+    end
+  end,
+  -- op: lookup, id: hover
+  function(data)
+    if data.id == util.msg_id.lookup_hover and data.info then
+      util.hover_doc(data.info)
       return true
     end
   end,
@@ -61,13 +98,6 @@ local read_handlers = {
   -- Fallback
   function(_) vim.print("FALLBACK") end,
 }
-
----@param data any
-function M.run_handlers(data)
-  for _, handler in ipairs(read_handlers) do
-    if handler(data) then break end
-  end
-end
 
 ---@return uv.uv_tcp_t?
 function M.connect(host, port)
@@ -100,7 +130,7 @@ function M.connect(host, port)
           local data, index = bencode.decode(str_buf)
           if data then
             str_buf = string.sub(str_buf, index)
-            vim.schedule(function() M.run_handlers(data) end)
+            vim.schedule(function() run_handlers(read_handlers, data) end)
           else
             break
           end
@@ -112,7 +142,7 @@ function M.connect(host, port)
 
     vim.schedule(function()
       M.write(client, { op = "describe", ["verbose?"] = 1 })
-      M.write(client, { op = "ls-sessions" })
+      M.write(client, { op = "ls-sessions", id = util.msg_id.session_refresh })
     end)
   end)
   return client
