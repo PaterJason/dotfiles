@@ -1,6 +1,7 @@
 local bencode = require("nrepl.bencode")
 local util = require("nrepl.util")
 local state = require("nrepl.state")
+local config = require("nrepl.config")
 
 local M = {}
 
@@ -16,13 +17,22 @@ end
 
 ---@type Nrepl.Handler[]
 local write_handlers = {
+  -- debugging handler
+  function(data)
+    if config.debug then
+      vim.api.nvim_echo({
+        { "DEBUG WRITE HANDLER\n", "Underlined" },
+        { vim.inspect(data), "Normal" },
+      }, true, {})
+    end
+  end,
   function(data)
     if data.op == "close" then
       local buf = util.get_log_buf(data.session)
       vim.api.nvim_buf_delete(buf, {})
-
       if state.session == data.session then state.session = nil end
     end
+    return true
   end,
 }
 
@@ -42,13 +52,26 @@ function M.write(client, obj)
   end
 end
 
+local function handle_out(session, msg_id, s, opts)
+  util.append_log(session, s)
+  if msg_id == util.msg_id.eval_cursor then
+    local filetype = (opts.is_filetype and state.filetype) or ""
+    util.cursor_float(s, filetype)
+  elseif msg_id == util.msg_id.eval_input then
+    vim.api.nvim_echo({ { s, "Normal" } }, true, {})
+  end
+end
+
 ---@type Nrepl.Handler[]
 local read_handlers = {
-  -- error
+  -- debugging handler
   function(data)
-    if data.err then
-      util.append_log(data.session, data.err)
-      return true
+    if config.debug then
+      vim.api.nvim_echo({
+        { "DEBUG READ HANDLER\n", "Underlined" },
+        { vim.inspect(data), "Normal" },
+      }, true, {})
+      -- vim.print("DEBUG READ HANDLER", data)
     end
   end,
   -- op: describe
@@ -60,8 +83,6 @@ local read_handlers = {
       return true
     end
   end,
-  -- debugging handler
-  function(data) vim.print("DEBUG HANDLER", data) end,
   -- op: ls-sessions
   function(data)
     if data.id == util.msg_id.session_refresh and data.sessions then
@@ -80,6 +101,30 @@ local read_handlers = {
       return true
     end
   end,
+  -- out
+  function(data)
+    if data.out then
+      util.append_log(data.session, data.out)
+      return true
+    end
+  end,
+  -- error
+  function(data)
+    if data.err then
+      handle_out(data.session, data.id, data.err, {})
+      return true
+    end
+  end,
+  -- op: eval
+  function(data)
+    if data.ex then
+      -- util.append_log(data.session, data.ex)
+      return true
+    elseif data.value then
+      handle_out(data.session, data.id, data.value, { is_filetype = true })
+      return true
+    end
+  end,
   -- op: lookup, definition
   function(data)
     if data.id == util.msg_id.lookup_definition and data.info then
@@ -94,23 +139,6 @@ local read_handlers = {
       return true
     end
   end,
-  -- op: eval
-  function(data)
-    if data.ex then
-      util.append_log(data.session, data.ex)
-      return true
-    elseif data.value then
-      util.append_log(data.session, data.value)
-      return true
-    end
-
-    if data.id then
-      vim.print("ID: ", data.id)
-      return true
-    end
-  end,
-  -- Fallback
-  function(_) vim.print("FALLBACK") end,
 }
 
 ---@return uv.uv_tcp_t?

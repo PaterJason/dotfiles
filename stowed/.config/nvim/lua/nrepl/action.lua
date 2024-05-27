@@ -66,7 +66,7 @@ function M.eval_input()
     function(input)
       tcp.write(state.client, {
         op = "eval",
-        id = util.msg_id.eval,
+        id = util.msg_id.eval_input,
         code = input,
         session = state.session,
       })
@@ -86,7 +86,7 @@ function M.eval_cursor()
 
   tcp.write(state.client, {
     op = "eval",
-    id = util.msg_id.eval,
+    id = util.msg_id.eval_cursor,
     code = text,
     session = state.session,
     ns = util.get_ts_text("ns"),
@@ -96,15 +96,13 @@ function M.eval_cursor()
   })
 end
 
+---@param session? string
 function M.interrupt(session)
-  if session then
-    tcp.write(state.client, {
-      op = "interrupt",
-      session = session,
-    })
-  else
-    util.select_session(M.interrupt)
-  end
+  session = session or state.session
+  if session then tcp.write(state.client, {
+    op = "interrupt",
+    session = session,
+  }) end
 end
 
 function M.load_file()

@@ -59,7 +59,8 @@ function M.get_ts_text(capture, opts)
 end
 
 M.msg_id = {
-  eval = "nvim-eval",
+  eval_cursor = "nvim-eval-cursor",
+  eval_input = "nvim-eval-input",
   load_file = "nvim-load-file",
   lookup_definition = "nvim-lookup-definition",
   lookup_hover = "nvim-lookup-hover",
@@ -87,6 +88,14 @@ function M.append_log(session, s)
   local buf = M.get_log_buf(session)
   local text = vim.split(s, "\n", { plain = true })
   vim.api.nvim_buf_set_lines(buf, -1, -1, false, text)
+end
+
+---@param s string
+---@param filetype string
+function M.cursor_float(s, filetype)
+  local lines = vim.split(s, "\n", { plain = true })
+  ---@type vim.api.keyset.win_config
+  vim.lsp.util.open_floating_preview(lines, filetype, config.floating_preview)
 end
 
 function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
