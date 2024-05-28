@@ -68,6 +68,25 @@ M.msg_id = {
   session_refresh = "nvim-session-refresh",
 }
 
+---@param status string[]
+---@return { is_done: boolean, is_error: boolean, status_strs: string[] }
+function M.status(status)
+  return vim.iter(status):fold({
+    is_done = false,
+    is_error = false,
+    status_strs = {},
+  }, function(acc, s)
+    if s == "done" then
+      acc.is_done = true
+    elseif s == "error" then
+      acc.is_error = true
+    else
+      table.insert(acc.status_strs, s)
+    end
+    return acc
+  end)
+end
+
 ---@param session? string
 ---@return integer
 function M.get_log_buf(session)

@@ -30,7 +30,7 @@ function M.disconnect()
 end
 
 ---@param session? string
-function M.clone_session(session)
+function M.session_clone(session)
   tcp.write(state.client, {
     op = "clone",
     id = util.msg_id.session_modify,
@@ -39,7 +39,7 @@ function M.clone_session(session)
 end
 
 ---@param session? string
-function M.close_session(session)
+function M.session_close(session)
   if session then
     tcp.write(state.client, {
       op = "close",
@@ -47,12 +47,12 @@ function M.close_session(session)
       session = session,
     })
   else
-    util.select_session(M.close)
+    util.select_session(M.session_close)
   end
 end
 
 ---@param session? string
-function M.set_session(session)
+function M.session_select(session)
   if session then
     state.session = session
   else

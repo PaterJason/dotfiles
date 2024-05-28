@@ -63,13 +63,13 @@ local function handle_out(data, key)
   local buf = util.get_log_buf(session)
   util.append_log(buf, s, key)
 
-  if
-    vim
-      .iter(vim.api.nvim_tabpage_list_wins(0))
-      :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
-  then
-    vim.print("Already displaying log")
+  -- For when log is open in tab
+  local winid = vim
+    .iter(vim.api.nvim_tabpage_list_wins(0))
+    :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
+  if winid then
   end
+
   if msg_id == util.msg_id.eval_cursor then
     local filetype = (key == "value" and state.filetype) or ""
     util.cursor_float(s, filetype)
@@ -87,6 +87,25 @@ local read_handlers = {
         { "DEBUG READ HANDLER\n", "Underlined" },
         { vim.inspect(data), "Normal" },
       }, true, {})
+    end
+  end,
+  -- status
+  function(data)
+    if
+      data.status
+      and state.server.sessions
+      and vim.list_contains(state.server.sessions, data.session)
+    then
+      local status = util.status(data.status)
+      if not vim.tbl_isempty(status.status_strs) then
+        local buf = util.get_log_buf(data.session)
+        util.append_log(
+          buf,
+          table.concat(status.status_strs, ", "),
+          (status.is_error and "error") or (status.is_done and "done") or "status"
+        )
+      end
+      return false
     end
   end,
   -- op: describe
