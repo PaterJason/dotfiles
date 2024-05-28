@@ -97,12 +97,12 @@ local read_handlers = {
       and vim.list_contains(state.server.sessions, data.session)
     then
       local status = util.status(data.status)
-      if not vim.tbl_isempty(status.status_strs) then
+      if status.is_done and not vim.tbl_isempty(status.status_strs) then
         local buf = util.get_log_buf(data.session)
         util.append_log(
           buf,
           table.concat(status.status_strs, ", "),
-          (status.is_error and "error") or (status.is_done and "done") or "status"
+          (status.is_error and "error") or "done"
         )
       end
       return false

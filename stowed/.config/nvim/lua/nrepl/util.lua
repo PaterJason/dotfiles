@@ -114,6 +114,7 @@ function M.append_log(buf, s, key)
 
   local start = -1
   if vim.api.nvim_buf_get_lines(buf, -2, -1, false)[1] == "" then start = -2 end
+  local pre_line_count = vim.api.nvim_buf_line_count(buf)
 
   if key ~= "value" then
     local text2 = {}
@@ -124,6 +125,16 @@ function M.append_log(buf, s, key)
     vim.api.nvim_buf_set_lines(buf, start, -1, true, text2)
   else
     vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
+  end
+
+  local post_line_count = vim.api.nvim_buf_line_count(buf)
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if
+      buf == vim.api.nvim_win_get_buf(winid)
+      and pre_line_count <= vim.api.nvim_win_get_cursor(winid)[1]
+    then
+      vim.api.nvim_win_set_cursor(winid, { post_line_count, 0 })
+    end
   end
 end
 
@@ -156,10 +167,12 @@ function M.hover_doc(info)
   if vim.tbl_isempty(info) then
     table.insert(content, "No doc info found")
   else
-    table.insert(content, info.ns .. "/" .. info.name)
+    -- Look at clojure.repl/print-doc
+    table.insert(content, info.spec or (info.ns and info.ns .. "/" .. info.name) or info.name)
     table.insert(content, info.arglists)
+    table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
     table.insert(content, info.added and "Available since " .. info.added)
-    table.insert(content, info.doc)
+    table.insert(content, " " .. info.doc)
   end
 
   vim.lsp.util.open_floating_preview(content, "", config.floating_preview)
