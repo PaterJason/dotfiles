@@ -172,7 +172,7 @@ function M.hover_doc(info)
     table.insert(content, info.arglists)
     table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
     table.insert(content, info.added and "Available since " .. info.added)
-    table.insert(content, " " .. info.doc)
+    table.insert(content, info.doc and " " .. info.doc)
   end
 
   vim.lsp.util.open_floating_preview(content, "", config.floating_preview)
