@@ -83,7 +83,7 @@ function M.eval_cursor()
     return
   end
   local text = vim.treesitter.get_node_text(node, 0)
-  local row, col = node:range()
+  local row, col = node:start()
   local file = vim.fn.expand("%:p")
 
   tcp.write(state.client, {
@@ -93,8 +93,8 @@ function M.eval_cursor()
     session = state.session,
     ns = util.get_ts_text("ns"),
     file = file,
-    line = row,
-    column = col,
+    line = row + 1,
+    column = col + 1,
   })
 end
 
