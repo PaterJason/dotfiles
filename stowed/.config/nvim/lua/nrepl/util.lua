@@ -78,16 +78,34 @@ function M.get_log_buf(session)
   if buf == -1 then
     buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(buf, bufname)
+
+    vim.bo[buf].filetype = state.filetype
     return buf
   else
     return buf
   end
 end
 
-function M.append_log(session, s)
-  local buf = M.get_log_buf(session)
+---@param buf integer
+---@param s string
+---@param key? string
+function M.append_log(buf, s, key)
+  s = string.gsub(s, "\n$", "")
   local text = vim.split(s, "\n", { plain = true })
-  vim.api.nvim_buf_set_lines(buf, -1, -1, false, text)
+
+  local start = -1
+  if vim.api.nvim_buf_get_lines(buf, -2, -1, false)[1] == "" then start = -2 end
+
+  if key ~= "value" then
+    local text2 = {}
+    local commentstring = vim.bo[buf].commentstring
+    for _, value in ipairs(text) do
+      table.insert(text2, string.format(commentstring, (string.format("(%s) %s", key, value))))
+    end
+    vim.api.nvim_buf_set_lines(buf, start, -1, true, text2)
+  else
+    vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
+  end
 end
 
 ---@param s string
@@ -120,7 +138,7 @@ function M.hover_doc(info)
     table.insert(content, "No doc info found")
   else
     table.insert(content, info.ns .. "/" .. info.name)
-    table.insert(content, info["arglists-str"])
+    table.insert(content, info.arglists)
     table.insert(content, info.added and "Available since " .. info.added)
     table.insert(content, info.doc)
   end

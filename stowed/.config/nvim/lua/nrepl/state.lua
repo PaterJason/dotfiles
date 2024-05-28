@@ -9,10 +9,13 @@
 ---@field filetype? string
 
 ---@type Nrepl.State
-local M = {
+local default = {
   server = {},
   -- HACK will need to chage if supporting other languages
-  filetype = "clojure"
+  filetype = "clojure",
 }
+
+---@type Nrepl.State
+local M = default
 
 return M

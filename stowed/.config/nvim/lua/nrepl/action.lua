@@ -24,7 +24,7 @@ function M.connect(host, port)
   if client then state.client = client end
 end
 
-function M.close()
+function M.disconnect()
   local client = state.client
   if client then client:close() end
 end

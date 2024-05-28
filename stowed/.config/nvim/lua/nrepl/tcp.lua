@@ -39,6 +39,7 @@ local write_handlers = {
 ---@param client uv.uv_tcp_t
 ---@param obj any
 function M.write(client, obj)
+  obj = vim.tbl_extend("keep", obj, config.middleware_params)
   local data = bencode.encode(obj)
   if data then
     client:write(data, function(err)
@@ -52,10 +53,25 @@ function M.write(client, obj)
   end
 end
 
-local function handle_out(session, msg_id, s, opts)
-  util.append_log(session, s)
+---@param data any
+---@param key string
+local function handle_out(data, key)
+  local session = data.session
+  local msg_id = data.id
+  local s = data[key]
+
+  local buf = util.get_log_buf(session)
+  util.append_log(buf, s, key)
+
+  if
+    vim
+      .iter(vim.api.nvim_tabpage_list_wins(0))
+      :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
+  then
+    vim.print("Already displaying log")
+  end
   if msg_id == util.msg_id.eval_cursor then
-    local filetype = (opts.is_filetype and state.filetype) or ""
+    local filetype = (key == "value" and state.filetype) or ""
     util.cursor_float(s, filetype)
   elseif msg_id == util.msg_id.eval_input then
     vim.api.nvim_echo({ { s, "Normal" } }, true, {})
@@ -71,15 +87,12 @@ local read_handlers = {
         { "DEBUG READ HANDLER\n", "Underlined" },
         { vim.inspect(data), "Normal" },
       }, true, {})
-      -- vim.print("DEBUG READ HANDLER", data)
     end
   end,
   -- op: describe
   function(data)
     if data.ops then
       state.server.ops = data.ops
-      state.server.aux = data.aux
-      state.server.versions = data.versions
       return true
     end
   end,
@@ -104,24 +117,24 @@ local read_handlers = {
   -- out
   function(data)
     if data.out then
-      util.append_log(data.session, data.out)
+      local buf = util.get_log_buf(data.session)
+      util.append_log(buf, data.out, "out")
       return true
     end
   end,
   -- error
   function(data)
     if data.err then
-      handle_out(data.session, data.id, data.err, {})
+      handle_out(data, "err")
       return true
     end
   end,
   -- op: eval
   function(data)
-    if data.ex then
-      -- util.append_log(data.session, data.ex)
+    if data.value then
+      handle_out(data, "value")
       return true
-    elseif data.value then
-      handle_out(data.session, data.id, data.value, { is_filetype = true })
+    elseif data.ex then
       return true
     end
   end,
