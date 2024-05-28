@@ -1,14 +1,18 @@
 {:aliases
  {:dev/env {:extra-paths ["dev"]}
-  :repl/basic
-  {:extra-deps {nrepl/nrepl       {:mvn/version "LATEST"}
+  :nrepl
+  {:extra-deps {nrepl/nrepl {:mvn/version "LATEST"}}
+   :main-opts  ["--main" "nrepl.cmdline"
+                "--interactive"]}
+  :cider
+  {:extra-deps {nrepl/nrepl {:mvn/version "LATEST"}
                 cider/cider-nrepl {:mvn/version "LATEST"}}
    :main-opts  ["--main" "nrepl.cmdline"
                 "--middleware" "[cider.nrepl/cider-middleware]"
                 "--interactive"]}
-  :repl/rebel
-  {:extra-deps {nrepl/nrepl                {:mvn/version "LATEST"}
-                cider/cider-nrepl          {:mvn/version "LATEST"}
+  :cider-rebel
+  {:extra-deps {nrepl/nrepl {:mvn/version "LATEST"}
+                cider/cider-nrepl {:mvn/version "LATEST"}
                 com.bhauman/rebel-readline {:mvn/version "LATEST"}}
    :main-opts  ["--eval" "(apply require clojure.main/repl-requires)"
                 "--main" "nrepl.cmdline"
