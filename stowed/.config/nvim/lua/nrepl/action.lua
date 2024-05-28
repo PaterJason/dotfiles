@@ -10,7 +10,9 @@ M = {}
 function M.connect(host, port)
   host = host or "localhost"
   if port == nil then
-    for line in io.lines(".nrepl-port") do
+    local port_file = ".nrepl-port"
+    if not vim.uv.fs_stat(port_file) then return end
+    for line in io.lines(port_file) do
       if line then
         port = line
         break
