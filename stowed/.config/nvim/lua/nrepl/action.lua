@@ -130,7 +130,7 @@ function M.lookup_definition()
     tcp.write(state.client, {
       op = "lookup",
       id = util.msg_id.lookup_definition,
-      sym = util.get_ts_text("sym", { cursor = true }),
+      sym = sym,
       ns = util.get_ts_text("ns"),
     })
   else
@@ -144,7 +144,7 @@ function M.lookup_hover()
     tcp.write(state.client, {
       op = "lookup",
       id = util.msg_id.lookup_hover,
-      sym = util.get_ts_text("sym", { cursor = true }),
+      sym = sym,
       ns = util.get_ts_text("ns"),
     })
   else
