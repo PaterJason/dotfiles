@@ -159,7 +159,10 @@ end
 ---@param session? string
 function M.log(session)
   local buf = require("nrepl.util").get_log_buf(session)
-  vim.cmd({ cmd = "buffer", args = { buf } })
+  if buf then
+    vim.api.nvim_win_set_buf(0, buf)
+    vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(buf), 0 })
+  end
 end
 
 return M
