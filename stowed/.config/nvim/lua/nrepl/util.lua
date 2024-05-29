@@ -59,6 +59,7 @@ function M.get_ts_text(capture, opts)
 end
 
 M.msg_id = {
+  complete_sync = "nvim-complete-sync",
   eval_cursor = "nvim-eval-cursor",
   eval_input = "nvim-eval-input",
   load_file = "nvim-load-file",
@@ -88,9 +89,10 @@ function M.status(status)
 end
 
 ---@param session? string
----@return integer
+---@return integer?
 function M.get_log_buf(session)
   session = session or state.session
+  if not vim.list_contains(state.server.sessions, session) then return end
   local bufname = "nREPL-log-" .. session
   local buf = vim.fn.bufnr(bufname)
 

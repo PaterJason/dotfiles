@@ -7,6 +7,7 @@
 ---@field client? uv.uv_tcp_t
 ---@field session? string
 ---@field filetype? string
+---@field complete_sync_callback? fun(data: any[])
 
 ---@type Nrepl.State
 local default = {

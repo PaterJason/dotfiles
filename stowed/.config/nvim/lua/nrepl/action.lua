@@ -64,7 +64,10 @@ end
 
 function M.eval_input()
   vim.ui.input(
-    { prompt = "=> " },
+    {
+      prompt = "=> ",
+      completion = "customlist,v:lua.require'nrepl.completion'.command",
+    },
     function(input)
       tcp.write(state.client, {
         op = "eval",

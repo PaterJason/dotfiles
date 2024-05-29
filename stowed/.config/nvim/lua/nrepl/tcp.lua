@@ -29,8 +29,10 @@ local write_handlers = {
   function(data)
     if data.op == "close" then
       local buf = util.get_log_buf(data.session)
-      vim.api.nvim_buf_delete(buf, {})
-      if state.session == data.session then state.session = nil end
+      if buf then
+        vim.api.nvim_buf_delete(buf, {})
+        if state.session == data.session then state.session = nil end
+      end
     end
     return true
   end,
@@ -67,13 +69,14 @@ local function handle_out(data, key)
   local s = data[key]
 
   local buf = util.get_log_buf(session)
-  util.append_log(buf, s, key)
+  if buf then
+    util.append_log(buf, s, key)
 
-  -- For when log is open in tab
-  local winid = vim
-    .iter(vim.api.nvim_tabpage_list_wins(0))
-    :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
-  if winid then
+    -- If log is open in tab
+    local winid = vim
+      .iter(vim.api.nvim_tabpage_list_wins(0))
+      :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
+    if winid then return end
   end
 
   if msg_id == util.msg_id.eval_cursor then
@@ -105,11 +108,13 @@ local read_handlers = {
       local status = util.status(data.status)
       if status.is_done and not vim.tbl_isempty(status.status_strs) then
         local buf = util.get_log_buf(data.session)
-        util.append_log(
-          buf,
-          table.concat(status.status_strs, ", "),
-          (status.is_error and "error") or "done"
-        )
+        if buf then
+          util.append_log(
+            buf,
+            table.concat(status.status_strs, ", "),
+            (status.is_error and "error") or "done"
+          )
+        end
       end
       return false
     end
@@ -143,7 +148,7 @@ local read_handlers = {
   function(data)
     if data.out then
       local buf = util.get_log_buf(data.session)
-      util.append_log(buf, data.out, "out")
+      if buf then util.append_log(buf, data.out, "out") end
       return true
     end
   end,
@@ -174,6 +179,17 @@ local read_handlers = {
   function(data)
     if data.id == util.msg_id.lookup_hover and data.info then
       util.hover_doc(data.info)
+      return true
+    end
+  end,
+  -- op: completion, sync
+  function(data)
+    if
+      data.id == util.msg_id.complete_sync
+      and state.complete_sync_callback
+      and data.completions
+    then
+      state.complete_sync_callback(data.completions)
       return true
     end
   end,
