@@ -37,18 +37,24 @@ local write_handlers = {
 }
 
 ---@param client uv.uv_tcp_t
----@param obj any
-function M.write(client, obj)
-  obj = vim.tbl_extend("keep", obj, config.middleware_params)
-  local data = bencode.encode(obj)
-  if data then
+---@param ... any
+function M.write(client, ...)
+  local objs = { ... }
+  local data = ""
+  for _, obj in ipairs(objs) do
+    obj = vim.tbl_extend("keep", obj, config.middleware_params)
+    data = data .. (bencode.encode(obj) or "")
+  end
+  if data ~= "" then
     client:write(data, function(err)
       if err then
         vim.print("Write ERROR", err)
         return
       end
 
-      vim.schedule(function() run_handlers(write_handlers, obj) end)
+      for _, obj in ipairs(objs) do
+        vim.schedule(function() run_handlers(write_handlers, obj) end)
+      end
     end)
   end
 end
@@ -214,10 +220,15 @@ function M.connect(host, port)
       end
     end)
 
-    vim.schedule(function()
-      M.write(client, { op = "describe", ["verbose?"] = 1 })
-      M.write(client, { op = "ls-sessions", id = util.msg_id.session_refresh })
-    end)
+    vim.schedule(
+      function()
+        M.write(
+          client,
+          { op = "describe", ["verbose?"] = 1 },
+          { op = "ls-sessions", id = util.msg_id.session_refresh }
+        )
+      end
+    )
   end)
   return client
 end
