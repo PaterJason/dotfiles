@@ -20,8 +20,8 @@ function M.get_sync(prefix, ns)
   ---@type any[]|nil
   local completions
 
-  state.complete_sync_callback = function(items) completions = items end
-  tcp.write(state.client, {
+  state.data.complete_sync_callback = function(items) completions = items end
+  tcp.write(state.data.client, {
     op = "completions",
     id = util.msg_id.complete_sync,
     prefix = prefix,
@@ -31,7 +31,7 @@ function M.get_sync(prefix, ns)
   })
 
   vim.wait(5000, function() return completions and true or false end, 100)
-  state.complete_sync_callback = nil
+  state.data.complete_sync_callback = nil
   return completions
 end
 

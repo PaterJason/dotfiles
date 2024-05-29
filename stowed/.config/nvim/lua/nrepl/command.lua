@@ -1,5 +1,5 @@
 vim.api.nvim_create_user_command("NreplOp", function(info)
-  local client = require("nrepl.state").client
+  local client = require("nrepl.state").data.client
   if client == nil then
     vim.notify("No nREPL client connected", vim.log.levels.WARN)
     return
@@ -25,7 +25,7 @@ end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
     local util = require("nrepl.util")
-    local ops = require("nrepl.state").server.ops
+    local ops = require("nrepl.state").data.server.ops
     return vim
       .iter(ops)
       :map(function(key, value)
@@ -37,7 +37,7 @@ end, {
 })
 
 vim.api.nvim_create_user_command("NreplWrite", function(info)
-  local client = require("nrepl.state").client
+  local client = require("nrepl.state").data.client
   if client == nil then
     vim.notify("No nREPL client connected", vim.log.levels.WARN)
     return
@@ -60,7 +60,7 @@ end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
     local util = require("nrepl.util")
-    local server = require("nrepl.state").server
+    local server = require("nrepl.state").data.server
     local _, arg_n = string.gsub(string.sub(cmd_line, 1, cursor_pos), " ", "")
     if arg_n == 1 then
       return vim

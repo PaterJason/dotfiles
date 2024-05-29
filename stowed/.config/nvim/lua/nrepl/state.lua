@@ -9,14 +9,20 @@
 ---@field filetype? string
 ---@field complete_sync_callback? fun(data: any[])
 
+local M = {}
+
 ---@type Nrepl.State
-local default = {
+M.default = {
   server = {},
-  -- HACK will need to chage if supporting other languages
+  -- HACK will need to resolve if supporting other languages
   filetype = "clojure",
 }
 
+function M.reset()
+  M.data = vim.deepcopy(M.default)
+end
+
 ---@type Nrepl.State
-local M = default
+M.data = vim.deepcopy(M.default)
 
 return M

@@ -31,7 +31,7 @@ local write_handlers = {
       local buf = util.get_log_buf(data.session)
       if buf then
         vim.api.nvim_buf_delete(buf, {})
-        if state.session == data.session then state.session = nil end
+        if state.data.session == data.session then state.data.session = nil end
       end
     end
     return true
@@ -80,7 +80,7 @@ local function handle_out(data, key)
   end
 
   if msg_id == util.msg_id.eval_cursor then
-    local filetype = (key == "value" and state.filetype) or ""
+    local filetype = (key == "value" and state.data.filetype) or ""
     util.cursor_float(s, filetype)
   elseif msg_id == util.msg_id.eval_input then
     vim.api.nvim_echo({ { s, "Normal" } }, true, {})
@@ -102,8 +102,8 @@ local read_handlers = {
   function(data)
     if
       data.status
-      and state.server.sessions
-      and vim.list_contains(state.server.sessions, data.session)
+      and state.data.server.sessions
+      and vim.list_contains(state.data.server.sessions, data.session)
     then
       local status = util.status(data.status)
       if status.is_done and not vim.tbl_isempty(status.status_strs) then
@@ -122,22 +122,22 @@ local read_handlers = {
   -- op: describe
   function(data)
     if data.ops then
-      state.server.ops = data.ops
+      state.data.server.ops = data.ops
       return true
     end
   end,
   -- op: ls-sessions
   function(data)
     if data.id == util.msg_id.session_refresh and data.sessions then
-      state.server.sessions = data.sessions
-      if state.session == nil then state.session = data.sessions[1] end
+      state.data.server.sessions = data.sessions
+      if state.data.session == nil then state.data.session = data.sessions[1] end
       return true
     end
   end,
   -- op: sessions
   function(data)
     if data.id == util.msg_id.session_modify then
-      M.write(state.client, {
+      M.write(state.data.client, {
         op = "ls-sessions",
         id = util.msg_id.session_refresh,
       })
@@ -186,10 +186,10 @@ local read_handlers = {
   function(data)
     if
       data.id == util.msg_id.complete_sync
-      and state.complete_sync_callback
+      and state.data.complete_sync_callback
       and data.completions
     then
-      state.complete_sync_callback(data.completions)
+      state.data.complete_sync_callback(data.completions)
       return true
     end
   end,

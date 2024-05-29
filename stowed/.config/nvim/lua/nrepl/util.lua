@@ -91,8 +91,8 @@ end
 ---@param session? string
 ---@return integer?
 function M.get_log_buf(session)
-  session = session or state.session
-  if not vim.list_contains(state.server.sessions, session) then return end
+  session = session or state.data.session
+  if not vim.list_contains(state.data.server.sessions, session) then return end
   local bufname = "nREPL-log-" .. session
   local buf = vim.fn.bufnr(bufname)
 
@@ -100,7 +100,7 @@ function M.get_log_buf(session)
     buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(buf, bufname)
 
-    vim.bo[buf].filetype = state.filetype
+    vim.bo[buf].filetype = state.data.filetype
     return buf
   else
     return buf
@@ -182,10 +182,10 @@ end
 
 ---@param callback fun(item: string?, idx: integer?)
 function M.select_session(callback)
-  vim.ui.select(state.server.sessions, {
+  vim.ui.select(state.data.server.sessions, {
     prompt = "Select session",
     format_item = function(item)
-      local current_session = state.session
+      local current_session = state.data.session
       if item == current_session then
         return item .. " (current)"
       else
