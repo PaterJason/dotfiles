@@ -18,9 +18,7 @@ M.default = {
   filetype = "clojure",
 }
 
-function M.reset()
-  M.data = vim.deepcopy(M.default)
-end
+function M.reset() M.data = vim.deepcopy(M.default) end
 
 ---@type Nrepl.State
 M.data = vim.deepcopy(M.default)

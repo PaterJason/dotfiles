@@ -80,8 +80,17 @@ local function handle_out(data, key)
   end
 
   if msg_id == util.msg_id.eval_cursor then
-    local filetype = (key == "value" and state.data.filetype) or ""
-    util.cursor_float(s, filetype)
+    local filetype = (util.is_ft_key(key) and state.data.filetype) or ""
+
+    local lines = vim.split(s, "\n", { plain = true })
+    local bufnr, _ = vim.lsp.util.open_floating_preview(
+      lines,
+      filetype,
+      vim.tbl_extend("keep", { title = string.format("nREPL (%s)", key) }, config.floating_preview)
+    )
+
+    local lang = vim.treesitter.language.get_lang(filetype)
+    if lang then vim.treesitter.start(bufnr, lang) end
   elseif msg_id == util.msg_id.eval_input then
     vim.api.nvim_echo({ { s, "Normal" } }, true, {})
   end
@@ -152,19 +161,16 @@ local read_handlers = {
       return true
     end
   end,
-  -- error
-  function(data)
-    if data.err then
-      handle_out(data, "err")
-      return true
-    end
-  end,
   -- op: eval
   function(data)
     if data.value then
       handle_out(data, "value")
       return true
+    elseif data["nrepl.middleware.caught/throwable"] then
+      handle_out(data, "nrepl.middleware.caught/throwable")
+      return true
     elseif data.ex then
+      handle_out(data, "ex")
       return true
     end
   end,
@@ -215,6 +221,7 @@ function M.connect(host, port)
 
   client:connect(addrinfo.addr, port, function(conn_err)
     assert(not conn_err, conn_err)
+    vim.notify("nREPL client connected")
 
     local str_buf = ""
     client:read_start(function(read_err, chunk)

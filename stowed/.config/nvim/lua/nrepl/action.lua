@@ -28,6 +28,7 @@ function M.disconnect()
   local client = state.data.client
   if client then
     client:close(function()
+      vim.notify("nREPL client disconnected")
       state.reset()
     end)
   end
@@ -86,7 +87,7 @@ end
 function M.eval_cursor()
   local node = util.get_ts_node("elem", { cursor = true, last = true })
   if node == nil then
-    vim.notify("No  TS node", vim.log.levels.WARN)
+    vim.notify("No TS node", vim.log.levels.WARN)
     return
   end
   local text = vim.treesitter.get_node_text(node, 0)

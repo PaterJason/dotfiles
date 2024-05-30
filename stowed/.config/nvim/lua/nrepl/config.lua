@@ -5,6 +5,7 @@ M = {
     title = "nREPL",
     focusable = false,
     focus_id = "nvim.nrepl",
+    wrap = false,
   },
   ---@class Nrepl.MiddlewareParams
   middleware_params = {
@@ -23,8 +24,8 @@ M = {
     ["nrepl.middleware.print/quota"] = nil,
     ["nrepl.middleware.print/keys"] = nil,
     -- caught
-    ["nrepl.middleware.caught/caught"] = nil,
-    ["nrepl.middleware.caught/print?"] = nil,
+    ["nrepl.middleware.caught/caught"] = "clojure.repl/pst",
+    ["nrepl.middleware.caught/print?"] = "true",
   },
   -- Use debug handler
   ---@type boolean
