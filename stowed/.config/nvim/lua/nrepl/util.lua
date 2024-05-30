@@ -107,6 +107,21 @@ function M.get_log_buf(session)
   end
 end
 
+function M.is_ft_key(key)
+  return vim.list_contains({
+    "value",
+    "nrepl.middleware.caught/throwable",
+  }, key)
+end
+
+local function format_log_comment(buf, key, value)
+  local commentstring = vim.bo[buf].commentstring
+  return string.format(
+    commentstring,
+    (key and string.format("(%s)", key) or "") .. (value and string.format(" %s", value) or "")
+  )
+end
+
 ---@param buf integer
 ---@param s string
 ---@param key? string
@@ -118,15 +133,15 @@ function M.append_log(buf, s, key)
   if vim.api.nvim_buf_get_lines(buf, -2, -1, false)[1] == "" then start = -2 end
   local pre_line_count = vim.api.nvim_buf_line_count(buf)
 
-  if key ~= "value" then
+  if M.is_ft_key(key) then
+    table.insert(text, 1, format_log_comment(buf, key))
+    vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
+  else
     local text2 = {}
-    local commentstring = vim.bo[buf].commentstring
     for _, value in ipairs(text) do
-      table.insert(text2, string.format(commentstring, (string.format("(%s) %s", key, value))))
+      table.insert(text2, format_log_comment(buf, key, value))
     end
     vim.api.nvim_buf_set_lines(buf, start, -1, true, text2)
-  else
-    vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
   end
 
   local post_line_count = vim.api.nvim_buf_line_count(buf)
@@ -138,14 +153,6 @@ function M.append_log(buf, s, key)
       vim.api.nvim_win_set_cursor(winid, { post_line_count, 0 })
     end
   end
-end
-
----@param s string
----@param filetype string
-function M.cursor_float(s, filetype)
-  local lines = vim.split(s, "\n", { plain = true })
-  ---@type vim.api.keyset.win_config
-  vim.lsp.util.open_floating_preview(lines, filetype, config.floating_preview)
 end
 
 function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
@@ -167,10 +174,10 @@ end
 function M.hover_doc(info)
   local content = {}
   if vim.tbl_isempty(info) then
-    table.insert(content, "No doc info found")
+    table.insert(content, "No lookup doc info")
   else
     -- Look at clojure.repl/print-doc
-    table.insert(content, info.spec or (info.ns and info.ns .. "/" .. info.name) or info.name)
+    table.insert(content, (info.ns and info.ns .. "/" .. info.name) or info.name)
     table.insert(content, info.arglists)
     table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
     table.insert(content, info.added and "Available since " .. info.added)
