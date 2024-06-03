@@ -13,8 +13,7 @@ function M.get_sync(prefix, ns)
 
   state.data.complete_sync_callback = function(items) completions = items end
 
-  -- if state.data.server.ops["complete"] then
-  if false then
+  if state.data.server.ops["complete"] then
     tcp.write(state.data.client, {
       op = "complete",
       id = util.msg_id.complete_sync,
