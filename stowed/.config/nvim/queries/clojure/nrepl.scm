@@ -7,7 +7,7 @@
   .
   (sym_lit) @ns)
 
-(sym_name) @sym
+(sym_lit) @sym
 
 [
  ; atom-ish
