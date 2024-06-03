@@ -35,7 +35,9 @@ function M.decode(s, index)
   index = index or 1
   local head = string.sub(s, index, index)
 
-  if head == "i" then
+  if head == "" then
+    return nil, index
+  elseif head == "i" then
     local start, _end = string.find(s, "^i%-?%d+e", index)
     if start == nil or _end == nil then
       vim.notify("Failed to decode number", vim.log.levels.ERROR)
