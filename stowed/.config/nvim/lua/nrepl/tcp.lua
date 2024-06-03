@@ -83,14 +83,7 @@ local function handle_out(data, key)
     local filetype = (util.is_ft_key(key) and state.data.filetype) or ""
 
     local lines = vim.split(s, "\n", { plain = true })
-    local bufnr, _ = vim.lsp.util.open_floating_preview(
-      lines,
-      filetype,
-      vim.tbl_extend("keep", { title = string.format("nREPL (%s)", key) }, config.floating_preview)
-    )
-
-    local lang = vim.treesitter.language.get_lang(filetype)
-    if lang then vim.treesitter.start(bufnr, lang) end
+    util.open_floating_preview(lines, filetype, { title = string.format("nREPL (%s)", key) })
   elseif msg_id == util.msg_id.eval_input then
     vim.api.nvim_echo({ { s, "Normal" } }, true, {})
   end
@@ -139,7 +132,9 @@ local read_handlers = {
   function(data)
     if data.id == util.msg_id.session_refresh and data.sessions then
       state.data.server.sessions = data.sessions
-      if state.data.session == nil then state.data.session = data.sessions[1] end
+      if not vim.list_contains(data.sessions, state.data.session) then
+        state.data.session = data.sessions[1]
+      end
       return true
     end
   end,
@@ -177,14 +172,29 @@ local read_handlers = {
   -- op: lookup, definition
   function(data)
     if data.id == util.msg_id.lookup_definition and data.info then
-      util.definition(data.info)
+      local file = data.info.file
+      local line = data.info.line
+      local column = data.info.column
+
+      if file and line and column then
+        vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
+        vim.api.nvim_win_set_cursor(0, { line, column - 1 })
+      end
       return true
     end
   end,
-  -- op: lookup, hover
+  -- hover
   function(data)
-    if data.id == util.msg_id.lookup_hover and data.info then
-      util.hover_doc(data.info)
+    if data.id == util.msg_id.cider_info_hover then
+      if data.member then
+        util.open_floating_preview(util.doc_java(data), "markdown")
+        return true
+      elseif data.name then
+        util.open_floating_preview(util.doc_clj(data), "markdown")
+        return true
+      end
+    elseif data.id == util.msg_id.lookup_hover and data.info then
+      util.open_floating_preview(util.doc_clj(data.info), "markdown")
       return true
     end
   end,

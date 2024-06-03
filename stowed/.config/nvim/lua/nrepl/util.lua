@@ -67,6 +67,8 @@ M.msg_id = {
   lookup_hover = "nvim-lookup-hover",
   session_modify = "nvim-session-modify",
   session_refresh = "nvim-session-refresh",
+
+  cider_info_hover = "nvim-cider-info-hover",
 }
 
 ---@param status string[]
@@ -155,36 +157,89 @@ function M.append_log(buf, s, key)
   end
 end
 
+---@diagnostic disable-next-line: unused-local
 function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
   return function(value) return string.sub(value, 1, string.len(arg_lead)) == arg_lead end
 end
 
-function M.definition(info)
-  local file = info.file
-  local row = info.line
-  local col = info.column - 1
-
+---@param file string
+---@return string
+function M.file_str(file)
   file = string.gsub(file, "^file:", "", 1)
   file = string.gsub(file, "^jar:file:(.*)(!/)", "zipfile://%1::", 1)
-
-  vim.cmd({ cmd = "edit", args = { file } })
-  vim.api.nvim_win_set_cursor(0, { row, col })
+  return file
 end
 
-function M.hover_doc(info)
+---@param info any
+---@return string[]
+function M.doc_clj(info)
   local content = {}
   if vim.tbl_isempty(info) then
     table.insert(content, "No lookup doc info")
   else
     -- Look at clojure.repl/print-doc
+    table.insert(content, "```clojure")
     table.insert(content, (info.ns and info.ns .. "/" .. info.name) or info.name)
-    table.insert(content, info.arglists)
+    table.insert(content, info.arglists or info["arglists-str"])
+    table.insert(content, info["forms-str"])
+    table.insert(content, "```")
+
     table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
     table.insert(content, info.added and "Available since " .. info.added)
     table.insert(content, info.doc and " " .. info.doc)
-  end
 
-  vim.lsp.util.open_floating_preview(content, "", config.floating_preview)
+    if info["see-also"] then
+      vim.list_extend(content, { "", "__See also:__", "```clojure" })
+      vim.list_extend(content, info["see-also"])
+      table.insert(content, "```")
+    end
+    if info.file then
+      vim.list_extend(content, { "", "__File:__", string.format("[%s]", M.file_str(info.file)) })
+    end
+  end
+  return content
+end
+
+---@param info any
+---@return string[]
+function M.doc_java(info)
+  local content = {}
+  if vim.tbl_isempty(info) then
+    table.insert(content, "No lookup doc info")
+  else
+    table.insert(content, "```clojure")
+    table.insert(
+      content,
+      (info.modifiers and (info.modifiers .. " ") or "")
+        .. (info.returns and (info.returns .. " ") or "")
+        .. (info.type and (info.type .. " ") or "")
+        .. (info.class and (info.class .. "/") or "")
+        .. info.member
+    )
+    table.insert(content, info.arglists or info["arglists-str"])
+    table.insert(content, "```")
+
+    if info.javadoc then
+      vim.list_extend(content, { "__Javadoc:__", string.format("[%s]", info.javadoc) })
+    end
+  end
+  return content
+end
+
+---@param contents string[]
+---@param filetype? string
+---@param opts? vim.lsp.util.open_floating_preview.Opts
+function M.open_floating_preview(contents, filetype, opts)
+  filetype = filetype or ""
+  opts = opts or {}
+  local bufnr, _ = vim.lsp.util.open_floating_preview(
+    contents,
+    filetype,
+    vim.tbl_extend("keep", opts, config.floating_preview)
+  )
+
+  local lang = vim.treesitter.language.get_lang(filetype)
+  if lang then vim.treesitter.start(bufnr, lang) end
 end
 
 ---@param callback fun(item: string?, idx: integer?)

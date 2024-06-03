@@ -1,5 +1,4 @@
 local util = require("nrepl.util")
-local config = require("nrepl.config")
 local tcp = require("nrepl.tcp")
 local state = require("nrepl.state")
 
@@ -78,7 +77,6 @@ function M.eval_input()
         op = "eval",
         id = util.msg_id.eval_input,
         code = input,
-        session = state.data.session,
       })
     end
   )
@@ -98,7 +96,6 @@ function M.eval_cursor()
     op = "eval",
     id = util.msg_id.eval_cursor,
     code = text,
-    session = state.data.session,
     ns = util.get_ts_text("ns"),
     file = file,
     line = row + 1,
@@ -108,13 +105,10 @@ end
 
 ---@param session? string
 function M.interrupt(session)
-  session = session or state.data.session
-  if session then
-    tcp.write(state.data.client, {
-      op = "interrupt",
-      session = session,
-    })
-  end
+  tcp.write(state.data.client, {
+    op = "interrupt",
+    session = session,
+  })
 end
 
 function M.load_file()
@@ -124,14 +118,13 @@ function M.load_file()
   tcp.write(state.data.client, {
     op = "load-file",
     id = util.msg_id.load_file,
-    session = state.data.session,
     file = table.concat(text, "\n"),
     ["file-path"] = file_path,
     ["file-name"] = vim.fs.basename(file_path),
   })
 end
 
-function M.lookup_definition()
+function M.definition()
   local sym = util.get_ts_text("sym", { cursor = true })
   if sym then
     tcp.write(state.data.client, {
@@ -145,21 +138,24 @@ function M.lookup_definition()
   end
 end
 
-function M.lookup_hover()
+function M.hover()
   local sym = util.get_ts_text("sym", { cursor = true })
-  if sym then
+  if not sym then
+    util.open_floating_preview({ "No valid symbol found at cursor position" })
+  elseif state.data.server.ops["info"] then
+    tcp.write(state.data.client, {
+      op = "info",
+      id = util.msg_id.cider_info_hover,
+      sym = sym,
+      ns = util.get_ts_text("ns"),
+    })
+  else
     tcp.write(state.data.client, {
       op = "lookup",
       id = util.msg_id.lookup_hover,
       sym = sym,
       ns = util.get_ts_text("ns"),
     })
-  else
-    vim.lsp.util.open_floating_preview(
-      { "No valid symbol found at cursor position" },
-      "",
-      config.floating_preview
-    )
   end
 end
 
