@@ -9,6 +9,7 @@ local M = {}
 
 ---@class Nrepl.TSCaptureOpts
 ---@field cursor? boolean
+---@field pos? integer[]
 ---@field last? boolean
 
 ---@param capture Nrepl.TSCapture
@@ -24,21 +25,18 @@ function M.get_ts_node(capture, opts)
   local parser = vim.treesitter.get_parser(0, lang, {})
   local tree = parser:trees()[1]
 
-  local cursor_pos
-  local start, stop
-  if opts.cursor then
-    cursor_pos = vim.api.nvim_win_get_cursor(0)
-    start = cursor_pos[1] - 1
-    stop = cursor_pos[1]
+  local pos
+  if opts.pos then
+    pos = opts.pos
+  elseif opts.cursor then
+    pos = vim.api.nvim_win_get_cursor(0)
   end
 
   local return_node
-  for id, node in query:iter_captures(tree:root(), 0, start, stop) do
+  for id, node in query:iter_captures(tree:root(), 0, pos and pos[1] - 1, pos and pos[1]) do
     local name = query.captures[id]
     if name == capture then
-      if
-        not cursor_pos or vim.treesitter.is_in_node_range(node, cursor_pos[1] - 1, cursor_pos[2])
-      then
+      if not pos or vim.treesitter.is_in_node_range(node, pos[1] - 1, pos[2]) then
         if opts.last then
           return_node = node
         else

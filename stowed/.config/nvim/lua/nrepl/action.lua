@@ -70,7 +70,7 @@ function M.eval_input()
   vim.ui.input(
     {
       prompt = "=> ",
-      completion = "customlist,v:lua.require'nrepl.completion'.command",
+      completion = "customlist,v:lua.require'nrepl'.command_completion_customlist",
     },
     function(input)
       tcp.write(state.data.client, {

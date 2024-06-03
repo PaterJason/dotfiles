@@ -44,7 +44,9 @@ function M.write(client, ...)
   local objs = { ... }
   local data = ""
   for _, obj in ipairs(objs) do
-    obj = vim.tbl_extend("keep", obj, config.middleware_params)
+    obj = vim.tbl_extend("keep", obj, config.middleware_params, {
+      session = state.data.session,
+    })
     data = data .. (bencode.encode(obj) or "")
   end
   if data ~= "" then
