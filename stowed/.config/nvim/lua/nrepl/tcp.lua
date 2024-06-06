@@ -5,213 +5,300 @@ local config = require("nrepl.config")
 
 local M = {}
 
----@alias Nrepl.Handler fun(data: any):boolean
+---@param operation Nrepl.Operation
+---@param ... unknown
+function M.write_operation(operation, ...)
+  local client = state.data.client
+  if not client then
+    vim.notify("No nREPL client connected", vim.log.levels.WARN)
+    return
+  elseif not client:is_writable() then
+    vim.notify("Cannot write to nREPL server", vim.log.levels.WARN)
+    return
+  end
 
----@param handlers Nrepl.Handler[]
----@param data any
-local function run_handlers(handlers, data)
-  for _, handler in ipairs(handlers) do
-    if handler(data) then break end
+  local obj = operation.make_operation(...)
+  if not obj then return end
+  obj = vim.tbl_extend("keep", obj, config.middleware_params, {
+    id = "nvim:" .. state.data.msg_count,
+    session = state.data.session,
+  })
+  state.data.msg_count = state.data.msg_count + 1
+
+  if config.debug then vim.schedule(function() util.echo("DEBUG WRITE CALLBACK", obj) end) end
+
+  local data = bencode.encode(obj)
+  if not data then return end
+  client:write(data, function(err)
+    assert(not err, err)
+    if obj.id then
+      state.data.msgs[obj.id] = {
+        op = obj.op,
+        out = {},
+        data = {},
+        callback = operation.callback,
+      }
+    end
+  end)
+end
+
+---@alias Nrepl.Operation.Callback fun(data: table, op: string)
+
+---@class Nrepl.Operation
+---@field make_operation fun(...: any):table?
+---@field callback Nrepl.Operation.Callback
+---@overload fun(...: any)
+
+local function eval_callback(data, op, no_log_cb)
+  for _, key in ipairs({
+    "value",
+    "nrepl.middleware.caught/throwable",
+    "ex",
+  }) do
+    if data[key] then
+      local s = data[key]
+      local _, winid = util.append_log(data.session, s, op, key)
+
+      if not winid then no_log_cb(s, key) end
+      break
+    end
   end
 end
 
----@type Nrepl.Handler[]
-local write_handlers = {
-  -- debugging handler
-  function(data)
-    if config.debug then
-      vim.api.nvim_echo({
-        { "DEBUG WRITE HANDLER\n", "Underlined" },
-        { vim.inspect(data), "Normal" },
-      }, true, {})
-    end
-  end,
-  function(data)
-    if data.op == "close" then
-      local buf = util.get_log_buf(data.session)
-      if buf then
-        vim.api.nvim_buf_delete(buf, {})
-        if state.data.session == data.session then state.data.session = nil end
-      end
-    end
-    return true
-  end,
-}
-
----@param client uv.uv_tcp_t
----@param ... any
-function M.write(client, ...)
-  local objs = { ... }
-  local data = ""
-  for _, obj in ipairs(objs) do
-    obj = vim.tbl_extend("keep", obj, config.middleware_params, {
-      session = state.data.session,
-    })
-    data = data .. (bencode.encode(obj) or "")
-  end
-  if data ~= "" then
-    client:write(data, function(err)
-      if err then
-        vim.print("Write ERROR", err)
-        return
-      end
-
-      for _, obj in ipairs(objs) do
-        vim.schedule(function() run_handlers(write_handlers, obj) end)
-      end
-    end)
-  end
-end
-
----@param data any
----@param key string
-local function handle_out(data, key)
-  local session = data.session
-  local msg_id = data.id
-  local s = data[key]
-
-  local buf = util.get_log_buf(session)
-  if buf then
-    util.append_log(buf, s, key)
-
-    -- If log is open in tab
-    local winid = vim
-      .iter(vim.api.nvim_tabpage_list_wins(0))
-      :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
-    if winid then return end
-  end
-
-  if msg_id == util.msg_id.eval_cursor then
-    local filetype = (util.is_ft_key(key) and state.data.filetype) or ""
-
-    local lines = vim.split(s, "\n", { plain = true })
-    util.open_floating_preview(lines, filetype, { title = string.format("nREPL (%s)", key) })
-  elseif msg_id == util.msg_id.eval_input then
-    vim.api.nvim_echo({ { s, "Normal" } }, true, {})
-  end
-end
-
----@type Nrepl.Handler[]
-local read_handlers = {
-  -- debugging handler
-  function(data)
-    if config.debug then
-      vim.api.nvim_echo({
-        { "DEBUG READ HANDLER\n", "Underlined" },
-        { vim.inspect(data), "Normal" },
-      }, true, {})
-    end
-  end,
-  -- status
-  function(data)
-    if
-      data.status
-      and state.data.server.sessions
-      and vim.list_contains(state.data.server.sessions, data.session)
-    then
-      local status = util.status(data.status)
-      if status.is_done and not vim.tbl_isempty(status.status_strs) then
-        local buf = util.get_log_buf(data.session)
-        if buf then
-          util.append_log(
-            buf,
-            table.concat(status.status_strs, ", "),
-            (status.is_error and "error") or "done"
-          )
+M.operation = {
+  ---@type Nrepl.Operation
+  describe = {
+    make_operation = function()
+      return {
+        op = "describe",
+        ["verbose?"] = 1,
+      }
+    end,
+    callback = function(data)
+      if data.ops then state.data.server.ops = data.ops end
+    end,
+  },
+  ---@type Nrepl.Operation
+  session_refresh = {
+    make_operation = function()
+      return {
+        op = "ls-sessions",
+      }
+    end,
+    callback = function(data)
+      if data.sessions then
+        state.data.server.sessions = data.sessions
+        if not vim.list_contains(data.sessions, state.data.session) then
+          state.data.session = data.sessions[1]
         end
       end
-      return false
-    end
-  end,
-  -- op: describe
-  function(data)
-    if data.ops then
-      state.data.server.ops = data.ops
-      return true
-    end
-  end,
-  -- op: ls-sessions
-  function(data)
-    if data.id == util.msg_id.session_refresh and data.sessions then
-      state.data.server.sessions = data.sessions
-      if not vim.list_contains(data.sessions, state.data.session) then
-        state.data.session = data.sessions[1]
-      end
-      return true
-    end
-  end,
-  -- op: sessions
-  function(data)
-    if data.id == util.msg_id.session_modify then
-      M.write(state.data.client, {
-        op = "ls-sessions",
-        id = util.msg_id.session_refresh,
-      })
-      return true
-    end
-  end,
-  -- out
-  function(data)
-    if data.out then
-      local buf = util.get_log_buf(data.session)
-      if buf then util.append_log(buf, data.out, "out") end
-      return true
-    end
-  end,
-  -- op: eval
-  function(data)
-    if data.value then
-      handle_out(data, "value")
-      return true
-    elseif data["nrepl.middleware.caught/throwable"] then
-      handle_out(data, "nrepl.middleware.caught/throwable")
-      return true
-    elseif data.ex then
-      handle_out(data, "ex")
-      return true
-    end
-  end,
-  -- op: lookup, definition
-  function(data)
-    if data.id == util.msg_id.lookup_definition and data.info then
-      local file = data.info.file
-      local line = data.info.line
-      local column = data.info.column
+    end,
+  },
+  ---@type Nrepl.Operation
+  clone = {
+    make_operation = function(session)
+      return {
+        op = "clone",
+        session = session or vim.NIL,
+      }
+    end,
+    callback = function(data) M.operation.session_refresh() end,
+  },
+  close = {
+    make_operation = function(session)
+      return {
+        op = "close",
+        session = session,
+      }
+    end,
+    callback = function(data) M.operation.session_refresh() end,
+  },
 
-      if file and line and column then
-        vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
-        vim.api.nvim_win_set_cursor(0, { line, column - 1 })
+  ---@type Nrepl.Operation
+  eval_range = {
+    ---@param start [integer, integer]
+    ---@param end_ [integer, integer]
+    make_operation = function(start, end_)
+      local node = util.get_ts_node("elem", {
+        start = start,
+        end_ = end_,
+        last = true,
+      })
+      if node == nil then
+        util.open_floating_preview({ "No element found at position" })
+        return
       end
-      return true
-    end
-  end,
-  -- hover
-  function(data)
-    if data.id == util.msg_id.cider_info_hover then
+      local text = vim.treesitter.get_node_text(node, 0)
+      local row, col = node:start()
+      local file = vim.fn.expand("%:p")
+
+      return {
+        op = "eval",
+        code = text,
+        ns = util.get_ts_text("ns"),
+        file = file,
+        line = row + 1,
+        column = col + 1,
+      }
+    end,
+    callback = function(data, op)
+      eval_callback(
+        data,
+        op,
+        function(s, key)
+          util.open_floating_preview(
+            vim.split(s, "\n", { plain = true }),
+            (util.is_ft_key(key) and state.data.filetype) or "",
+            { title = "nREPL " .. util.format_log_prefix(op, key) }
+          )
+        end
+      )
+    end,
+  },
+  ---@type Nrepl.Operation
+  eval_text = {
+    make_operation = function(text)
+      return {
+        op = "eval",
+        code = text,
+      }
+    end,
+    callback = function(data, op)
+      eval_callback(
+        data,
+        op,
+        function(s, key) util.echo("nREPL " .. util.format_log_prefix(op, key), s) end
+      )
+    end,
+  },
+  ---@type Nrepl.Operation
+  load_file = {
+    make_operation = function(file_path, lines)
+      return {
+        op = "load-file",
+        file = table.concat(lines, "\n"),
+        ["file-path"] = file_path,
+        ["file-name"] = vim.fs.basename(file_path),
+      }
+    end,
+    callback = function(data, op)
+      eval_callback(
+        data,
+        op,
+        function(s, key) util.echo("nREPL " .. util.format_log_prefix(op, key), s) end
+      )
+    end,
+  },
+  interrupt = {
+    make_operation = function(session)
+      return {
+        op = "interrupt",
+        session = session,
+      }
+    end,
+    callback = function(data) end,
+  },
+
+  ---@type Nrepl.Operation
+  lookup_hover = {
+    make_operation = function(ns, sym)
+      return {
+        op = "lookup",
+        sym = sym,
+        ns = ns,
+      }
+    end,
+    callback = function(data)
+      if data.info and not vim.tbl_isempty(data.info) then
+        util.open_floating_preview(util.doc_clj(data.info), "markdown")
+      else
+        util.open_floating_preview({ "No lookup doc info" })
+      end
+    end,
+  },
+  ---@type Nrepl.Operation
+  info_hover = {
+    make_operation = function(ns, sym)
+      return {
+        op = "info",
+        sym = sym,
+        ns = ns,
+      }
+    end,
+    callback = function(data)
       if data.member then
         util.open_floating_preview(util.doc_java(data), "markdown")
-        return true
       elseif data.name then
         util.open_floating_preview(util.doc_clj(data), "markdown")
-        return true
+      else
+        util.open_floating_preview({ "No lookup doc info" })
       end
-    elseif data.id == util.msg_id.lookup_hover and data.info then
-      util.open_floating_preview(util.doc_clj(data.info), "markdown")
-      return true
-    end
-  end,
-  -- op: completion, sync
-  function(data)
-    if
-      data.id == util.msg_id.complete_sync
-      and state.data.complete_sync_callback
-      and data.completions
-    then
-      state.data.complete_sync_callback(data.completions)
-      return true
-    end
-  end,
+    end,
+  },
+
+  ---@type Nrepl.Operation
+  lookup_definition = {
+    make_operation = function(ns, sym)
+      return {
+        op = "lookup",
+        sym = sym,
+        ns = ns,
+      }
+    end,
+    callback = function(data)
+      if data.info and not vim.tbl_isempty(data.info) then
+        local file = data.info.file
+        local line = data.info.line
+        local column = data.info.column
+
+        if file and line and column then
+          vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
+          vim.api.nvim_win_set_cursor(0, { line, column - 1 })
+        end
+      end
+    end,
+  },
 }
+
+local mt = {
+  __call = M.write_operation,
+}
+for _, tbl in pairs(M.operation) do
+  setmetatable(tbl, mt)
+end
+
+---@param data table
+local function read_callback(data)
+  if config.debug then vim.schedule(function() util.echo("DEBUG READ CALLBACK", data) end) end
+
+  if data.id and state.data.msgs[data.id] then
+    local msg_data = state.data.msgs[data.id]
+    msg_data.data = vim.tbl_extend("force", msg_data.data, data)
+
+    if data.out then table.insert(msg_data.out, data.out) end
+
+    local status = data.status and util.status(data.status) or {}
+    if status.is_done then
+      vim.schedule(function()
+        if not vim.tbl_isempty(msg_data.out) then
+          local s = table.concat(msg_data.out)
+          local _, winid = util.append_log(data.session, s, msg_data.op, "out")
+          if not winid then util.echo("Nrepl (out)n", s) end
+        end
+
+        msg_data.callback(msg_data.data, msg_data.op)
+
+        if not vim.tbl_isempty(status.status_strs) then
+          local s = table.concat(status.status_strs, ", ")
+          local key = (status.is_error and "error") or "done"
+          local _, winid = util.append_log(data.session, s, msg_data.op, key)
+          if not winid then util.echo(string.format("Nrepl status (%s)", key), s) end
+        end
+      end)
+      state.data.msgs[data.id] = nil
+    end
+  end
+end
 
 ---@return uv.uv_tcp_t?
 function M.connect(host, port)
@@ -245,7 +332,7 @@ function M.connect(host, port)
           local data, index = bencode.decode(str_buf)
           if data then
             str_buf = string.sub(str_buf, index)
-            vim.schedule(function() run_handlers(read_handlers, data) end)
+            read_callback(data)
           else
             break
           end
@@ -255,15 +342,10 @@ function M.connect(host, port)
       end
     end)
 
-    vim.schedule(
-      function()
-        M.write(
-          client,
-          { op = "describe", ["verbose?"] = 1 },
-          { op = "ls-sessions", id = util.msg_id.session_refresh }
-        )
-      end
-    )
+    vim.schedule(function()
+      M.operation.describe()
+      M.operation.session_refresh()
+    end)
   end)
   return client
 end

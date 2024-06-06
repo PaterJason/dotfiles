@@ -3,7 +3,7 @@ M = {
   floating_preview = {
     border = "single",
     title = "nREPL",
-    focusable = false,
+    focusable = true,
     focus_id = "nvim.nrepl",
     wrap = false,
   },
@@ -24,7 +24,7 @@ M = {
     ["nrepl.middleware.print/quota"] = nil,
     ["nrepl.middleware.print/keys"] = nil,
     -- caught
-    ["nrepl.middleware.caught/caught"] = "clojure.repl/pst",
+    ["nrepl.middleware.caught/caught"] = nil,
     ["nrepl.middleware.caught/print?"] = "true",
   },
   -- Use debug handler

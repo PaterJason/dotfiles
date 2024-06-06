@@ -19,9 +19,11 @@ function M.encode(obj)
   elseif obj_type == "table" then
     local s = "d"
     for key, value in pairs(obj) do
-      local k_str, v_str = M.encode(key), M.encode(value)
-      if k_str == nil or v_str == nil then return end
-      s = s .. k_str .. v_str
+      if value ~= vim.NIL then
+        local k_str, v_str = M.encode(key), M.encode(value)
+        if k_str == nil or v_str == nil then return end
+        s = s .. k_str .. v_str
+      end
     end
     return s .. "e"
   end

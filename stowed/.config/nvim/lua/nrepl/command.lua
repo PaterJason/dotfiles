@@ -20,7 +20,10 @@ vim.api.nvim_create_user_command("NreplOp", function(info)
     if key ~= "" and value ~= "" then data[key] = value end
   end
 
-  require("nrepl.tcp").write(client, data)
+  require("nrepl.tcp").write_operation({
+    make_operation = function() return data end,
+    callback = function(t) require("nrepl.util").echo("nREPL Response", t) end,
+  })
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cursor_pos)
@@ -29,7 +32,13 @@ end, {
     return vim
       .iter(ops)
       :map(function(key, value)
-        if value.requires == nil or vim.tbl_isempty(value.requires) then return key end
+        if
+          value.requires == nil
+          or vim.tbl_isempty(value.requires)
+          or (vim.tbl_count(value.requires) == 1 and value.requires.session)
+        then
+          return key
+        end
       end)
       :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
       :totable()
@@ -45,7 +54,10 @@ vim.api.nvim_create_user_command("NreplWrite", function(info)
 
   local args = info.args
   local data = vim.fn.eval(args)
-  require("nrepl.tcp").write(client, data)
+  require("nrepl.tcp").write_operation({
+    make_operation = function() return data end,
+    callback = function(t) require("nrepl.util").echo("nREPL Response", t) end,
+  })
 end, {
   nargs = 1,
   complete = "expression",

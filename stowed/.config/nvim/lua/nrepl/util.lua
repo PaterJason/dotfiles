@@ -8,8 +8,8 @@ local M = {}
 ---| "elem"
 
 ---@class Nrepl.TSCaptureOpts
----@field cursor? boolean
----@field pos? integer[]
+---@field start? [integer, integer]
+---@field end_? [integer, integer]
 ---@field last? boolean
 
 ---@param capture Nrepl.TSCapture
@@ -17,6 +17,13 @@ local M = {}
 ---@return TSNode?
 function M.get_ts_node(capture, opts)
   opts = opts or {}
+  local start
+  local end_
+  if opts.start then
+    start = opts.start
+    end_ = opts.end_ or start
+  end
+
   local filetype = vim.bo.filetype
   local lang = vim.treesitter.language.get_lang(filetype)
   if lang == nil then return end
@@ -25,18 +32,14 @@ function M.get_ts_node(capture, opts)
   local parser = vim.treesitter.get_parser(0, lang, {})
   local tree = parser:trees()[1]
 
-  local pos
-  if opts.pos then
-    pos = opts.pos
-  elseif opts.cursor then
-    pos = vim.api.nvim_win_get_cursor(0)
-  end
-
   local return_node
-  for id, node in query:iter_captures(tree:root(), 0, pos and pos[1] - 1, pos and pos[1]) do
+  for id, node in query:iter_captures(tree:root(), 0, start and start[1], end_ and end_[1] + 1) do
     local name = query.captures[id]
     if name == capture then
-      if not pos or vim.treesitter.is_in_node_range(node, pos[1] - 1, pos[2]) then
+      if
+        (not start or vim.treesitter.is_in_node_range(node, start[1], start[2]))
+        and (not end_ or vim.treesitter.is_in_node_range(node, end_[1], end_[2]))
+      then
         if opts.last then
           return_node = node
         else
@@ -55,19 +58,6 @@ function M.get_ts_text(capture, opts)
   local node = M.get_ts_node(capture, opts)
   if node then return vim.treesitter.get_node_text(node, 0) end
 end
-
-M.msg_id = {
-  complete_sync = "nvim-complete-sync",
-  eval_cursor = "nvim-eval-cursor",
-  eval_input = "nvim-eval-input",
-  load_file = "nvim-load-file",
-  lookup_definition = "nvim-lookup-definition",
-  lookup_hover = "nvim-lookup-hover",
-  session_modify = "nvim-session-modify",
-  session_refresh = "nvim-session-refresh",
-
-  cider_info_hover = "nvim-cider-info-hover",
-}
 
 ---@param status string[]
 ---@return { is_done: boolean, is_error: boolean, status_strs: string[] }
@@ -114,18 +104,16 @@ function M.is_ft_key(key)
   }, key)
 end
 
-local function format_log_comment(buf, key, value)
-  local commentstring = vim.bo[buf].commentstring
-  return string.format(
-    commentstring,
-    (key and string.format("(%s)", key) or "") .. (value and string.format(" %s", value) or "")
-  )
-end
+function M.format_log_prefix(op, key) return string.format("%s (%s)", op, key) end
 
----@param buf integer
+---@param session string
 ---@param s string
----@param key? string
-function M.append_log(buf, s, key)
+---@param op string
+---@param key string
+function M.append_log(session, s, op, key)
+  local buf = M.get_log_buf(session)
+  if not buf then return end
+
   s = string.gsub(s, "\n$", "")
   local text = vim.split(s, "\n", { plain = true })
 
@@ -133,13 +121,16 @@ function M.append_log(buf, s, key)
   if vim.api.nvim_buf_get_lines(buf, -2, -1, false)[1] == "" then start = -2 end
   local pre_line_count = vim.api.nvim_buf_line_count(buf)
 
-  if M.is_ft_key(key) then
-    table.insert(text, 1, format_log_comment(buf, key))
+  local commentstring = vim.bo[buf].commentstring
+  local prefix = M.format_log_prefix(op, key)
+  if key == "ut" then
+  elseif M.is_ft_key(key) then
+    table.insert(text, 1, string.format(commentstring, prefix))
     vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
   else
     local text2 = {}
     for _, value in ipairs(text) do
-      table.insert(text2, format_log_comment(buf, key, value))
+      table.insert(text2, string.format(commentstring, prefix) .. " " .. value)
     end
     vim.api.nvim_buf_set_lines(buf, start, -1, true, text2)
   end
@@ -153,6 +144,12 @@ function M.append_log(buf, s, key)
       vim.api.nvim_win_set_cursor(winid, { post_line_count, 0 })
     end
   end
+
+  local winid = vim
+    .iter(vim.api.nvim_tabpage_list_wins(0))
+    :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
+
+  return buf, winid
 end
 
 ---@diagnostic disable-next-line: unused-local
@@ -172,28 +169,24 @@ end
 ---@return string[]
 function M.doc_clj(info)
   local content = {}
-  if vim.tbl_isempty(info) then
-    table.insert(content, "No lookup doc info")
-  else
-    -- Look at clojure.repl/print-doc
-    table.insert(content, "```clojure")
-    table.insert(content, (info.ns and info.ns .. "/" .. info.name) or info.name)
-    table.insert(content, info.arglists or info["arglists-str"])
-    table.insert(content, info["forms-str"])
+  -- Look at clojure.repl/print-doc
+  table.insert(content, "```clojure")
+  table.insert(content, (info.ns and info.ns .. "/" .. info.name) or info.name)
+  table.insert(content, info.arglists or info["arglists-str"])
+  table.insert(content, info["forms-str"])
+  table.insert(content, "```")
+
+  table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
+  table.insert(content, info.added and "Available since " .. info.added)
+  table.insert(content, info.doc and " " .. info.doc)
+
+  if info["see-also"] then
+    vim.list_extend(content, { "", "__See also:__", "```clojure" })
+    vim.list_extend(content, info["see-also"])
     table.insert(content, "```")
-
-    table.insert(content, (info["special-form"] and "Special Form") or (info.macro and "Macro"))
-    table.insert(content, info.added and "Available since " .. info.added)
-    table.insert(content, info.doc and " " .. info.doc)
-
-    if info["see-also"] then
-      vim.list_extend(content, { "", "__See also:__", "```clojure" })
-      vim.list_extend(content, info["see-also"])
-      table.insert(content, "```")
-    end
-    if info.file then
-      vim.list_extend(content, { "", "__File:__", string.format("[%s]", M.file_str(info.file)) })
-    end
+  end
+  if info.file then
+    vim.list_extend(content, { "", "__File:__", string.format("[%s]", M.file_str(info.file)) })
   end
   return content
 end
@@ -209,12 +202,13 @@ function M.doc_java(info)
     table.insert(
       content,
       (info.modifiers and (info.modifiers .. " ") or "")
-        .. (info.returns and (info.returns .. " ") or "")
-        .. (info.type and (info.type .. " ") or "")
         .. (info.class and (info.class .. "/") or "")
         .. info.member
     )
-    table.insert(content, info.arglists or info["arglists-str"])
+    if info["annotated-arglists"] then vim.list_extend(content, info["annotated-arglists"]) end
+    if info.throws and not (vim.tbl_isempty(info.throws)) then
+      table.insert(content, string.format("throws %s", table.concat(info.throws, " ")))
+    end
     table.insert(content, "```")
 
     if info.javadoc then
@@ -255,6 +249,15 @@ function M.select_session(callback)
   }, function(item)
     if item then callback(item) end
   end)
+end
+
+---@param title string
+---@param data any
+function M.echo(title, data)
+  vim.api.nvim_echo({
+    { title .. "\n", "Underlined" },
+    { (type(data) == "string" and data) or vim.inspect(data), "Normal" },
+  }, true, {})
 end
 
 return M

@@ -2,19 +2,28 @@
 ---@field ops? table
 ---@field sessions? string[]
 
+---@class Nrepl.State.Msgs
+---@field op string
+---@field out string[]
+---@field data table
+---@field callback Nrepl.Operation.Callback
+
 ---@class Nrepl.State
 ---@field server Nrepl.State.Server
 ---@field client? uv.uv_tcp_t
 ---@field session? string
+---@field msgs? table<string, Nrepl.State.Msgs>
+---@field msg_count? integer
 ---@field filetype? string
----@field complete_sync_callback? fun(data: any[])
 
 local M = {}
 
 ---@type Nrepl.State
 M.default = {
   server = {},
-  -- HACK will need to resolve if supporting other languages
+  msgs = {},
+  msg_count = 0,
+  -- HACK will need to change if supporting other languages
   filetype = "clojure",
 }
 

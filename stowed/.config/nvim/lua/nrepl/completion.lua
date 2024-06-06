@@ -11,28 +11,28 @@ function M.get_sync(prefix, ns)
   ---@type any[]|nil
   local completions
 
-  state.data.complete_sync_callback = function(items) completions = items end
-
-  if state.data.server.ops["complete"] then
-    tcp.write(state.data.client, {
-      op = "complete",
-      id = util.msg_id.complete_sync,
-      prefix = prefix,
-      ns = ns,
-      ["extra-metadata"] = { "arglists", "doc" },
-    })
-  else
-    tcp.write(state.data.client, {
-      op = "completions",
-      id = util.msg_id.complete_sync,
-      prefix = prefix,
-      ns = ns,
-      options = { ["extra-metadata"] = { "arglists", "doc" } },
-    })
-  end
+  tcp.write_operation({
+    make_operation = function()
+      if state.data.server.ops["complete"] then
+        return {
+          op = "complete",
+          prefix = prefix,
+          ns = ns,
+          ["extra-metadata"] = { "arglists", "doc" },
+        }
+      else
+        return {
+          op = "completions",
+          prefix = prefix,
+          ns = ns,
+          options = { ["extra-metadata"] = { "arglists", "doc" } },
+        }
+      end
+    end,
+    callback = function(data) completions = data.completions end,
+  })
 
   vim.wait(5000, function() return completions and true or false end, 100)
-  state.data.complete_sync_callback = nil
   return completions
 end
 
