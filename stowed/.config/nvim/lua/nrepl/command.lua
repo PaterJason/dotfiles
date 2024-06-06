@@ -8,7 +8,7 @@ vim.api.nvim_create_user_command("NreplOp", function(info)
   local fargs = info.fargs
   local op = fargs[1]
 
-  local data = {
+  local request = {
     op = op,
   }
 
@@ -17,12 +17,12 @@ vim.api.nvim_create_user_command("NreplOp", function(info)
     local n = string.find(arg, "=", 2, true)
     local key = string.sub(arg, 0, n - 1)
     local value = string.sub(arg, n + 1)
-    if key ~= "" and value ~= "" then data[key] = value end
+    if key ~= "" and value ~= "" then request[key] = value end
   end
 
-  require("nrepl.tcp").write_operation({
-    make_operation = function() return data end,
-    callback = function(t) require("nrepl.util").echo("nREPL Response", t) end,
+  require("nrepl.tcp").write({
+    make_request = function() return request end,
+    callback = function(response) require("nrepl.util").echo("nREPL Response", response) end,
   })
 end, {
   nargs = "+",
@@ -53,10 +53,10 @@ vim.api.nvim_create_user_command("NreplWrite", function(info)
   end
 
   local args = info.args
-  local data = vim.fn.eval(args)
-  require("nrepl.tcp").write_operation({
-    make_operation = function() return data end,
-    callback = function(t) require("nrepl.util").echo("nREPL Response", t) end,
+  local request = vim.fn.eval(args)
+  require("nrepl.tcp").write({
+    make_request = function() return request end,
+    callback = function(response) require("nrepl.util").echo("nREPL Response", response) end,
   })
 end, {
   nargs = 1,

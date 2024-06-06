@@ -7,7 +7,7 @@ M = {
     focus_id = "nvim.nrepl",
     wrap = false,
   },
-  ---@class Nrepl.MiddlewareParams
+  ---@class Nrepl.Config.MiddlewareParams
   middleware_params = {
     -- print
     ["nrepl.middleware.print/print"] = "nrepl.util.print/pr",
@@ -27,7 +27,7 @@ M = {
     ["nrepl.middleware.caught/caught"] = nil,
     ["nrepl.middleware.caught/print?"] = "true",
   },
-  -- Use debug handler
+  -- Debug printing
   ---@type boolean
   debug = false,
 }

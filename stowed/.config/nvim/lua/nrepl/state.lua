@@ -6,7 +6,7 @@
 ---@field op string
 ---@field out string[]
 ---@field data table
----@field callback Nrepl.Operation.Callback
+---@field callback Nrepl.Message.Callback
 
 ---@class Nrepl.State
 ---@field server Nrepl.State.Server

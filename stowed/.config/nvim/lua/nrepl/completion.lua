@@ -11,8 +11,8 @@ function M.get_sync(prefix, ns)
   ---@type any[]|nil
   local completions
 
-  tcp.write_operation({
-    make_operation = function()
+  tcp.write({
+    make_request = function()
       if state.data.server.ops["complete"] then
         return {
           op = "complete",
