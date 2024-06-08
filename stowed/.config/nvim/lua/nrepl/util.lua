@@ -24,7 +24,7 @@ function M.get_ts_node(capture, opts)
     end_ = opts.end_ or start
   end
 
-  local filetype = vim.bo.filetype
+  local filetype = state.data.filetype or ""
   local lang = vim.treesitter.language.get_lang(filetype)
   if lang == nil then return end
   local query = vim.treesitter.query.get(lang, "nrepl")
@@ -76,80 +76,6 @@ function M.status(status)
     end
     return acc
   end)
-end
-
----@param session? string
----@return integer?
-function M.get_log_buf(session)
-  session = session or state.data.session
-  if not vim.list_contains(state.data.server.sessions, session) then return end
-  local bufname = "nREPL-log-" .. session
-  local buf = vim.fn.bufnr(bufname)
-
-  if buf == -1 then
-    buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(buf, bufname)
-
-    vim.bo[buf].filetype = state.data.filetype
-    return buf
-  else
-    return buf
-  end
-end
-
-function M.is_ft_key(key)
-  return vim.list_contains({
-    "value",
-    "nrepl.middleware.caught/throwable",
-  }, key)
-end
-
-function M.format_log_prefix(op, key) return string.format("%s (%s)", op, key) end
-
----@param session string
----@param s string
----@param op string
----@param key string
-function M.append_log(session, s, op, key)
-  local buf = M.get_log_buf(session)
-  if not buf then return end
-
-  s = string.gsub(s, "\n$", "")
-  local text = vim.split(s, "\n", { plain = true })
-
-  local start = -1
-  if vim.api.nvim_buf_get_lines(buf, -2, -1, false)[1] == "" then start = -2 end
-  local pre_line_count = vim.api.nvim_buf_line_count(buf)
-
-  local commentstring = vim.bo[buf].commentstring
-  local prefix = M.format_log_prefix(op, key)
-  if key == "ut" then
-  elseif M.is_ft_key(key) then
-    table.insert(text, 1, string.format(commentstring, prefix))
-    vim.api.nvim_buf_set_lines(buf, start, -1, true, text)
-  else
-    local text2 = {}
-    for _, value in ipairs(text) do
-      table.insert(text2, string.format(commentstring, prefix) .. " " .. value)
-    end
-    vim.api.nvim_buf_set_lines(buf, start, -1, true, text2)
-  end
-
-  local post_line_count = vim.api.nvim_buf_line_count(buf)
-  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-    if
-      buf == vim.api.nvim_win_get_buf(winid)
-      and pre_line_count <= vim.api.nvim_win_get_cursor(winid)[1]
-    then
-      vim.api.nvim_win_set_cursor(winid, { post_line_count, 0 })
-    end
-  end
-
-  local winid = vim
-    .iter(vim.api.nvim_tabpage_list_wins(0))
-    :find(function(winid) return buf == vim.api.nvim_win_get_buf(winid) end)
-
-  return buf, winid
 end
 
 ---@diagnostic disable-next-line: unused-local
@@ -258,6 +184,49 @@ function M.echo(title, data)
     { title .. "\n", "Underlined" },
     { (type(data) == "string" and data) or vim.inspect(data), "Normal" },
   }, true, {})
+end
+
+M.callback = {}
+
+---@type Nrepl.Message.Callback
+function M.callback.status(response, request)
+  local status = response.status and M.status(response.status) or {}
+
+  if status.is_done and not vim.tbl_isempty(status.status_strs) then
+    local s = table.concat(status.status_strs, ", ")
+    require("nrepl.prompt").append(response.session, s, {
+      new_line = true,
+      prefix = string.format("%s (%s) ", request.op, status.is_error and "error" or "done"),
+    })
+  end
+end
+
+---@type Nrepl.Message.Callback
+function M.callback.eval(response, request)
+  local prompt = require("nrepl.prompt")
+
+  if response.out then
+    prompt.append(response.session, response.out, { prefix = "(out) " })
+    vim.cmd({ cmd = "echo" })
+    -- vim.api.nvim_echo({ { response.out, "Comment" } }, false, {})
+    vim.cmd("echo '22222'")
+  elseif response.err then
+    prompt.append(response.session, response.err, { prefix = "(err) " })
+    vim.api.nvim_out_write(response.err)
+    -- vim.api.nvim_echo({ { response.err, "ErrorMsg" } }, false, {})
+  elseif response.value then
+    prompt.append(response.session, response.value, {})
+    vim.api.nvim_out_write(response.value)
+    -- vim.api.nvim_echo({ { response.value, "Normal" } }, false, {})
+  end
+
+  local status = response.status and M.status(response.status) or {}
+  if status.is_done and not vim.tbl_isempty(status.status_strs) then
+    M.callback.status(response, request)
+  elseif status.is_done then
+    prompt.append(response.session, "", { new_line = true })
+    -- vim.api.nvim_out_write("\n")
+  end
 end
 
 return M

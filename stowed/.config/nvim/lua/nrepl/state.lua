@@ -3,8 +3,7 @@
 ---@field sessions? string[]
 
 ---@class Nrepl.State.Msgs
----@field op string
----@field out string[]
+---@field request table
 ---@field data table
 ---@field callback Nrepl.Message.Callback
 
@@ -15,12 +14,14 @@
 ---@field msgs? table<string, Nrepl.State.Msgs>
 ---@field msg_count? integer
 ---@field filetype? string
+---@field str_buf string
 
 local M = {}
 
 ---@type Nrepl.State
 M.default = {
   server = {},
+  str_buf = "",
   msgs = {},
   msg_count = 0,
   -- HACK will need to change if supporting other languages

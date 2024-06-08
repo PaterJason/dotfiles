@@ -1,10 +1,11 @@
-local util = require("nrepl.util")
+local prompt = require("nrepl.prompt")
 local state = require("nrepl.state")
-
 local tcp = require("nrepl.tcp")
+local util = require("nrepl.util")
+
 local message = tcp.message
 
-M = {}
+local M = {}
 
 ---@param host? string
 ---@param port? string
@@ -81,7 +82,7 @@ end
 
 ---@param session? string
 function M.log(session)
-  local buf = require("nrepl.util").get_log_buf(session)
+  local buf = prompt.get_buf(session)
   if buf then
     vim.api.nvim_win_set_buf(0, buf)
     vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(buf), 0 })

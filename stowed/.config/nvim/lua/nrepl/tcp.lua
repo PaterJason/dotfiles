@@ -33,8 +33,7 @@ function M.write(message, ...)
     assert(not err, err)
     if request.id then
       state.data.msgs[request.id] = {
-        op = request.op,
-        out = {},
+        request = request,
         data = {},
         callback = message.callback,
       }
@@ -42,28 +41,12 @@ function M.write(message, ...)
   end)
 end
 
----@alias Nrepl.Message.Callback fun(data: table, op: string)
+---@alias Nrepl.Message.Callback fun(data: table, request: table)
 
 ---@class Nrepl.Message
 ---@field make_request fun(...: any):table?
 ---@field callback Nrepl.Message.Callback
 ---@overload fun(...: any)
-
-local function eval_callback(response, op, no_log_cb)
-  for _, key in ipairs({
-    "value",
-    "nrepl.middleware.caught/throwable",
-    "ex",
-  }) do
-    if response[key] then
-      local s = response[key]
-      local _, winid = util.append_log(response.session, s, op, key)
-
-      if not winid then no_log_cb(s, key) end
-      break
-    end
-  end
-end
 
 M.message = {
   ---@type Nrepl.Message
@@ -74,7 +57,7 @@ M.message = {
         ["verbose?"] = 1,
       }
     end,
-    callback = function(response)
+    callback = function(response, _)
       if response.ops then state.data.server.ops = response.ops end
     end,
   },
@@ -85,7 +68,7 @@ M.message = {
         op = "ls-sessions",
       }
     end,
-    callback = function(response)
+    callback = function(response, _)
       if response.sessions then
         state.data.server.sessions = response.sessions
         if not vim.list_contains(response.sessions, state.data.session) then
@@ -102,7 +85,7 @@ M.message = {
         session = session or vim.NIL,
       }
     end,
-    callback = function(response) M.message.session_refresh() end,
+    callback = function(response, _) M.message.session_refresh() end,
   },
   close = {
     make_request = function(session)
@@ -111,7 +94,7 @@ M.message = {
         session = session,
       }
     end,
-    callback = function(response) M.message.session_refresh() end,
+    callback = function(response, _) M.message.session_refresh() end,
   },
 
   ---@type Nrepl.Message
@@ -141,19 +124,7 @@ M.message = {
         column = col + 1,
       }
     end,
-    callback = function(response, op)
-      eval_callback(
-        response,
-        op,
-        function(s, key)
-          util.open_floating_preview(
-            vim.split(s, "\n", { plain = true }),
-            (util.is_ft_key(key) and state.data.filetype) or "",
-            { title = "nREPL " .. util.format_log_prefix(op, key) }
-          )
-        end
-      )
-    end,
+    callback = function(response, request) util.callback.eval(response, request) end,
   },
   ---@type Nrepl.Message
   eval_text = {
@@ -163,13 +134,7 @@ M.message = {
         code = text,
       }
     end,
-    callback = function(response, op)
-      eval_callback(
-        response,
-        op,
-        function(s, key) util.echo("nREPL " .. util.format_log_prefix(op, key), s) end
-      )
-    end,
+    callback = function(response, request) util.callback.eval(response, request) end,
   },
   ---@type Nrepl.Message
   load_file = {
@@ -181,13 +146,7 @@ M.message = {
         ["file-name"] = vim.fs.basename(file_path),
       }
     end,
-    callback = function(response, op)
-      eval_callback(
-        response,
-        op,
-        function(s, key) util.echo("nREPL " .. util.format_log_prefix(op, key), s) end
-      )
-    end,
+    callback = function(response, request) util.callback.eval(response, request) end,
   },
   interrupt = {
     make_request = function(session)
@@ -196,7 +155,7 @@ M.message = {
         session = session,
       }
     end,
-    callback = function(response) end,
+    callback = util.callback.status,
   },
 
   ---@type Nrepl.Message
@@ -208,11 +167,15 @@ M.message = {
         ns = ns,
       }
     end,
-    callback = function(response)
+    callback = function(response, _)
+      local opts = {
+        title = "nREPL hover",
+        focus_id = "nvim.nrepl.hover",
+      }
       if response.info and not vim.tbl_isempty(response.info) then
-        util.open_floating_preview(util.doc_clj(response.info), "markdown")
+        util.open_floating_preview(util.doc_clj(response.info), "markdown", { title = "" })
       else
-        util.open_floating_preview({ "No lookup doc info" })
+        util.open_floating_preview({ "No lookup doc info" }, "", opts)
       end
     end,
   },
@@ -225,13 +188,17 @@ M.message = {
         ns = ns,
       }
     end,
-    callback = function(response)
+    callback = function(response, _)
+      local opts = {
+        title = "nREPL hover",
+        focus_id = "nvim.nrepl.hover",
+      }
       if response.member then
-        util.open_floating_preview(util.doc_java(response), "markdown")
+        util.open_floating_preview(util.doc_java(response), "markdown", opts)
       elseif response.name then
-        util.open_floating_preview(util.doc_clj(response), "markdown")
+        util.open_floating_preview(util.doc_clj(response), "markdown", opts)
       else
-        util.open_floating_preview({ "No lookup doc info" })
+        util.open_floating_preview({ "No lookup doc info" }, "", opts)
       end
     end,
   },
@@ -245,7 +212,7 @@ M.message = {
         ns = ns,
       }
     end,
-    callback = function(response)
+    callback = function(response, _)
       if response.info and not vim.tbl_isempty(response.info) then
         local file = response.info.file
         local line = response.info.line
@@ -271,32 +238,13 @@ end
 local function read_callback(response)
   if config.debug then vim.schedule(function() util.echo("DEBUG READ CALLBACK", response) end) end
 
-  if response.id and state.data.msgs[response.id] then
-    local msg_data = state.data.msgs[response.id]
-    msg_data.data = vim.tbl_extend("force", msg_data.data, response)
-
-    if response.out then table.insert(msg_data.out, response.out) end
-
+  local msg_data = response.id and state.data.msgs[response.id]
+  if msg_data then
     local status = response.status and util.status(response.status) or {}
-    if status.is_done then
-      vim.schedule(function()
-        if not vim.tbl_isempty(msg_data.out) then
-          local s = table.concat(msg_data.out)
-          local _, winid = util.append_log(response.session, s, msg_data.op, "out")
-          if not winid then util.echo("Nrepl (out)n", s) end
-        end
 
-        msg_data.callback(msg_data.data, msg_data.op)
+    vim.schedule(function() msg_data.callback(response, msg_data.request) end)
 
-        if not vim.tbl_isempty(status.status_strs) then
-          local s = table.concat(status.status_strs, ", ")
-          local key = (status.is_error and "error") or "done"
-          local _, winid = util.append_log(response.session, s, msg_data.op, key)
-          if not winid then util.echo(string.format("Nrepl status (%s)", key), s) end
-        end
-      end)
-      state.data.msgs[response.id] = nil
-    end
+    if status.is_done then state.data.msgs[response.id] = nil end
   end
 end
 
@@ -322,11 +270,10 @@ function M.connect(host, port)
     assert(not conn_err, conn_err)
     vim.notify("nREPL client connected")
 
-    local str_buf = ""
     client:read_start(function(read_err, chunk)
       assert(not read_err, read_err)
       if chunk then
-        str_buf = str_buf .. chunk
+        local str_buf = state.data.str_buf .. chunk
 
         while str_buf ~= "" do
           local response, index = bencode.decode(str_buf)
@@ -337,6 +284,8 @@ function M.connect(host, port)
             break
           end
         end
+
+        state.data.str_buf = str_buf
       else
         client:close()
       end
