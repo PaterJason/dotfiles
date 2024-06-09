@@ -1,11 +1,11 @@
 ; namespaces
-; taken from nvim-treesitter highlights.scm
+; modified from nvim-treesitter highlights.scm
 (list_lit
   .
   (sym_lit) @_ns_sym
   (#eq? @_ns_sym "ns")
   .
-  (sym_lit) @ns)
+  (sym_lit (sym_name) @ns))
 
 (sym_lit) @sym
 

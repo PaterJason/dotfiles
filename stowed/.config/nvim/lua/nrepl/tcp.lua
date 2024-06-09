@@ -48,8 +48,8 @@ end
 ---@field callback Nrepl.Message.Callback
 ---@overload fun(...: any)
 
+---@type table<string, Nrepl.Message>
 M.message = {
-  ---@type Nrepl.Message
   describe = {
     make_request = function()
       return {
@@ -61,7 +61,6 @@ M.message = {
       if response.ops then state.data.server.ops = response.ops end
     end,
   },
-  ---@type Nrepl.Message
   session_refresh = {
     make_request = function()
       return {
@@ -77,7 +76,6 @@ M.message = {
       end
     end,
   },
-  ---@type Nrepl.Message
   clone = {
     make_request = function(session)
       return {
@@ -85,7 +83,10 @@ M.message = {
         session = session or vim.NIL,
       }
     end,
-    callback = function(response, _) M.message.session_refresh() end,
+    callback = function(response, request)
+      M.message.session_refresh()
+      util.callback.status(response, request)
+    end,
   },
   close = {
     make_request = function(session)
@@ -94,25 +95,18 @@ M.message = {
         session = session,
       }
     end,
-    callback = function(response, _) M.message.session_refresh() end,
+    callback = function(response, request)
+      M.message.session_refresh()
+      util.callback.status(response, request)
+    end,
   },
 
-  ---@type Nrepl.Message
   eval_range = {
     ---@param start [integer, integer]
     ---@param end_ [integer, integer]
     make_request = function(start, end_)
-      local node = util.get_ts_node("elem", {
-        start = start,
-        end_ = end_,
-        last = true,
-      })
-      if node == nil then
-        util.open_floating_preview({ "No element found at position" })
-        return
-      end
-      local text = vim.treesitter.get_node_text(node, 0)
-      local row, col = node:start()
+      local lines = vim.api.nvim_buf_get_text(0, start[1], start[2], end_[1], end_[2], {})
+      local text = table.concat(lines, "\n")
       local file = vim.fn.expand("%:p")
 
       return {
@@ -120,15 +114,15 @@ M.message = {
         code = text,
         ns = util.get_ts_text("ns"),
         file = file,
-        line = row + 1,
-        column = col + 1,
+        line = start[1] + 1,
+        column = start[2] + 1,
       }
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
-  ---@type Nrepl.Message
   eval_text = {
     make_request = function(text)
+      if text == "" then return end
       return {
         op = "eval",
         code = text,
@@ -136,7 +130,6 @@ M.message = {
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
-  ---@type Nrepl.Message
   load_file = {
     make_request = function(file_path, lines)
       return {
@@ -158,7 +151,27 @@ M.message = {
     callback = util.callback.status,
   },
 
-  ---@type Nrepl.Message
+  lookup_definition = {
+    make_request = function(ns, sym)
+      return {
+        op = "lookup",
+        sym = sym,
+        ns = ns,
+      }
+    end,
+    callback = function(response, _)
+      if response.info and not vim.tbl_isempty(response.info) then
+        local file = response.info.file
+        local line = response.info.line
+        local column = response.info.column
+
+        if file and line and column then
+          vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
+          vim.api.nvim_win_set_cursor(0, { line, column - 1 })
+        end
+      end
+    end,
+  },
   lookup_hover = {
     make_request = function(ns, sym)
       return {
@@ -179,7 +192,6 @@ M.message = {
       end
     end,
   },
-  ---@type Nrepl.Message
   info_hover = {
     make_request = function(ns, sym)
       return {
@@ -202,36 +214,12 @@ M.message = {
       end
     end,
   },
-
-  ---@type Nrepl.Message
-  lookup_definition = {
-    make_request = function(ns, sym)
-      return {
-        op = "lookup",
-        sym = sym,
-        ns = ns,
-      }
-    end,
-    callback = function(response, _)
-      if response.info and not vim.tbl_isempty(response.info) then
-        local file = response.info.file
-        local line = response.info.line
-        local column = response.info.column
-
-        if file and line and column then
-          vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
-          vim.api.nvim_win_set_cursor(0, { line, column - 1 })
-        end
-      end
-    end,
-  },
 }
 
-local mt = {
-  __call = M.write,
-}
 for _, tbl in pairs(M.message) do
-  setmetatable(tbl, mt)
+  setmetatable(tbl, {
+    __call = M.write,
+  })
 end
 
 ---@param response table

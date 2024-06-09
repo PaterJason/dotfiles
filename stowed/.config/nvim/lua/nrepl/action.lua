@@ -92,7 +92,29 @@ end
 function M.eval_cursor()
   local pos = vim.api.nvim_win_get_cursor(0)
   pos[1] = pos[1] - 1
-  message.eval_range(pos, pos)
+
+  local node = util.get_ts_node("elem", {
+    start = pos,
+    last = true,
+  })
+  if node == nil then
+    util.open_floating_preview({ "No element found at position" })
+    return
+  end
+  local start = { node:start() }
+  local end_ = { node:end_() }
+
+  message.eval_range(start, end_)
+end
+
+function M.eval_operator(motion_type)
+  if motion_type then
+    local start, end_ = util.get_operator_range(motion_type)
+    message.eval_range(start, end_)
+  else
+    vim.go.operatorfunc = "v:lua.require'nrepl.action'.eval_operator"
+    return "g@"
+  end
 end
 
 function M.eval_input()

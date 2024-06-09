@@ -1,5 +1,4 @@
 local state = require("nrepl.state")
-local tcp = require("nrepl.tcp")
 
 local M = {}
 
@@ -17,26 +16,23 @@ function M.get_buf(session)
     vim.bo[buf].buftype = "prompt"
 
     vim.fn.prompt_setprompt(buf, "=> ")
-    vim.fn.prompt_setcallback(buf, "v:lua.require'nrepl.prompt'.callback")
-    vim.fn.prompt_setinterrupt(buf, "v:lua.require'nrepl.action'.interrupt")
+    vim.fn.prompt_setcallback(buf, "v:lua.require'nrepl.tcp'.message.eval_text")
+    vim.fn.prompt_setinterrupt(buf, "v:lua.require'nrepl.tcp'.message.interrupt")
 
     vim.api.nvim_create_autocmd({ "BufEnter" }, {
       buffer = buf,
       callback = function()
-        vim.bo[buf].filetype = state.data.filetype
         vim.treesitter.start(buf, state.data.filetype)
         vim.bo[buf].omnifunc = "v:lua.require'nrepl'.completefunc"
       end,
     })
-    return buf
-  else
-    return buf
   end
+  return buf
 end
 
 ---@param session string
 ---@param s string
----@param opts { new_line?: boolean, linenr?: number, prefix?: string }
+---@param opts { new_line?: boolean, prefix?: string }
 function M.append(session, s, opts)
   local buf = M.get_buf(session)
   if not buf then return end
@@ -54,7 +50,10 @@ function M.append(session, s, opts)
   end
   if opts.new_line then table.insert(prefixed_text, "") end
 
-  local linenr = opts.linenr or -1
+  local linenr = -1
+  if vim.api.nvim_win_get_buf(0) == buf and vim.startswith(vim.api.nvim_get_mode().mode, "i") then
+    linenr = -2
+  end
   local line = vim.api.nvim_buf_get_lines(buf, linenr - 1, linenr, false)[1]
   local prompt = vim.fn.prompt_getprompt(buf)
 
@@ -69,28 +68,6 @@ function M.append(session, s, opts)
   else
     vim.api.nvim_buf_set_lines(buf, linenr, linenr, true, prefixed_text)
   end
-  vim.bo[buf].modified = false
-end
-
-function M.callback(text)
-  if text == "" then return end
-  tcp.write({
-    make_request = function()
-      return {
-        op = "eval",
-        code = text,
-      }
-    end,
-    callback = function(response)
-      if response.out then
-        M.append(response.session, response.out, { prefix = "(out) ", linenr = -2 })
-      elseif response.err then
-        M.append(response.session, response.err, { prefix = "(err) ", linenr = -2 })
-      elseif response.value then
-        M.append(response.session, response.value, { linenr = -2 })
-      end
-    end,
-  })
 end
 
 return M

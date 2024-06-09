@@ -14,31 +14,31 @@ local M = {
     ["nrepl.middleware.print/print"] = "nrepl.util.print/pr",
     ["nrepl.middleware.print/options"] = {
       ---@type "true"|vim.NIL
-      ["print-dup"] = vim.NIL,
+      ["print-dup"] = nil,
       ---@type integer|vim.NIL
       ["print-length"] = 50,
       ---@type integer|vim.NIL
       ["print-level"] = 10,
       ---@type "true"|vim.NIL
-      ["print-meta"] = vim.NIL,
+      ["print-meta"] = nil,
       ---@type "true"|vim.NIL
-      ["print-namespace-maps"] = vim.NIL,
+      ["print-namespace-maps"] = nil,
       ---@type "true"|vim.NIL
-      ["print-readably"] = vim.NIL,
+      ["print-readably"] = nil,
     },
     ---@type "true"|vim.NIL
     ["nrepl.middleware.print/stream?"] = "true",
     ---@type integer|vim.NIL
-    ["nrepl.middleware.print/buffer-size"] = vim.NIL,
+    ["nrepl.middleware.print/buffer-size"] = nil,
     ---@type integer|vim.NIL
-    ["nrepl.middleware.print/quota"] = vim.NIL,
+    ["nrepl.middleware.print/quota"] = nil,
     ---@type string[]|vim.NIL
-    ["nrepl.middleware.print/keys"] = vim.NIL,
+    ["nrepl.middleware.print/keys"] = nil,
     -- caught
     ---@type string|vim.NIL
     ["nrepl.middleware.caught/caught"] = "clojure.repl/pst",
     ---@type "true"|vim.NIL
-    ["nrepl.middleware.caught/print?"] = vim.NIL,
+    ["nrepl.middleware.caught/print?"] = nil,
   },
   -- Debug printing
   ---@type boolean

@@ -78,6 +78,26 @@ function M.status(status)
   end)
 end
 
+---Get range of the operator (zero-based, end col exclusive)
+---@param motion_type "line"|"char"|"block"
+---@return [integer, integer]
+---@return [integer, integer]
+function M.get_operator_range(motion_type)
+  local start = vim.api.nvim_buf_get_mark(0, "[")
+  local end_ = vim.api.nvim_buf_get_mark(0, "]")
+  start[1] = start[1] - 1
+  end_[1] = end_[1] - 1
+  end_[2] = end_[2] + 1
+
+  if motion_type == "line" then
+    start[2] = 0
+    end_[1] = end_[1] + 1
+    end_[2] = 0
+  end
+
+  return start, end_
+end
+
 ---@diagnostic disable-next-line: unused-local
 function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
   return function(value) return string.sub(value, 1, string.len(arg_lead)) == arg_lead end
@@ -205,20 +225,16 @@ end
 function M.callback.eval(response, request)
   local prompt = require("nrepl.prompt")
 
-  if response.out then
+  if response.status then
+    M.callback.status(response, request)
+  elseif response.out then
     prompt.append(response.session, response.out, { prefix = "(out) " })
   elseif response.err then
     prompt.append(response.session, response.err, { prefix = "(err) " })
   elseif response.value then
     prompt.append(response.session, response.value, {})
-  end
-
-  local status = response.status and M.status(response.status) or {}
-  if status.is_done and not vim.tbl_isempty(status.status_strs) then
-    M.callback.status(response, request)
-  elseif status.is_done then
+  else
     prompt.append(response.session, "", { new_line = true })
-    -- vim.api.nvim_out_write("\n")
   end
 end
 
