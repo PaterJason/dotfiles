@@ -48,11 +48,12 @@ end
 function M.completefunc(findstart, base)
   if findstart == 1 then
     local pos = vim.api.nvim_win_get_cursor(0)
+    pos[1] = pos[1] - 1
     pos[2] = pos[2] - 1
-    local node = util.get_ts_node("sym", { pos = pos })
+    local node = util.get_ts_node("sym", { start = pos })
     if node then
       local row, column = node:start()
-      if row == pos[1] - 1 then return column end
+      if row == pos[1] then return column end
     end
   elseif findstart == 0 then
     local completions = M.get_sync(base, util.get_ts_text("ns"))
