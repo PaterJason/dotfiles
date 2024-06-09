@@ -207,17 +207,10 @@ function M.callback.eval(response, request)
 
   if response.out then
     prompt.append(response.session, response.out, { prefix = "(out) " })
-    vim.cmd({ cmd = "echo" })
-    -- vim.api.nvim_echo({ { response.out, "Comment" } }, false, {})
-    vim.cmd("echo '22222'")
   elseif response.err then
     prompt.append(response.session, response.err, { prefix = "(err) " })
-    vim.api.nvim_out_write(response.err)
-    -- vim.api.nvim_echo({ { response.err, "ErrorMsg" } }, false, {})
   elseif response.value then
     prompt.append(response.session, response.value, {})
-    vim.api.nvim_out_write(response.value)
-    -- vim.api.nvim_echo({ { response.value, "Normal" } }, false, {})
   end
 
   local status = response.status and M.status(response.status) or {}
