@@ -19,10 +19,7 @@ function M.write(message, ...)
 
   local request = message.make_request(...)
   if not request then return end
-  request = vim.tbl_extend("keep", request, config.middleware_params, {
-    id = "nvim:" .. state.data.msg_count,
-    session = state.data.session,
-  })
+  request.id = "nvim:" .. state.data.msg_count
   state.data.msg_count = state.data.msg_count + 1
 
   if config.debug then vim.schedule(function() util.echo("DEBUG WRITE CALLBACK", request) end) end
@@ -41,7 +38,7 @@ function M.write(message, ...)
   end)
 end
 
----@alias Nrepl.Message.Callback fun(data: table, request: table)
+---@alias Nrepl.Message.Callback fun(response: table, request: table)
 
 ---@class Nrepl.Message
 ---@field make_request fun(...: any):table?
@@ -58,7 +55,8 @@ M.message = {
       }
     end,
     callback = function(response, _)
-      if response.ops then state.data.server.ops = response.ops end
+      state.data.server.ops = response.ops
+      state.data.server.aux = response.aux
     end,
   },
   session_refresh = {
@@ -80,7 +78,7 @@ M.message = {
     make_request = function(session)
       return {
         op = "clone",
-        session = session or vim.NIL,
+        session = session,
       }
     end,
     callback = function(response, request)
@@ -109,35 +107,44 @@ M.message = {
       local text = table.concat(lines, "\n")
       local file = vim.fn.expand("%:p")
 
-      return {
+      local request = {
         op = "eval",
+        session = state.data.session,
         code = text,
         ns = util.get_ts_text("ns"),
         file = file,
         line = start[1] + 1,
         column = start[2] + 1,
       }
+      request = vim.tbl_extend("keep", request, config.middleware_params)
+      return request
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
   eval_text = {
     make_request = function(text)
       if text == "" then return end
-      return {
+      local request = {
         op = "eval",
+        session = state.data.session,
         code = text,
       }
+      request = vim.tbl_extend("keep", request, config.middleware_params)
+      return request
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
   load_file = {
     make_request = function(file_path, lines)
-      return {
+      local request = {
         op = "load-file",
+        session = state.data.session,
         file = table.concat(lines, "\n"),
         ["file-path"] = file_path,
         ["file-name"] = vim.fs.basename(file_path),
       }
+      request = vim.tbl_extend("keep", request, config.middleware_params)
+      return request
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
@@ -145,7 +152,7 @@ M.message = {
     make_request = function(session)
       return {
         op = "interrupt",
-        session = session,
+        session = session or state.data.session,
       }
     end,
     callback = util.callback.status,

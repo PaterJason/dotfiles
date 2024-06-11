@@ -2,9 +2,7 @@ local M = {}
 
 function M.init()
   require("nrepl.command")
-  if vim.tbl_isempty(require("nrepl.state").data.server) then
-    require"nrepl.action".connect()
-  end
+  if vim.tbl_isempty(require("nrepl.state").data.server) then require("nrepl.action").connect() end
 end
 
 function M.completefunc(...) return require("nrepl.completion").completefunc(...) end

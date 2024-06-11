@@ -82,7 +82,7 @@ end, {
         :totable()
     elseif arg_n == 2 and server then
       local act = vim.split(cmd_line, " ", { plain = true })[2]
-      if vim.list_contains({ "session_select", "session_clone", "session_close", "log" }, act) then
+      if vim.list_contains({ "session_select", "session_clone", "session_close" }, act) then
         return vim
           .iter(server.sessions)
           :map(function(key, _) return key end)

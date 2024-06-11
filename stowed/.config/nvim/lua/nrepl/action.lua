@@ -135,10 +135,7 @@ end
 function M.interrupt(session) message.interrupt(session) end
 
 function M.hover()
-  local pos = vim.api.nvim_win_get_cursor(0)
-  pos[1] = pos[1] - 1
-  local ns = util.get_ts_text("ns")
-  local sym = util.get_ts_text("sym", { start = pos })
+  local ns, sym = util.get_cursor_ns_sym()
   if not sym then
     util.open_floating_preview({ "No symbol found at cursor position" })
   elseif state.data.server.ops["info"] then
@@ -149,11 +146,7 @@ function M.hover()
 end
 
 function M.definition()
-  local pos = vim.api.nvim_win_get_cursor(0)
-  pos[1] = pos[1] - 1
-  local ns = util.get_ts_text("ns")
-  local sym = util.get_ts_text("sym", { start = pos })
-
+  local ns, sym = util.get_cursor_ns_sym()
   message.lookup_definition(ns, sym)
 end
 

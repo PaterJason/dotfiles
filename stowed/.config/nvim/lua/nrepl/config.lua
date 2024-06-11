@@ -1,3 +1,7 @@
+---@alias Nrepl.RequestParam.Bool 1|vim.NIL
+---@alias Nrepl.RequestParam.Integer integer|vim.NIL
+---@alias Nrepl.RequestParam.String string|vim.NIL
+
 ---@class Nrepl.Config
 local M = {
   ---@type vim.lsp.util.open_floating_preview.Opts
@@ -9,35 +13,35 @@ local M = {
     wrap = false,
   },
   middleware_params = {
-    -- print
-    ---@type string|vim.NIL
-    ["nrepl.middleware.print/print"] = "nrepl.util.print/pr",
+    ---@type Nrepl.RequestParam.String
+    -- ["nrepl.middleware.print/print"] = "nrepl.util.print/pr",
+    ["nrepl.middleware.print/print"] = "cider.nrepl.pprint/fipp-pprint",
     ["nrepl.middleware.print/options"] = {
-      ---@type "true"|vim.NIL
-      ["print-dup"] = nil,
-      ---@type integer|vim.NIL
+      ---@type Nrepl.RequestParam.Bool
+      ["print-dup"] = 1,
+      ---@type Nrepl.RequestParam.Integer
       ["print-length"] = 50,
-      ---@type integer|vim.NIL
+      ---@type Nrepl.RequestParam.Integer
       ["print-level"] = 10,
-      ---@type "true"|vim.NIL
+      ---@type Nrepl.RequestParam.Bool
       ["print-meta"] = nil,
-      ---@type "true"|vim.NIL
+      ---@type Nrepl.RequestParam.Bool
       ["print-namespace-maps"] = nil,
-      ---@type "true"|vim.NIL
+      ---@type Nrepl.RequestParam.Bool
       ["print-readably"] = nil,
     },
-    ---@type "true"|vim.NIL
-    ["nrepl.middleware.print/stream?"] = "true",
-    ---@type integer|vim.NIL
+    ---@type Nrepl.RequestParam.Bool
+    ["nrepl.middleware.print/stream?"] = 1,
+    ---@type Nrepl.RequestParam.Integer
     ["nrepl.middleware.print/buffer-size"] = nil,
-    ---@type integer|vim.NIL
+    ---@type Nrepl.RequestParam.Integer
     ["nrepl.middleware.print/quota"] = nil,
     ---@type string[]|vim.NIL
     ["nrepl.middleware.print/keys"] = nil,
-    -- caught
-    ---@type string|vim.NIL
+
+    ---@type Nrepl.RequestParam.String
     ["nrepl.middleware.caught/caught"] = "clojure.repl/pst",
-    ---@type "true"|vim.NIL
+    ---@type Nrepl.RequestParam.Bool
     ["nrepl.middleware.caught/print?"] = nil,
   },
   -- Debug printing

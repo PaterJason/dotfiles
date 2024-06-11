@@ -7,7 +7,7 @@ function M.encode(obj)
   if obj_type == "number" and obj % 1 == 0 then
     return "i" .. obj .. "e"
   elseif obj_type == "string" then
-    return string.len(obj) .. ":" .. obj
+    return #obj .. ":" .. obj
   elseif vim.islist(obj) then
     local s = "l"
     for _, value in ipairs(obj) do
@@ -35,32 +35,32 @@ end
 ---@return any, integer
 function M.decode(s, index)
   index = index or 1
-  local head = string.sub(s, index, index)
+  local head = s:sub(index, index)
 
   if head == "" then
     return nil, index
   elseif head == "i" then
-    local start, _end = string.find(s, "^i%-?%d+e", index)
-    if start == nil or _end == nil then
+    local start, end_ = s:find("^i%-?%d+e", index)
+    if start == nil or end_ == nil then
       vim.notify("Failed to decode number", vim.log.levels.ERROR)
       return nil, index
     end
-    return tonumber(string.sub(s, start + 1, _end - 1)), _end + 1
+    return tonumber(s:sub(start + 1, end_ - 1)), end_ + 1
   elseif string.find(head, "%d") then
-    local start, _end = string.find(s, "^%d+:", index)
-    if start == nil or _end == nil then
+    local start, end_ = s:find("^%d+:", index)
+    if start == nil or end_ == nil then
       vim.notify("Failed to decode string", vim.log.levels.ERROR)
       return nil, index
     end
-    local len = tonumber(string.sub(s, start, _end - 1))
-    local ret_s = string.sub(s, _end + 1, _end + len)
-    if string.len(ret_s) < len then return nil, index end
-    return ret_s, _end + len + 1
+    local len = tonumber(s:sub(start, end_ - 1))
+    local ret_s = s:sub(end_ + 1, end_ + len)
+    if #ret_s < len then return nil, index end
+    return ret_s, end_ + len + 1
   elseif head == "l" then
     local list = {}
     index = index + 1
     while true do
-      if string.sub(s, index, index) == "e" then
+      if s:sub(index, index) == "e" then
         index = index + 1
         break
       end
@@ -75,7 +75,7 @@ function M.decode(s, index)
     local dict = vim.empty_dict()
     index = index + 1
     while true do
-      if string.sub(s, index, index) == "e" then
+      if s:sub(index, index) == "e" then
         index = index + 1
         break
       end

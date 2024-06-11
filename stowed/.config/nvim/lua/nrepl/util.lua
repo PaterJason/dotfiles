@@ -59,6 +59,17 @@ function M.get_ts_text(capture, opts)
   if node then return vim.treesitter.get_node_text(node, 0) end
 end
 
+---@return string?
+---@return string?
+function M.get_cursor_ns_sym()
+  local pos = vim.api.nvim_win_get_cursor(0)
+  pos[1] = pos[1] - 1
+  local ns = M.get_ts_text("ns")
+  local sym = M.get_ts_text("sym", { start = pos })
+
+  return ns, sym
+end
+
 ---@param status string[]
 ---@return { is_done: boolean, is_error: boolean, status_strs: string[] }
 function M.status(status)
@@ -106,8 +117,7 @@ end
 ---@param file string
 ---@return string
 function M.file_str(file)
-  file = string.gsub(file, "^file:", "", 1)
-  file = string.gsub(file, "^jar:file:(.*)(!/)", "zipfile://%1::", 1)
+  file = file:gsub("^file:", "", 1):gsub("^jar:file:(.*)(!/)", "zipfile://%1::", 1)
   return file
 end
 

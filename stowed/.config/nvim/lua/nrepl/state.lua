@@ -1,4 +1,5 @@
 ---@class Nrepl.State.Server
+---@field aux? table
 ---@field ops? table
 ---@field sessions? string[]
 
