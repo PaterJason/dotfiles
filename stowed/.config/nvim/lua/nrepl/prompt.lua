@@ -6,23 +6,20 @@ local augroup = vim.api.nvim_create_augroup("nrepl_prompt", { clear = true })
 
 ---@return integer
 function M.get_buf()
-  local bufname = "nREPL-prompt"
-  local buf = vim.fn.bufnr(bufname)
-
-  if buf == -1 then
-    buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(buf, bufname)
+  local buf = vim.uri_to_bufnr("nrepl://prompt")
+  if not vim.api.nvim_buf_is_loaded(buf) then
     vim.bo[buf].buftype = "prompt"
 
     vim.fn.prompt_setprompt(buf, "=> ")
     vim.fn.prompt_setcallback(buf, "v:lua.require'nrepl.tcp'.message.eval_text")
     vim.fn.prompt_setinterrupt(buf, "v:lua.require'nrepl.tcp'.message.interrupt")
+    vim.bo[buf].filetype = state.data.filetype
 
     vim.api.nvim_create_autocmd({ "BufEnter" }, {
       group = augroup,
       buffer = buf,
       callback = function()
-        vim.treesitter.start(buf, state.data.filetype)
+        vim.bo[buf].filetype = state.data.filetype
         vim.bo[buf].omnifunc = "v:lua.require'nrepl'.completefunc"
       end,
     })
@@ -60,13 +57,16 @@ function M.append(s, opts)
     vim.api.nvim_buf_set_text(buf, linenr, -1, linenr, -1, prefixed_text)
   elseif
     (not vim.startswith(line, prompt))
-    and ((prefix and vim.startswith(line, prefix)) or (not vim.startswith(line, "; ")))
+    and (
+      (prefix and vim.startswith(line, prefix)) or (not prefix and not vim.startswith(line, "; "))
+    )
   then
     prefixed_text[1] = text[1]
     vim.api.nvim_buf_set_text(buf, linenr, -1, linenr, -1, prefixed_text)
   else
     vim.api.nvim_buf_set_lines(buf, linenr, linenr, true, prefixed_text)
   end
+  vim.bo[buf].modified = false
 
   local line_count = vim.api.nvim_buf_line_count(buf)
   for _, winnr in ipairs(vim.fn.win_findbuf(buf)) do
