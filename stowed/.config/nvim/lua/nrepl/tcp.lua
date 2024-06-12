@@ -188,15 +188,10 @@ M.message = {
       }
     end,
     callback = function(response, _)
-      local opts = {
+      util.open_floating_preview(util.doc_clj(response.info), "markdown", {
         title = "nREPL hover",
         focus_id = "nvim.nrepl.hover",
-      }
-      if response.info and not vim.tbl_isempty(response.info) then
-        util.open_floating_preview(util.doc_clj(response.info), "markdown", { title = "" })
-      else
-        util.open_floating_preview({ "No lookup doc info" }, "", opts)
-      end
+      })
     end,
   },
   info_hover = {
@@ -217,7 +212,7 @@ M.message = {
       elseif response.name then
         util.open_floating_preview(util.doc_clj(response), "markdown", opts)
       else
-        util.open_floating_preview({ "No lookup doc info" }, "", opts)
+        util.open_floating_preview({ "No doc info" }, "", opts)
       end
     end,
   },
@@ -273,7 +268,7 @@ function M.connect(host, port)
         while str_buf ~= "" do
           local response, index = bencode.decode(str_buf)
           if response then
-            str_buf = string.sub(str_buf, index)
+            str_buf = str_buf:sub(index)
             read_callback(response)
           else
             break

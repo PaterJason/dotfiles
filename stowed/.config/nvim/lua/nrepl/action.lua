@@ -80,13 +80,10 @@ function M.session_close(session)
   end
 end
 
----@param session? string
-function M.log(session)
-  local buf = prompt.get_buf(session)
-  if buf then
-    vim.api.nvim_win_set_buf(0, buf)
-    vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(buf), 0 })
-  end
+function M.log()
+  local buf = prompt.get_buf()
+  vim.api.nvim_win_set_buf(0, buf)
+  vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(buf), 0 })
 end
 
 function M.eval_cursor()
@@ -120,7 +117,7 @@ end
 function M.eval_input()
   vim.ui.input({
     prompt = "=> ",
-    -- completion = "customlist,v:lua.require'nrepl'.command_completion_customlist",
+    completion = "customlist,v:lua.require'nrepl'.command_completion_customlist",
   }, function(input) message.eval_text(input) end)
 end
 

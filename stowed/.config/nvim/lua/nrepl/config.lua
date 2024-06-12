@@ -40,7 +40,7 @@ local M = {
     ["nrepl.middleware.print/keys"] = nil,
 
     ---@type Nrepl.RequestParam.String
-    ["nrepl.middleware.caught/caught"] = "clojure.repl/pst",
+    ["nrepl.middleware.caught/caught"] = nil,
     ---@type Nrepl.RequestParam.Bool
     ["nrepl.middleware.caught/print?"] = nil,
   },

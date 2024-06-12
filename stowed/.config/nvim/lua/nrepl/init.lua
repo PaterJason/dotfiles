@@ -8,7 +8,7 @@ end
 function M.completefunc(...) return require("nrepl.completion").completefunc(...) end
 
 function M.command_completion_customlist(...)
-  return require("nrepl").command_completion_customlist(...)
+  return require("nrepl.completion").command_customlist(...)
 end
 
 return M

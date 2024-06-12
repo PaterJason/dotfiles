@@ -102,8 +102,7 @@ function M.get_operator_range(motion_type)
 
   if motion_type == "line" then
     start[2] = 0
-    end_[1] = end_[1] + 1
-    end_[2] = 0
+    end_[2] = -1
   end
 
   return start, end_
@@ -124,6 +123,7 @@ end
 ---@param info any
 ---@return string[]
 function M.doc_clj(info)
+  if not info or vim.tbl_isempty(info) then return { "No doc info" } end
   local content = {}
   -- Look at clojure.repl/print-doc
   table.insert(content, "```clojure")
@@ -137,9 +137,8 @@ function M.doc_clj(info)
   table.insert(content, info.doc and " " .. info.doc)
 
   if info["see-also"] then
-    vim.list_extend(content, { "", "__See also:__", "```clojure" })
+    vim.list_extend(content, { "", "__See also:__" })
     vim.list_extend(content, info["see-also"])
-    table.insert(content, "```")
   end
   if info.file then
     vim.list_extend(content, { "", "__File:__", string.format("[%s]", M.file_str(info.file)) })
@@ -150,26 +149,23 @@ end
 ---@param info any
 ---@return string[]
 function M.doc_java(info)
+  if not info or vim.tbl_isempty(info) then return { "No doc info" } end
   local content = {}
-  if vim.tbl_isempty(info) then
-    table.insert(content, "No lookup doc info")
-  else
-    table.insert(content, "```clojure")
-    table.insert(
-      content,
-      (info.modifiers and (info.modifiers .. " ") or "")
-        .. (info.class and (info.class .. "/") or "")
-        .. info.member
-    )
-    if info["annotated-arglists"] then vim.list_extend(content, info["annotated-arglists"]) end
-    if info.throws and not (vim.tbl_isempty(info.throws)) then
-      table.insert(content, string.format("throws %s", table.concat(info.throws, " ")))
-    end
-    table.insert(content, "```")
+  table.insert(content, "```clojure")
+  table.insert(
+    content,
+    (info.modifiers and (info.modifiers .. " ") or "")
+      .. (info.class and (info.class .. "/") or "")
+      .. info.member
+  )
+  if info["annotated-arglists"] then vim.list_extend(content, info["annotated-arglists"]) end
+  if info.throws and not (vim.tbl_isempty(info.throws)) then
+    table.insert(content, "throw " .. table.concat(info.throws, " "))
+  end
+  table.insert(content, "```")
 
-    if info.javadoc then
-      vim.list_extend(content, { "__Javadoc:__", string.format("[%s]", info.javadoc) })
-    end
+  if info.javadoc then
+    vim.list_extend(content, { "__Javadoc:__", string.format("[%s]", info.javadoc) })
   end
   return content
 end
@@ -216,18 +212,54 @@ function M.echo(title, data)
   }, true, {})
 end
 
+local function set_virt_text(s, hl_name, request)
+  if not request.line then return end
+
+  if vim.fn.expand("%:p") ~= request.file then return end
+
+  local ns_id = vim.api.nvim_create_namespace("nrepl_eval")
+  -- hacky
+  local request_id = tonumber(string.sub(request.id, 6))
+  ---@cast request_id integer
+  local extmark = vim.api.nvim_buf_get_extmark_by_id(0, ns_id, request_id, {})
+
+  if vim.tbl_isempty(extmark) then
+    vim.api.nvim_buf_clear_namespace(0, ns_id, request.line - 1, request.line)
+    vim.api.nvim_buf_set_extmark(0, ns_id, request.line - 1, request.column - 1, {
+      id = request_id,
+      virt_text = {
+        { "=> " .. string.gsub(s, "%s+", " "), vim.api.nvim_get_hl_id_by_name(hl_name) },
+      },
+      priority = 175,
+      invalidate = true,
+      undo_restore = false,
+    })
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+      callback = function() vim.api.nvim_buf_del_extmark(0, ns_id, request_id) end,
+      buffer = 0,
+      once = true,
+    })
+  end
+end
+
 M.callback = {}
 
 ---@type Nrepl.Message.Callback
 function M.callback.status(response, request)
   local status = response.status and M.status(response.status) or {}
 
-  if status.is_done and not vim.tbl_isempty(status.status_strs) then
-    local s = table.concat(status.status_strs, ", ")
-    require("nrepl.prompt").append(response.session, s, {
-      new_line = true,
-      prefix = string.format("%s (%s) ", request.op, status.is_error and "error" or "done"),
-    })
+  if status.is_done then
+    if vim.tbl_isempty(status.status_strs) then
+      require("nrepl.prompt").append("", {
+        new_line = true,
+      })
+    else
+      local s = table.concat(status.status_strs, ", ")
+      require("nrepl.prompt").append(s, {
+        new_line = true,
+        prefix = string.format("%s (%s) ", request.op, status.is_error and "error" or "done"),
+      })
+    end
   end
 end
 
@@ -238,13 +270,13 @@ function M.callback.eval(response, request)
   if response.status then
     M.callback.status(response, request)
   elseif response.out then
-    prompt.append(response.session, response.out, { prefix = "(out) " })
+    prompt.append(response.out, { prefix = "(out) " })
   elseif response.err then
-    prompt.append(response.session, response.err, { prefix = "(err) " })
+    prompt.append(response.err, { prefix = "(err) " })
+    set_virt_text(response.err, "DiagnosticVirtualTextError", request)
   elseif response.value then
-    prompt.append(response.session, response.value, {})
-  else
-    prompt.append(response.session, "", { new_line = true })
+    prompt.append(response.value, {})
+    set_virt_text(response.value, "DiagnosticVirtualTextOk", request)
   end
 end
 
