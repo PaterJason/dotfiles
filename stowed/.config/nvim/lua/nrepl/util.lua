@@ -254,10 +254,12 @@ function M.callback.status(response, request)
         new_line = true,
       })
     else
-      local s = table.concat(status.status_strs, ", ")
+      local s = request.op
+        .. (status.is_error and " error: " or ": ")
+        .. table.concat(status.status_strs, ", ")
       require("nrepl.prompt").append(s, {
         new_line = true,
-        prefix = string.format("%s (%s) ", request.op, status.is_error and "error" or "done"),
+        prefix = "done",
       })
     end
   end
@@ -270,9 +272,9 @@ function M.callback.eval(response, request)
   if response.status then
     M.callback.status(response, request)
   elseif response.out then
-    prompt.append(response.out, { prefix = "(out) " })
+    prompt.append(response.out, { prefix = "out" })
   elseif response.err then
-    prompt.append(response.err, { prefix = "(err) " })
+    prompt.append(response.err, { prefix = "err" })
     set_virt_text(response.err, "DiagnosticVirtualTextError", request)
   elseif response.value then
     prompt.append(response.value, {})

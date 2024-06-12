@@ -33,7 +33,7 @@ function M.append(s, opts)
   local buf = M.get_buf()
 
   local text = vim.split(s, "\n", { plain = true })
-  local prefix = opts.prefix and ("; " .. opts.prefix)
+  local prefix = opts.prefix and string.format("; (%s) ", opts.prefix)
   local prefixed_text = {}
   for index, value in ipairs(text) do
     if not prefix or value == "" then

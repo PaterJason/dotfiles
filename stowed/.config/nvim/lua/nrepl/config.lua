@@ -1,6 +1,7 @@
 ---@alias Nrepl.RequestParam.Bool 1|vim.NIL
 ---@alias Nrepl.RequestParam.Integer integer|vim.NIL
 ---@alias Nrepl.RequestParam.String string|vim.NIL
+---@alias Nrepl.RequestParam.StringList string[]|vim.NIL
 
 ---@class Nrepl.Config
 local M = {
@@ -36,7 +37,7 @@ local M = {
     ["nrepl.middleware.print/buffer-size"] = nil,
     ---@type Nrepl.RequestParam.Integer
     ["nrepl.middleware.print/quota"] = nil,
-    ---@type string[]|vim.NIL
+    ---@type Nrepl.RequestParam.StringList
     ["nrepl.middleware.print/keys"] = nil,
 
     ---@type Nrepl.RequestParam.String
