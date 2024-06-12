@@ -3,7 +3,6 @@ MiniDeps.later(function()
     source = "neovim/nvim-lspconfig",
     depends = {
       "b0o/SchemaStore.nvim",
-      "nanotee/sqls.nvim",
     },
   })
 
@@ -49,6 +48,17 @@ MiniDeps.later(function()
     lua_ls = {
       settings = {
         Lua = {
+          runtime = {
+            version = "LuaJIT",
+            path = { "lua/?.lua", "lua/?/init.lua" },
+            pathStrict = true,
+          },
+          workspace = {
+            library = {
+              vim.env.VIMRUNTIME,
+              "${3rd}/luv/library",
+            },
+          },
           completion = {
             callSnippet = "Replace",
           },
@@ -59,7 +69,8 @@ MiniDeps.later(function()
       on_init = function(client)
         if vim.uv.fs_stat(vim.fs.joinpath(client.root_dir, "init.lua")) then
           local library = vim.api.nvim_get_runtime_file("lua/", true)
-          library[#library+1] = "${3rd}/luv/library"
+          library[1] = "${3rd}/luv/library"
+
           client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
             workspace = {
               library = library,
@@ -75,17 +86,22 @@ MiniDeps.later(function()
                 "/mason/*/",
                 "/nvim-web-devicons/",
                 "/schemastore/catalog.lua",
-                "/neodev.nvim/",
-                "/rustaceanvim/",
-                "/sqls/",
               },
             },
           })
         end
       end,
     },
-    sqls = {
-      on_attach = function(client, bufnr) require("sqls").on_attach(client, bufnr) end,
+    rust_analyzer = {
+      settings = {
+        ["rust-analyzer"] = {
+          check = {
+            command = "clippy",
+            extraArgs = { "--", "-W", "clippy::pedantic" },
+          },
+          diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
+        },
+      },
     },
     templ = {},
     texlab = {
@@ -169,27 +185,4 @@ MiniDeps.later(function()
     },
   })
   vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
-end)
-
-MiniDeps.later(function()
-  MiniDeps.add({
-    source = "mrcjkb/rustaceanvim",
-  })
-
-  vim.g.rustaceanvim = {
-    tools = {
-      hover_actions = { replace_builtin_hover = false },
-    },
-    server = {
-      settings = {
-        ["rust-analyzer"] = {
-          check = {
-            command = "clippy",
-            extraArgs = { "--", "-W", "clippy::pedantic" },
-          },
-          diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
-        },
-      },
-    },
-  }
 end)

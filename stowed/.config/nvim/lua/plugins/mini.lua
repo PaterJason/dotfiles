@@ -238,6 +238,8 @@ MiniDeps.later(function()
   end, { desc = "Select picker" })
 end)
 
+MiniDeps.later(function() require("mini.splitjoin").setup({}) end)
+
 MiniDeps.later(function()
   require("mini.surround").setup({
     mappings = {

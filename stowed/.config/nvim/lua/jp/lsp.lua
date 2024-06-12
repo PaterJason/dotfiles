@@ -1,18 +1,3 @@
--- Diagnostics
-vim.diagnostic.config({
-  severity_sort = true,
-  signs = false,
-  float = {
-    border = "single",
-    header = "",
-    source = true,
-    title = "Diagnostics",
-  },
-})
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
-vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
-
--- LSP
 local methods = vim.lsp.protocol.Methods
 local handlers = vim.lsp.handlers
 
@@ -172,7 +157,15 @@ local function attach(args)
   -- Keymaps
   local mappings = {
     {
+      methods.textDocument_hover,
+      "n",
+      "K",
+      vim.lsp.buf.hover,
+      "Hover",
+    },
+    {
       methods.textDocument_documentSymbol,
+      "n",
       "gO",
       function()
         vim.lsp.buf.document_symbol({
@@ -186,15 +179,46 @@ local function attach(args)
       end,
       "Document symbols",
     },
-    { methods.textDocument_references, "grr", vim.lsp.buf.references, "References" },
-    { methods.textDocument_codeLens, "grl", vim.lsp.codelens.run, "Run code lens" },
-    { methods.textDocument_rename, "grn", vim.lsp.buf.rename, "Rename" },
-    { methods.textDocument_codeAction, "gra", vim.lsp.buf.code_action, "Code action" },
+    {
+      methods.textDocument_references,
+      "n",
+      "grr",
+      vim.lsp.buf.references,
+      "References",
+    },
+    {
+      methods.textDocument_codeLens,
+      "n",
+      "grl",
+      vim.lsp.codelens.run,
+      "Run code lens",
+    },
+    {
+      methods.textDocument_rename,
+      "n",
+      "grn",
+      vim.lsp.buf.rename,
+      "Rename",
+    },
+    {
+      methods.textDocument_codeAction,
+      { "n", "v" },
+      "gra",
+      vim.lsp.buf.code_action,
+      "Code action",
+    },
+    {
+      methods.textDocument_signatureHelp,
+      "i",
+      "<C-s>",
+      vim.lsp.buf.signature_help,
+      "Signature help",
+    },
   }
   for _, value in ipairs(mappings) do
-    local method, lhs, rhs, desc = unpack(value)
+    local method, mode, lhs, rhs, desc = unpack(value)
     if client.supports_method(method) then
-      vim.keymap.set("n", lhs, rhs, { buffer = bufnr, desc = desc })
+      vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
     end
   end
 

@@ -41,7 +41,7 @@ o.infercase = true
 o.smartcase = true
 o.tabstop = 2
 o.shiftwidth = 0
-o.completeopt = "menuone,noinsert,noselect"
+o.completeopt = "menuone,noinsert,popup"
 o.nrformats = "alpha,hex,bin,unsigned"
 
 -- Extra UI options
@@ -59,6 +59,23 @@ o.foldnestmax = 10
 o.foldtext = ""
 
 vim.cmd("packadd cfilter")
+
+-- Lower priority then treesitter (100)
+-- vim.highlight.priorities.semantic_tokens = 95
+
+-- Diagnostics
+vim.diagnostic.config({
+  severity_sort = true,
+  signs = false,
+  float = {
+    border = "single",
+    header = "",
+    source = true,
+    title = "Diagnostics",
+  },
+})
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
 -- GUI
 if vim.fn.has("gui_running") == 1 then vim.o.guifont = "Monospace:h10" end

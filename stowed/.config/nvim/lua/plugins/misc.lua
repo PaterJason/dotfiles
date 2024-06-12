@@ -31,13 +31,3 @@ MiniDeps.now(function()
   })
   require("nvim-web-devicons").setup({})
 end)
-
-MiniDeps.later(function()
-  vim.g["conjure#client_on_load"] = false
-  vim.g["conjure#completion#omnifunc"] = false
-  vim.g["conjure#highlight#enabled"] = true
-  vim.g["conjure#mapping#doc_word"] = "K"
-  MiniDeps.add({
-    source = "PaterJason/conjure",
-  })
-end)
