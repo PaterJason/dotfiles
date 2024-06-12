@@ -7,6 +7,13 @@
   .
   (sym_lit (sym_name) @ns))
 
+(list_lit
+  .
+  (sym_lit) @_ns_sym
+  (#eq? @_ns_sym "in-ns")
+  .
+  (quoting_lit (sym_lit (sym_name) @ns)))
+
 (sym_lit) @sym
 
 [
