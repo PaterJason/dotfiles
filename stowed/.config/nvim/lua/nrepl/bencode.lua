@@ -27,7 +27,7 @@ function M.encode(obj)
     end
     return s .. "e"
   end
-  vim.notify("Failed to encode bencode", vim.log.levels.ERROR)
+  vim.notify("Bencode: Failed to encode", vim.log.levels.ERROR)
 end
 
 ---@param s string
@@ -42,14 +42,14 @@ function M.decode(s, index)
   elseif head == "i" then
     local start, end_ = s:find("^i%-?%d+e", index)
     if start == nil or end_ == nil then
-      vim.notify("Failed to decode number", vim.log.levels.ERROR)
+      vim.notify("Bencode: Failed to decode number", vim.log.levels.ERROR)
       return nil, index
     end
     return tonumber(s:sub(start + 1, end_ - 1)), end_ + 1
   elseif string.find(head, "%d") then
     local start, end_ = s:find("^%d+:", index)
     if start == nil or end_ == nil then
-      vim.notify("Failed to decode string", vim.log.levels.ERROR)
+      vim.notify("Bencode: Failed to decode string", vim.log.levels.ERROR)
       return nil, index
     end
     local len = tonumber(s:sub(start, end_ - 1))
@@ -91,8 +91,7 @@ function M.decode(s, index)
   end
 
   vim.schedule(function()
-    vim.notify("Failed to decode bencode", vim.log.levels.ERROR)
-    vim.print("BENCODE: ", s)
+    vim.notify("Bencode: Failed to decode bencode", vim.log.levels.ERROR)
   end)
   return nil, index
 end

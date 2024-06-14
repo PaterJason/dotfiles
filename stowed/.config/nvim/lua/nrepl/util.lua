@@ -203,6 +203,12 @@ function M.select_session(callback)
   end)
 end
 
+---@param msg string
+---@param level? integer
+function M.notify(msg, level)
+  vim.notify("nREPL: " .. msg, level)
+end
+
 ---@param title string
 ---@param data any
 function M.echo(title, data)

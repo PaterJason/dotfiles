@@ -10,10 +10,10 @@ local M = {}
 function M.write(message, ...)
   local client = state.data.client
   if not client then
-    vim.notify("No nREPL client connected", vim.log.levels.WARN)
+    util.notify("No client connected", vim.log.levels.WARN)
     return
   elseif not client:is_writable() then
-    vim.notify("Cannot write to nREPL server", vim.log.levels.WARN)
+    util.notify("Cannot write to server", vim.log.levels.WARN)
     return
   end
 
@@ -45,8 +45,9 @@ end
 ---@field callback Nrepl.Message.Callback
 ---@overload fun(...: any)
 
----@type table<string, Nrepl.Message>
+--@type table<string, Nrepl.Message>
 M.message = {
+  ---@type Nrepl.Message
   describe = {
     make_request = function()
       return {
@@ -59,6 +60,7 @@ M.message = {
       state.data.server.aux = response.aux
     end,
   },
+  ---@type Nrepl.Message
   session_refresh = {
     make_request = function()
       return {
@@ -68,12 +70,16 @@ M.message = {
     callback = function(response, _)
       if response.sessions then
         state.data.server.sessions = response.sessions
-        if not vim.list_contains(response.sessions, state.data.session) then
+        if vim.tbl_isempty(response.sessions) then
+          M.message.clone()
+        elseif not vim.list_contains(response.sessions, state.data.session) then
           state.data.session = response.sessions[1]
+          util.notify("Session " .. state.data.session)
         end
       end
     end,
   },
+  ---@type Nrepl.Message
   clone = {
     make_request = function(session)
       return {
@@ -86,6 +92,7 @@ M.message = {
       util.callback.status(response, request)
     end,
   },
+  ---@type Nrepl.Message
   close = {
     make_request = function(session)
       return {
@@ -99,6 +106,7 @@ M.message = {
     end,
   },
 
+  ---@type Nrepl.Message
   eval_range = {
     ---@param start [integer, integer]
     ---@param end_ [integer, integer]
@@ -121,6 +129,7 @@ M.message = {
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
+  ---@type Nrepl.Message
   eval_text = {
     make_request = function(text)
       if text == "" then return end
@@ -134,6 +143,7 @@ M.message = {
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
+  ---@type Nrepl.Message
   load_file = {
     make_request = function(file_path, lines)
       local request = {
@@ -148,6 +158,7 @@ M.message = {
     end,
     callback = function(response, request) util.callback.eval(response, request) end,
   },
+  ---@type Nrepl.Message
   interrupt = {
     make_request = function(session)
       return {
@@ -158,6 +169,7 @@ M.message = {
     callback = util.callback.status,
   },
 
+  ---@type Nrepl.Message
   lookup_definition = {
     make_request = function(ns, sym)
       return {
@@ -179,6 +191,27 @@ M.message = {
       end
     end,
   },
+  ---@type Nrepl.Message
+  info_definition = {
+    make_request = function(ns, sym)
+      return {
+        op = "info",
+        sym = sym,
+        ns = ns,
+      }
+    end,
+    callback = function(response, _)
+      local file = response.file
+      local line = response.line
+      local column = response.column
+
+      if file and line and column then
+        vim.cmd({ cmd = "edit", args = { util.file_str(file) } })
+        vim.api.nvim_win_set_cursor(0, { line, column - 1 })
+      end
+    end,
+  },
+  ---@type Nrepl.Message
   lookup_hover = {
     make_request = function(ns, sym)
       return {
@@ -194,6 +227,7 @@ M.message = {
       })
     end,
   },
+  ---@type Nrepl.Message
   info_hover = {
     make_request = function(ns, sym)
       return {
@@ -246,19 +280,19 @@ function M.connect(host, port)
     protocol = "tcp",
   })[1]
   if addrinfo == nil then
-    vim.notify("Failed to get address info", vim.log.levels.WARN)
+    util.notify("Failed to get address info", vim.log.levels.WARN)
     return
   end
 
   local client = vim.uv.new_tcp("inet")
   if client == nil then
-    vim.notify("Failed to create TCP server", vim.log.levels.WARN)
+    util.notify("Failed to create TCP server", vim.log.levels.WARN)
     return
   end
 
   client:connect(addrinfo.addr, port, function(conn_err)
     assert(not conn_err, conn_err)
-    vim.notify("nREPL client connected")
+    util.notify("Client connected")
 
     client:read_start(function(read_err, chunk)
       assert(not read_err, read_err)

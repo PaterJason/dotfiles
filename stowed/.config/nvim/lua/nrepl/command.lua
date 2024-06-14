@@ -1,7 +1,8 @@
 vim.api.nvim_create_user_command("NreplOp", function(info)
   local client = require("nrepl.state").data.client
+  local util = require("nrepl.util")
   if client == nil then
-    vim.notify("No nREPL client connected", vim.log.levels.WARN)
+    util.notify("No client connected", vim.log.levels.WARN)
     return
   end
 
@@ -47,8 +48,9 @@ end, {
 
 vim.api.nvim_create_user_command("NreplWrite", function(info)
   local client = require("nrepl.state").data.client
+  local util = require("nrepl.util")
   if client == nil then
-    vim.notify("No nREPL client connected", vim.log.levels.WARN)
+    util.notify("No client connected", vim.log.levels.WARN)
     return
   end
 

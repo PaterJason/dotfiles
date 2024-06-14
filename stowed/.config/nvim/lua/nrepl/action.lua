@@ -14,7 +14,7 @@ function M.connect(host, port)
   if port == nil then
     local port_file = ".nrepl-port"
     if not vim.uv.fs_stat(port_file) then
-      vim.notify("No .nrepl-port file")
+      util.notify("No .nrepl-port file, not connecting")
       return
     end
     for line in io.lines(port_file) do
@@ -30,15 +30,11 @@ function M.connect(host, port)
   if client then
     if client:is_closing() then
       state.reset()
-
       state.data.client = tcp.connect(host, portnum)
     else
-      client:read_stop()
-      client:shutdown()
       client:close(function()
-        vim.notify("Existing nREPL client disconnected")
+        util.notify("Existing client disconnected")
         state.reset()
-
         state.data.client = tcp.connect(host, portnum)
       end)
     end
@@ -51,7 +47,7 @@ function M.disconnect()
   local client = state.data.client
   if client then
     client:close(function()
-      vim.notify("nREPL client disconnected")
+      util.notify("Client disconnected")
       state.reset()
     end)
   end
@@ -144,7 +140,14 @@ end
 
 function M.definition()
   local ns, sym = util.get_cursor_ns_sym()
-  message.lookup_definition(ns, sym)
+
+  if not sym then
+    util.open_floating_preview({ "No symbol found at cursor position" })
+  elseif state.data.server.ops["info"] then
+    message.info_definition(ns, sym)
+  else
+    message.lookup_definition(ns, sym)
+  end
 end
 
 return M
