@@ -27,10 +27,62 @@ function M.get_buf()
   return buf
 end
 
+---@return integer[]
+function M.get_wins()
+  local buf = vim.uri_to_bufnr("nrepl://prompt")
+  return vim.fn.win_findbuf(buf)
+end
+
+---@param enter boolean
+---@param config vim.api.keyset.win_config
+---@return integer
+function M.open_win(enter, config)
+  ---@type vim.api.keyset.win_config
+  local win_config = {
+    style = "minimal",
+  }
+  win_config = vim.tbl_extend("force", win_config, config)
+  local win = vim.api.nvim_open_win(M.get_buf(), enter, win_config)
+  vim.wo[win].wrap = false
+  return win
+end
+
+---@return integer?
+function M.open_float()
+  local wins = M.get_wins()
+  local tabpage = vim.api.nvim_get_current_tabpage()
+  if vim.iter(wins):find(function(win) return vim.api.nvim_win_get_tabpage(win) == tabpage end) then
+    return
+  end
+
+  ---@type vim.api.keyset.win_config
+  local win_config = {
+    relative = "editor",
+    -- vim.o.lines
+    -- vim.o.columns
+    row = 0,
+    col = vim.o.columns,
+    width = 80,
+    height = 20,
+    style = "minimal",
+    focusable = false,
+    border = "single",
+    title = "nREPL",
+    title_pos = "center",
+  }
+  local win = M.open_win(false, win_config)
+  vim.api.nvim_create_autocmd("CursorMoved", {
+    callback = function() vim.api.nvim_win_close(win, false) end,
+    once = true,
+  })
+  return win
+end
+
 ---@param s string
 ---@param opts { new_line?: boolean, prefix?: string }
 function M.append(s, opts)
   local buf = M.get_buf()
+  local pre_line_count = vim.api.nvim_buf_line_count(buf)
 
   local text = vim.split(s, "\n", { plain = true })
   local prefix = opts.prefix and string.format("; (%s) ", opts.prefix)
@@ -43,6 +95,7 @@ function M.append(s, opts)
     end
   end
 
+  -- Append buffer
   local linenr = -1
   if vim.api.nvim_win_get_buf(0) == buf and vim.startswith(vim.api.nvim_get_mode().mode, "i") then
     linenr = -2
@@ -68,9 +121,23 @@ function M.append(s, opts)
   end
   vim.bo[buf].modified = false
 
+  -- Scroll window
   local line_count = vim.api.nvim_buf_line_count(buf)
   for _, winnr in ipairs(vim.fn.win_findbuf(buf)) do
-    vim.api.nvim_win_set_cursor(winnr, { line_count, 0 })
+    if
+      vim.api.nvim_win_get_config(winnr).relative == ""
+      and vim.api.nvim_win_get_cursor(winnr)[1] == pre_line_count
+    then
+      vim.api.nvim_win_set_cursor(winnr, { line_count, 0 })
+    end
+  end
+
+  local float_winnr = M.open_float()
+  if float_winnr then
+    vim.api.nvim_win_call(float_winnr, function()
+      vim.api.nvim_win_set_cursor(0, { pre_line_count, 0 })
+      vim.cmd("normal! zt")
+    end)
   end
 end
 

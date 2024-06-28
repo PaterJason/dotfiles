@@ -90,9 +90,7 @@ function M.decode(s, index)
     return dict, index
   end
 
-  vim.schedule(function()
-    vim.notify("Bencode: Failed to decode bencode", vim.log.levels.ERROR)
-  end)
+  vim.schedule(function() vim.notify("Bencode: Failed to decode bencode", vim.log.levels.ERROR) end)
   return nil, index
 end
 

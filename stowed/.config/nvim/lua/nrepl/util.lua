@@ -205,9 +205,7 @@ end
 
 ---@param msg string
 ---@param level? integer
-function M.notify(msg, level)
-  vim.notify("nREPL: " .. msg, level)
-end
+function M.notify(msg, level) vim.notify("nREPL: " .. msg, level) end
 
 ---@param title string
 ---@param data any
@@ -281,10 +279,10 @@ function M.callback.eval(response, request)
     prompt.append(response.out, { prefix = "out" })
   elseif response.err then
     prompt.append(response.err, { prefix = "err" })
-    set_virt_text(response.err, "DiagnosticVirtualTextError", request)
+    -- set_virt_text(response.err, "DiagnosticVirtualTextError", request)
   elseif response.value then
     prompt.append(response.value, {})
-    set_virt_text(response.value, "DiagnosticVirtualTextOk", request)
+    -- set_virt_text(response.value, "DiagnosticVirtualTextOk", request)
   end
 end
 
