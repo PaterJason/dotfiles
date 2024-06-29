@@ -100,16 +100,6 @@ function M.eval_cursor()
   message.eval_range(start, end_)
 end
 
-function M.eval_operator(motion_type)
-  if motion_type then
-    local start, end_ = util.get_operator_range(motion_type)
-    message.eval_range(start, end_)
-  else
-    vim.go.operatorfunc = "v:lua.require'nrepl.action'.eval_operator"
-    return "g@"
-  end
-end
-
 function M.eval_input()
   vim.ui.input({
     prompt = "=> ",

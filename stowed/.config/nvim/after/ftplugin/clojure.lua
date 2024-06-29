@@ -9,8 +9,8 @@ if true then
   vim.keymap.set(
     { "n", "x" },
     "<LocalLeader>e",
-    action.eval_operator,
-    { desc = "Eval operator", buffer = 0, expr = true }
+    "<Plug>(NreplEvalOperator)",
+    { desc = "Eval", buffer = 0 }
   )
   vim.keymap.set("n", "<LocalLeader>ee", action.eval_cursor, { desc = "Eval cursor", buffer = 0 })
   vim.keymap.set("n", "<LocalLeader>lf", action.load_file, { desc = "Load file", buffer = 0 })

@@ -1,3 +1,8 @@
+---@diagnostic disable-next-line: unused-local
+local function filter_completion_pred(arg_lead, cmd_line, cursor_pos)
+  return function(value) return string.sub(value, 1, string.len(arg_lead)) == arg_lead end
+end
+
 vim.api.nvim_create_user_command("NreplOp", function(info)
   local client = require("nrepl.state").data.client
   local util = require("nrepl.util")
@@ -41,7 +46,7 @@ end, {
           return key
         end
       end)
-      :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+      :filter(filter_completion_pred(arg_lead, cmd_line, cursor_pos))
       :totable()
   end,
 })
@@ -80,7 +85,7 @@ end, {
       return vim
         .iter(action)
         :map(function(key, _) return key end)
-        :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+        :filter(filter_completion_pred(arg_lead, cmd_line, cursor_pos))
         :totable()
     elseif arg_n == 2 and server then
       local act = vim.split(cmd_line, " ", { plain = true })[2]
@@ -88,7 +93,7 @@ end, {
         return vim
           .iter(server.sessions)
           :map(function(key, _) return key end)
-          :filter(util.filter_completion_pred(arg_lead, cmd_line, cursor_pos))
+          :filter(filter_completion_pred(arg_lead, cmd_line, cursor_pos))
           :totable()
       end
     end

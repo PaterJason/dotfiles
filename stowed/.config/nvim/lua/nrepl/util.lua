@@ -89,30 +89,6 @@ function M.status(status)
   end)
 end
 
----Get range of the operator (zero-based, end col exclusive)
----@param motion_type "line"|"char"|"block"
----@return [integer, integer]
----@return [integer, integer]
-function M.get_operator_range(motion_type)
-  local start = vim.api.nvim_buf_get_mark(0, "[")
-  local end_ = vim.api.nvim_buf_get_mark(0, "]")
-  start[1] = start[1] - 1
-  end_[1] = end_[1] - 1
-  end_[2] = end_[2] + 1
-
-  if motion_type == "line" then
-    start[2] = 0
-    end_[2] = -1
-  end
-
-  return start, end_
-end
-
----@diagnostic disable-next-line: unused-local
-function M.filter_completion_pred(arg_lead, cmd_line, cursor_pos)
-  return function(value) return string.sub(value, 1, string.len(arg_lead)) == arg_lead end
-end
-
 ---@param file string
 ---@return string
 function M.file_str(file)
