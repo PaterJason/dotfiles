@@ -139,6 +139,12 @@ MiniDeps.later(function()
   })
 end)
 
+MiniDeps.later(function()
+  require("mini.icons").setup({
+    style = "glyph",
+  })
+end)
+
 MiniDeps.later(function() require("mini.jump").setup({}) end)
 
 MiniDeps.now(function()

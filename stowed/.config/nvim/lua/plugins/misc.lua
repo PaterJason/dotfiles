@@ -24,10 +24,3 @@ MiniDeps.now(function()
   })
   vim.cmd("colorscheme catppuccin")
 end)
-
-MiniDeps.now(function()
-  MiniDeps.add({
-    source = "nvim-tree/nvim-web-devicons",
-  })
-  require("nvim-web-devicons").setup({})
-end)

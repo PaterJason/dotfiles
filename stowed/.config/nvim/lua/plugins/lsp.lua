@@ -84,7 +84,6 @@ MiniDeps.later(function()
                 "/lspconfig/server_configurations/",
                 "/mason-*/",
                 "/mason/*/",
-                "/nvim-web-devicons/",
                 "/schemastore/catalog.lua",
               },
             },
