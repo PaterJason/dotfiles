@@ -56,14 +56,15 @@ function M.open_float()
   end
 
   ---@type vim.api.keyset.win_config
+  local screencol = vim.fn.screencol()
+  local columns = vim.go.columns
+  local lines = vim.go.lines
   local win_config = {
     relative = "editor",
-    -- vim.o.lines
-    -- vim.o.columns
     row = 0,
-    col = vim.o.columns,
-    width = 80,
-    height = 20,
+    col = (screencol <= columns / 2) and columns or 0,
+    width = math.min(columns / 2, 80),
+    height = math.min(lines - 4, 24),
     style = "minimal",
     focusable = false,
     border = "single",
