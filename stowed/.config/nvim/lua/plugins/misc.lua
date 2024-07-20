@@ -8,6 +8,7 @@ MiniDeps.now(function()
     custom_highlights = function(colors)
       return {
         NormalFloat = { bg = colors.none },
+        CursorLine = { bg = colors.mantle },
       }
     end,
     integrations = {

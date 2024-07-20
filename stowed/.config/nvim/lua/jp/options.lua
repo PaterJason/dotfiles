@@ -39,6 +39,7 @@ o.splitright = true
 o.ignorecase = true
 o.infercase = true
 o.smartcase = true
+o.inccommand = "split"
 o.tabstop = 2
 o.shiftwidth = 0
 o.completeopt = "menuone,noinsert,popup"
