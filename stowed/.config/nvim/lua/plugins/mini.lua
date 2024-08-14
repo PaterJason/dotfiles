@@ -5,8 +5,14 @@ MiniDeps.later(
     require("mini.ai").setup({
       n_lines = 100,
       search_method = "cover",
-      mappings = { around_next = "", inside_next = "", around_last = "", inside_last = "" },
+      mappings = {
+        around_next = "",
+        inside_next = "",
+        around_last = "",
+        inside_last = "",
+      },
       custom_textobjects = {
+        a = false,
         f = false,
         B = MiniExtra.gen_ai_spec.buffer(),
         D = MiniExtra.gen_ai_spec.diagnostic(),
@@ -98,35 +104,6 @@ MiniDeps.later(function()
     "<leader>td",
     function() MiniDiff.toggle_overlay(0) end,
     { desc = "Toggle diff overlay" }
-  )
-end)
-
-MiniDeps.now(function()
-  vim.g.loaded_netrw = 1
-  vim.g.loaded_netrwPlugin = 1
-  require("mini.files").setup({
-    mappings = {
-      go_in = "L",
-      go_in_plus = "l",
-      go_out = "H",
-      go_out_plus = "h",
-    },
-    windows = {
-      max_number = 1,
-      width_focus = 80,
-    },
-  })
-  vim.keymap.set(
-    "n",
-    "-",
-    function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
-    { desc = "Open parent directory" }
-  )
-  vim.keymap.set(
-    "n",
-    "_",
-    function() MiniFiles.open(nil, false) end,
-    { desc = "Open current directory" }
   )
 end)
 

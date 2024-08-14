@@ -6,5 +6,10 @@
   },
   "workspace": {
     "checkThirdParty": false
+  },
+  "diagnostics": {
+    "unusedLocalExclude": [
+      "_*"
+    ]
   }
 }

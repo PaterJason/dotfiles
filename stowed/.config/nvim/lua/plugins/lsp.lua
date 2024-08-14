@@ -79,7 +79,6 @@ MiniDeps.later(function()
                 "catppuccin*.lua",
                 "/cmp_*/",
                 "/conform/formatters/",
-                "/conjure/",
                 "/lint/linters/",
                 "/lspconfig/server_configurations/",
                 "/mason-*/",

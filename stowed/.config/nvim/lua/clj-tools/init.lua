@@ -45,7 +45,7 @@ function M.get_client()
   })[1]
 end
 
-vim.lsp.handlers["clojure/serverInfo/raw"] = function(err, result, context, config)
+vim.lsp.handlers["clojure/serverInfo/raw"] = function(_err, result, _context, _config)
   vim.print(result)
 end
 function M.get_server_info()
@@ -53,7 +53,7 @@ function M.get_server_info()
   client.request("clojure/serverInfo/raw", {}, nil, 0)
 end
 
-vim.lsp.handlers["clojure/cursorInfo/raw"] = function(err, result, context, config)
+vim.lsp.handlers["clojure/cursorInfo/raw"] = function(_err, result, _context, _config)
   vim.print(result)
 end
 function M.get_cursor_info()
@@ -66,7 +66,7 @@ function M.open_cljdoc()
   client.request(
     "clojure/cursorInfo/raw",
     vim.lsp.util.make_position_params(),
-    function(err, result, context, config)
+    function(_err, result, _context, _config)
       if result then
         local element = result.elements[1]
         local ns = element.definition.ns
@@ -132,12 +132,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end, {
       desc = "Run clojure-lsp command",
       nargs = 1,
-      complete = function(arg_lead, cmd_line, cursor_pos)
+      complete = function(arg_lead, _cmd_line, _cursor_pos)
         return vim.tbl_filter(function(s) return s:sub(1, #arg_lead) == arg_lead end, commands)
       end,
     })
 
-    vim.api.nvim_buf_create_user_command(0, "CljDoc", function(info) M.open_cljdoc() end, {
+    vim.api.nvim_buf_create_user_command(0, "CljDoc", function(_info) M.open_cljdoc() end, {
       desc = "Open ClojureDocs",
       nargs = 0,
     })
