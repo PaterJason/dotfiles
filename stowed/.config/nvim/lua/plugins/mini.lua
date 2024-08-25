@@ -124,6 +124,12 @@ end)
 
 MiniDeps.later(function() require("mini.jump").setup({}) end)
 
+MiniDeps.later(function()
+  require("mini.misc").setup({ make_global = {} })
+  MiniMisc.setup_termbg_sync()
+  vim.keymap.set("n", "<leader>z", MiniMisc.zoom, { desc = "Zoom" })
+end)
+
 MiniDeps.now(function()
   require("mini.notify").setup({
     lsp_progress = {
