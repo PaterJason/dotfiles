@@ -164,7 +164,10 @@ local function get_hl_group(color)
   local hl_group = "LspColor" .. hex
   if not hl_groups[hl_group] then
     hl_groups[hl_group] = true
-    vim.api.nvim_set_hl(ns_documentColor, hl_group, { fg = "#" .. hex })
+    vim.api.nvim_set_hl(ns_documentColor, hl_group, {
+      fg = ((color.red + color.green + color.blue) > 1.5 and "#000000") or "#FFFFFF",
+      bg = "#" .. hex,
+    })
   end
   return hl_group
 end
@@ -287,8 +290,11 @@ local function attach(args)
               ci.range.start.line,
               ci.range.start.character,
               {
-                virt_text = { { "⬤ ", hl_group } },
-                virt_text_pos = "inline",
+                -- virt_text = { { "⬤ ", hl_group } },
+                -- virt_text_pos = "inline",
+                end_row = ci.range["end"].line,
+                end_col = ci.range["end"].character,
+                hl_group = hl_group,
               }
             )
           end
