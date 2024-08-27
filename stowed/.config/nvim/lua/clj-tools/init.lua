@@ -103,8 +103,8 @@ end
 
 vim.api.nvim_create_autocmd("LspAttach", {
   group = "JPConfigLsp",
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
     ---@cast client -?
     if client.name == "clojure_lsp" then
       vim.lsp.commands["code-lens-references"] = function(command, ctx)
@@ -148,8 +148,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 --   vim.api.nvim_create_autocmd("FileType", {
 --     group = "JPConfigLsp",
 --     pattern = { "clojure", "edn" },
---     callback = function(args)
---       if vim.bo[args.buf].buftype ~= "nofile" then M.lsp_start() end
+--     callback = function(ev)
+--       if vim.bo[ev.buf].buftype ~= "nofile" then M.lsp_start() end
 --     end,
 --   })
 -- end

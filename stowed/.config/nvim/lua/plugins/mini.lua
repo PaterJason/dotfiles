@@ -126,7 +126,7 @@ MiniDeps.later(function() require("mini.jump").setup({}) end)
 
 MiniDeps.later(function()
   require("mini.misc").setup({ make_global = {} })
-  MiniMisc.setup_termbg_sync()
+  -- MiniMisc.setup_termbg_sync()
   vim.keymap.set("n", "<leader>z", MiniMisc.zoom, { desc = "Zoom" })
 end)
 
