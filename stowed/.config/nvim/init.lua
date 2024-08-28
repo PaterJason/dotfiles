@@ -20,9 +20,9 @@ end
 
 require("mini.deps").setup({ path = { package = path_package } })
 MiniDeps.later(function()
-  vim.keymap.set("n", "<leader>pc", vim.cmd.DepsClean, { desc = "Clean" })
-  vim.keymap.set("n", "<leader>pl", vim.cmd.DepsShowLog, { desc = "Show Log" })
-  vim.keymap.set("n", "<leader>pu", vim.cmd.DepsUpdate, { desc = "Update" })
+  vim.keymap.set("n", "<Leader>pc", vim.cmd.DepsClean, { desc = "Clean" })
+  vim.keymap.set("n", "<Leader>pl", vim.cmd.DepsShowLog, { desc = "Show Log" })
+  vim.keymap.set("n", "<Leader>pu", vim.cmd.DepsUpdate, { desc = "Update" })
 end)
 
 require("plugins.mini")

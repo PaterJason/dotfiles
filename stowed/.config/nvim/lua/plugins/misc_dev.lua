@@ -124,7 +124,7 @@ MiniDeps.later(function()
       if choice ~= nil then expand_body(choice) end
     end)
   end
-  vim.keymap.set("n", "<leader>ss", select_snippet, { desc = "Snippets" })
+  vim.keymap.set("n", "<Leader>ss", select_snippet, { desc = "Snippets" })
   vim.keymap.set("i", "<C-h>", select_snippet, { desc = "Select snippet" })
 
   local function expand_snip_prefix()

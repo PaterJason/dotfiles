@@ -40,8 +40,8 @@ MiniDeps.later(function() require("mini.bracketed").setup({}) end)
 
 MiniDeps.later(function()
   require("mini.bufremove").setup({})
-  vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
-  vim.keymap.set("n", "<leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
+  vim.keymap.set("n", "<Leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })
+  vim.keymap.set("n", "<Leader>bw", MiniBufremove.wipeout, { desc = "Wipeout buffer" })
 end)
 
 MiniDeps.later(function()
@@ -127,7 +127,7 @@ MiniDeps.later(function() require("mini.jump").setup({}) end)
 MiniDeps.later(function()
   require("mini.misc").setup({ make_global = {} })
   -- MiniMisc.setup_termbg_sync()
-  vim.keymap.set("n", "<leader>z", MiniMisc.zoom, { desc = "Zoom" })
+  vim.keymap.set("n", "<Leader>z", MiniMisc.zoom, { desc = "Zoom" })
 end)
 
 MiniDeps.now(function()
@@ -150,32 +150,32 @@ MiniDeps.later(function()
     mappings = { choose_marked = "<C-q>" },
   })
   vim.ui.select = MiniPick.ui_select
-  vim.keymap.set("n", "<leader>sb", MiniPick.builtin.buffers, { desc = "Buffers" })
-  vim.keymap.set("n", "<leader>sf", MiniPick.builtin.files, { desc = "Files" })
-  vim.keymap.set("n", "<leader>sg", MiniPick.builtin.grep_live, { desc = "Grep live" })
-  vim.keymap.set("n", "<leader>sh", MiniPick.builtin.help, { desc = "Help tags" })
-  vim.keymap.set("n", "<leader>sr", MiniPick.builtin.resume, { desc = "Resume" })
+  vim.keymap.set("n", "<Leader>sb", MiniPick.builtin.buffers, { desc = "Buffers" })
+  vim.keymap.set("n", "<Leader>sf", MiniPick.builtin.files, { desc = "Files" })
+  vim.keymap.set("n", "<Leader>sg", MiniPick.builtin.grep_live, { desc = "Grep live" })
+  vim.keymap.set("n", "<Leader>sh", MiniPick.builtin.help, { desc = "Help tags" })
+  vim.keymap.set("n", "<Leader>sr", MiniPick.builtin.resume, { desc = "Resume" })
 
   vim.keymap.set(
     "n",
-    "<leader>sd",
+    "<Leader>sd",
     MiniExtra.pickers.diagnostic,
     { desc = "Built-in diagnostic picker" }
   )
   vim.keymap.set(
     "n",
-    "<leader>sl",
+    "<Leader>sl",
     function() MiniExtra.pickers.buf_lines({ scope = "current" }) end,
     { desc = "Buffer lines" }
   )
   vim.keymap.set(
     "n",
-    "<leader>sq",
+    "<Leader>sq",
     function() MiniExtra.pickers.list({ scope = "quickfix" }) end,
     { desc = "Quickfix list" }
   )
 
-  vim.keymap.set("n", "<leader><leader>", function()
+  vim.keymap.set("n", "<Leader><Leader>", function()
     local scopes = {
       buf_lines = { "current", "all" },
       diagnostic = { "current", "all" },

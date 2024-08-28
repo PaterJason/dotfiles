@@ -75,8 +75,8 @@ vim.diagnostic.config({
     title = "Diagnostics",
   },
 })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
-vim.keymap.set("n", "<leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<Leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<Leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
 
 -- GUI
 if vim.fn.has("gui_running") == 1 then vim.o.guifont = "Monospace:h10" end

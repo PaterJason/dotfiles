@@ -142,7 +142,7 @@ local function select()
   end)
 end
 
-vim.keymap.set("n", "<leader>ti", function()
+vim.keymap.set("n", "<Leader>ti", function()
   local is_enabled = vim.lsp.inlay_hint.is_enabled({})
   vim.lsp.inlay_hint.enable(not is_enabled)
   vim.notify("Inlay hints " .. (is_enabled and "disabled" or "enabled"))
@@ -246,7 +246,7 @@ local function attach(args)
     end
   end
 
-  vim.keymap.set("n", "<leader>l", select, { buffer = bufnr, desc = "Select LSP call" })
+  vim.keymap.set("n", "<Leader>l", select, { buffer = bufnr, desc = "Select LSP call" })
 
   -- Autocommands
   vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })

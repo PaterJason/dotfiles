@@ -183,5 +183,5 @@ MiniDeps.later(function()
       },
     },
   })
-  vim.keymap.set("n", "<leader>m", vim.cmd.Mason, { desc = "Mason" })
+  vim.keymap.set("n", "<Leader>m", vim.cmd.Mason, { desc = "Mason" })
 end)
