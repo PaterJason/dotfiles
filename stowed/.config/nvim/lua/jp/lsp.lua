@@ -148,30 +148,6 @@ vim.keymap.set("n", "<Leader>ti", function()
   vim.notify("Inlay hints " .. (is_enabled and "disabled" or "enabled"))
 end, { desc = "Toggle inlay hints" })
 
-local ns_documentColor = vim.api.nvim_create_namespace("lsp.documentColor")
-vim.api.nvim_set_hl_ns(ns_documentColor)
-local hl_groups = {}
----@param color lsp.Color
----@return string
-local function get_hl_group(color)
-  local hex = string.format(
-    "%02x%02x%02x",
-    math.floor(color.red * 255 + 0.5),
-    math.floor(color.green * 255 + 0.5),
-    math.floor(color.blue * 255 + 0.5)
-  )
-
-  local hl_group = "LspColor" .. hex
-  if not hl_groups[hl_group] then
-    hl_groups[hl_group] = true
-    vim.api.nvim_set_hl(ns_documentColor, hl_group, {
-      fg = ((color.red + color.green + color.blue) > 1.5 and "#000000") or "#FFFFFF",
-      bg = "#" .. hex,
-    })
-  end
-  return hl_group
-end
-
 local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
   ---@cast client -?
@@ -274,39 +250,33 @@ local function attach(args)
   end
 
   if client.supports_method(methods.textDocument_documentColor) then
+    local ns = vim.api.nvim_create_namespace("lsp.documentColor")
     local function update()
       client.request(
         methods.textDocument_documentColor,
         { textDocument = vim.lsp.util.make_text_document_params(bufnr) },
         function(err, result, context, config)
-          vim.api.nvim_buf_clear_namespace(bufnr, ns_documentColor, 0, -1)
+          vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
           if err then return end
           ---@cast result lsp.ColorInformation[]
           for _, ci in ipairs(result) do
-            local hl_group = get_hl_group(ci.color)
-            vim.api.nvim_buf_set_extmark(
-              bufnr,
-              ns_documentColor,
-              ci.range.start.line,
-              ci.range.start.character,
-              {
-                -- virt_text = { { "⬤ ", hl_group } },
-                -- virt_text_pos = "inline",
-                end_row = ci.range["end"].line,
-                end_col = ci.range["end"].character,
-                hl_group = hl_group,
-              }
+            local hex = string.format(
+              "#%02x%02x%02x",
+              math.floor(ci.color.red * 255 + 0.5),
+              math.floor(ci.color.green * 255 + 0.5),
+              math.floor(ci.color.blue * 255 + 0.5)
             )
+            local hl_group = MiniHipatterns.compute_hex_color_group(hex, "bg")
+            vim.api.nvim_buf_set_extmark(bufnr, ns, ci.range.start.line, ci.range.start.character, {
+              end_row = ci.range["end"].line,
+              end_col = ci.range["end"].character,
+              hl_group = hl_group,
+            })
           end
         end,
         bufnr
       )
     end
-    vim.api.nvim_create_autocmd({ "InsertEnter" }, {
-      callback = function() vim.api.nvim_buf_clear_namespace(bufnr, ns_documentColor, 0, -1) end,
-      group = attach_augroup,
-      buffer = bufnr,
-    })
     vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
       callback = update,
       group = attach_augroup,
