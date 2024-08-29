@@ -98,10 +98,16 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
-  require("mini.diff").setup({})
+  require("mini.diff").setup({
+    mappings = {
+      apply = "<Leader>hs",
+      reset = "<Leader>hx",
+      textobject = "ih",
+    },
+  })
   vim.keymap.set(
     "n",
-    "<leader>td",
+    "<Leader>ho",
     function() MiniDiff.toggle_overlay(0) end,
     { desc = "Toggle diff overlay" }
   )
