@@ -12,6 +12,7 @@ handlers[methods.textDocument_signatureHelp] = vim.lsp.with(handlers.signature_h
 
 local augroup = vim.api.nvim_create_augroup("JPConfigLsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("JPConfigLspAttach", {})
+local documentColor_ns = vim.api.nvim_create_namespace("lsp.documentColor")
 
 local function select()
   ---@type {text: string, on_choice: fun(), method: string}[]
@@ -248,15 +249,13 @@ local function attach(args)
     })
     vim.lsp.codelens.refresh({ bufnr = bufnr })
   end
-
   if client.supports_method(methods.textDocument_documentColor) then
-    local ns = vim.api.nvim_create_namespace("lsp.documentColor")
     local function update()
       client.request(
         methods.textDocument_documentColor,
         { textDocument = vim.lsp.util.make_text_document_params(bufnr) },
         function(err, result, context, config)
-          vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+          vim.api.nvim_buf_clear_namespace(bufnr, documentColor_ns, 0, -1)
           if err then return end
           ---@cast result lsp.ColorInformation[]
           for _, ci in ipairs(result) do
@@ -267,11 +266,17 @@ local function attach(args)
               math.floor(ci.color.blue * 255 + 0.5)
             )
             local hl_group = MiniHipatterns.compute_hex_color_group(hex, "bg")
-            vim.api.nvim_buf_set_extmark(bufnr, ns, ci.range.start.line, ci.range.start.character, {
-              end_row = ci.range["end"].line,
-              end_col = ci.range["end"].character,
-              hl_group = hl_group,
-            })
+            vim.api.nvim_buf_set_extmark(
+              bufnr,
+              documentColor_ns,
+              ci.range.start.line,
+              ci.range.start.character,
+              {
+                end_row = ci.range["end"].line,
+                end_col = ci.range["end"].character,
+                hl_group = hl_group,
+              }
+            )
           end
         end,
         bufnr
@@ -300,6 +305,6 @@ vim.api.nvim_create_autocmd("LspDetach", {
     vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
     vim.lsp.codelens.clear(client.id)
     vim.lsp.buf.clear_references()
-    vim.api.nvim_buf_clear_namespace(bufnr, ns_documentColor, 0, -1)
+    vim.api.nvim_buf_clear_namespace(bufnr, documentColor_ns, 0, -1)
   end,
 })
