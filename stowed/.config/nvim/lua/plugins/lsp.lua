@@ -117,7 +117,7 @@ MiniDeps.later(function()
       },
     },
     taplo = {},
-    tsserver = {
+    ts_ls = {
       settings = {
         typescript = {
           inlayHints = {
