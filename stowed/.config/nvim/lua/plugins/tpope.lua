@@ -1,10 +1,10 @@
 MiniDeps.later(function()
-  MiniDeps.add({ source = "tpope/vim-abolish" })
+  MiniDeps.add("tpope/vim-abolish")
 
-  MiniDeps.add({ source = "tpope/vim-sleuth" })
+  MiniDeps.add("tpope/vim-sleuth")
 
-  MiniDeps.add({ source = "tpope/vim-eunuch" })
+  MiniDeps.add("tpope/vim-eunuch")
 
   vim.g.fugitive_legacy_commands = 0
-  MiniDeps.add({ source = "tpope/vim-fugitive" })
+  MiniDeps.add("tpope/vim-fugitive")
 end)

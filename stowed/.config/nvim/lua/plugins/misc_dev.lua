@@ -1,5 +1,5 @@
 MiniDeps.later(function()
-  MiniDeps.add({ source = "mfussenegger/nvim-lint" })
+  MiniDeps.add("mfussenegger/nvim-lint")
 
   local lint = require("lint")
 
@@ -7,7 +7,7 @@ MiniDeps.later(function()
     fish = { "fish" },
   }
 
-  local augroup = vim.api.nvim_create_augroup("nvim_lint", { clear = true })
+  local augroup = vim.api.nvim_create_augroup("nvim_lint", {})
   vim.api.nvim_create_autocmd({ "BufWritePost" }, {
     group = augroup,
     callback = function() lint.try_lint() end,
@@ -15,7 +15,7 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
-  MiniDeps.add({ source = "stevearc/conform.nvim" })
+  MiniDeps.add("stevearc/conform.nvim")
 
   require("conform").setup({
     formatters_by_ft = {
@@ -46,7 +46,7 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
-  MiniDeps.add({ source = "rafamadriz/friendly-snippets" })
+  MiniDeps.add("rafamadriz/friendly-snippets")
 
   local dir = vim
     .iter(vim.api.nvim_list_runtime_paths())
@@ -150,9 +150,9 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
-  MiniDeps.add({ source = "PaterJason/nvim-nrepl" })
+  MiniDeps.add("PaterJason/nvim-nrepl")
 
-  local augroup = vim.api.nvim_create_augroup("nvim_nrepl", { clear = true })
+  local augroup = vim.api.nvim_create_augroup("nvim_nrepl", {})
   vim.api.nvim_create_autocmd({ "FileType" }, {
     group = augroup,
     pattern = { "clojure" },
