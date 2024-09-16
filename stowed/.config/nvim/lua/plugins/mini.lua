@@ -236,6 +236,32 @@ end)
 MiniDeps.later(function() require("mini.splitjoin").setup({}) end)
 
 MiniDeps.later(function()
+  local function active()
+    local git = MiniStatusline.section_git({ trunc_width = 40 })
+    local diff = MiniStatusline.section_diff({ trunc_width = 75 })
+    local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+    local lsp = MiniStatusline.section_lsp({ trunc_width = 75 })
+    local filename = MiniStatusline.section_filename({ trunc_width = 140 })
+    local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+    local location = MiniStatusline.section_location({ trunc_width = 75 })
+
+    return MiniStatusline.combine_groups({
+      { hl = "MiniStatuslineDevinfo", strings = { git, diff, diagnostics, lsp } },
+      "%<", -- Mark general truncate point
+      { hl = "MiniStatuslineFilename", strings = { filename } },
+      "%=", -- End left alignment
+      { hl = "MiniStatuslineFileinfo", strings = { fileinfo, location } },
+    })
+  end
+
+  require("mini.statusline").setup({
+    content = {
+      active = active,
+    },
+  })
+end)
+
+MiniDeps.later(function()
   require("mini.surround").setup({
     mappings = {
       add = "ys",
