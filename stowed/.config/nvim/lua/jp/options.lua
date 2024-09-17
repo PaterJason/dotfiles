@@ -66,6 +66,12 @@ vim.cmd("packadd cfilter")
 -- vim.highlight.priorities.semantic_tokens = 95
 
 -- Diagnostics
+local diagnostic_signs = {
+  [vim.diagnostic.severity.ERROR] = "",
+  [vim.diagnostic.severity.WARN] = "",
+  [vim.diagnostic.severity.INFO] = "",
+  [vim.diagnostic.severity.HINT] = "",
+}
 vim.diagnostic.config({
   severity_sort = true,
   signs = false,
@@ -74,6 +80,12 @@ vim.diagnostic.config({
     header = "",
     source = true,
     title = "Diagnostics",
+  },
+  virtual_text = {
+    spacing = 2,
+    prefix = function(diagnostic, i, total)
+      return diagnostic_signs[diagnostic.severity] .. (i == total and "" or " ")
+    end,
   },
 })
 vim.keymap.set("n", "<Leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
