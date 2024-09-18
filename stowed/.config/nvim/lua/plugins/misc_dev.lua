@@ -59,7 +59,7 @@ MiniDeps.later(function()
   ---@field prefix string
   ---@field description? string
 
-  ---@type table<string, FriendlySnippet>
+  ---@type table<string, FriendlySnippet[]>
   local lang_snippets = {}
 
   local extended_filetypes = {
