@@ -201,7 +201,6 @@ MiniDeps.later(function()
     local disabled = {
       "cli",
       "hipatterns",
-      "hl_groups",
       "treesitter",
       "visit_paths",
       "visit_labels",
