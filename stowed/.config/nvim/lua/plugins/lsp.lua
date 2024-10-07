@@ -13,11 +13,10 @@ MiniDeps.later(function()
 
   ---@type table<string, lspconfig.Config>
   local server_settings = {
-    clojure_lsp = {},
+    -- vscode-langservers-extracted
     cssls = {},
     eslint = {},
     html = {},
-    htmx = {},
     jsonls = {
       settings = {
         json = {
@@ -26,6 +25,8 @@ MiniDeps.later(function()
         },
       },
     },
+    htmx = {},
+    clojure_lsp = {},
     bashls = {},
     gopls = {
       settings = {
