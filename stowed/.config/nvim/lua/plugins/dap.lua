@@ -1,10 +1,14 @@
 MiniDeps.later(function()
   MiniDeps.add({
     source = "mfussenegger/nvim-dap",
+    depends = { "theHamsta/nvim-dap-virtual-text" },
   })
 
   local dap = require("dap")
   local widgets = require("dap.ui.widgets")
+  require("nvim-dap-virtual-text").setup({
+    highlight_new_as_changed = true,
+  })
   dap.defaults.fallback.terminal_win_cmd = "tabnew"
 
   vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
