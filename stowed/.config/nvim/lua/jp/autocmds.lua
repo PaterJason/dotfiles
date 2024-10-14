@@ -1,4 +1,4 @@
-local augroup = vim.api.nvim_create_augroup("JPConfig", { clear = true })
+local augroup = vim.api.nvim_create_augroup("JPConfig", {})
 local create = vim.api.nvim_create_autocmd
 
 create({ "TextYankPost" }, {
