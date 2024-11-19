@@ -4,13 +4,15 @@ vim.filetype.add({
   },
   filename = {
     [".zprintrc"] = "clojure",
-    ["zathurarc"] = "zathurarc",
+  },
+  pattern = {
+    [".*/%.config/zathura/.*"] = "zathurarc",
   },
 })
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "gitcommit" },
-  callback = function() vim.opt_local.spell = true end,
+  callback = function() vim.wo.spell = true end,
   group = "JPConfig",
   desc = "Set spell",
 })
