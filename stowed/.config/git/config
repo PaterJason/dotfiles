@@ -1,8 +1,6 @@
 [user]
 	email = jasonbipaterson@gmail.com
 	name = Jason Paterson
-[core]
-	excludesfile = ~/.gitexcludes
 [pull]
 	rebase = interactive
 [push]
