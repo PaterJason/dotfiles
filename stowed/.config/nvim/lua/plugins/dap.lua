@@ -9,10 +9,28 @@ MiniDeps.later(function()
   require("nvim-dap-virtual-text").setup({
     highlight_new_as_changed = true,
   })
-  dap.defaults.fallback.terminal_win_cmd = "tabnew"
+  if os.getenv("TMUX") then
+    dap.defaults.fallback.external_terminal = {
+      command = "/usr/bin/tmux",
+      args = { "new-window", "-a", "-d" },
+    }
+    dap.defaults.fallback.force_external_terminal = true
+  else
+    dap.defaults.fallback.terminal_win_cmd = "tabnew"
+  end
+
+  ---@type fun(session: dap.Session, err: any, body: any, request: any, seq: number)
+  local function start_fn(session, err, body, request, seq) dap.repl.open({ height = 10 }) end
+  dap.listeners.before.attach["user"] = start_fn
+  dap.listeners.before.launch["user"] = start_fn
 
   vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-  vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue" })
+  vim.keymap.set(
+    "n",
+    "<Leader>dl",
+    function() dap.list_breakpoints(true) end,
+    { desc = "List breakpoints" }
+  )
   vim.keymap.set(
     "n",
     "<Leader>dr",
@@ -32,6 +50,17 @@ MiniDeps.later(function()
     function() widgets.sidebar(widgets.scopes, { width = 50 }).toggle() end,
     { desc = "Scopes" }
   )
+
+  vim.keymap.set("n", "<F7>", dap.step_back, { desc = "Step back" })
+  vim.keymap.set("n", "<F8>", dap.continue, { desc = "Continue" })
+  vim.keymap.set("n", "<F9>", dap.step_over, { desc = "Step over" })
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = "dap-repl",
+    callback = function(ev) require("dap.ext.autocompl").attach() end,
+    group = "JPConfig",
+    desc = "DAP REPL",
+  })
 
   -- JavaScript & TypeScript
   dap.adapters.firefox = {
@@ -73,6 +102,7 @@ MiniDeps.later(function()
       end,
       cwd = "${workspaceFolder}",
       stopOnEntry = false,
+      lldb = { showDisassembly = "never" },
     },
   }
   dap.configurations.c = dap.configurations.cpp
