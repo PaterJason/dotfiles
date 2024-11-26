@@ -31,7 +31,7 @@ o.linebreak = true
 o.showbreak = "↵ "
 o.number = true
 o.relativenumber = true
-opt.shortmess:append("I")
+o.shortmess = "aoOTICF"
 o.splitbelow = true
 o.splitright = true
 

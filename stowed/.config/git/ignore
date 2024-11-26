@@ -1,3 +1,5 @@
-.clj-kondo
-.lsp
+# git patches
+*.patch
+*.diff
+
 .envrc
