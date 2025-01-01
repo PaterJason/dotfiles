@@ -1,42 +1,57 @@
 MiniDeps.later(function()
   MiniDeps.add({
-    source = "hrsh7th/nvim-cmp",
-    depends = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-nvim-lsp-signature-help",
-      "rcarriga/cmp-dap",
-    },
+    source = "Saghen/blink.cmp",
+    depends = { "rafamadriz/friendly-snippets" },
+    checkout = "v0.9.0", -- check releases for latest tag
   })
 
-  local cmp = require("cmp")
-
-  cmp.setup({
-    enabled = function() return vim.bo.buftype ~= "prompt" or require("cmp_dap").is_dap_buffer() end,
-    snippet = {
-      expand = function(args) vim.snippet.expand(args.body) end,
+  require("blink.cmp").setup({
+    keymap = {
+      preset = "default",
+      ["<Tab>"] = {},
+      ["<S-Tab>"] = {},
     },
-    window = {
-      completion = cmp.config.window.bordered({ border = "single" }),
-      documentation = cmp.config.window.bordered({ border = "single" }),
+    completion = {
+      accept = {
+        auto_brackets = { enabled = false },
+      },
+      menu = {
+        -- border = "single",
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 0,
+        window = { border = "single" },
+      },
+      list = {
+        selection = function(ctx) return ctx.mode == "cmdline" and "auto_insert" or "preselect" end,
+      },
     },
-    mapping = cmp.mapping.preset.insert({
-      ["<C-d>"] = cmp.mapping.scroll_docs(8),
-      ["<C-u>"] = cmp.mapping.scroll_docs(-8),
-      ["<C-Space>"] = cmp.mapping.complete(),
-      ["<C-e>"] = cmp.mapping.abort(),
-      ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    }),
-    sources = cmp.config.sources({
-      { name = "nvim_lsp_signature_help" },
-      { name = "nvim_lsp" },
-    }, {
-      { name = "conjure" },
-    }),
-  })
-
-  require("cmp").setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+    signature = {
+      enabled = true,
+      window = { border = "single" },
+    },
+    snippets = {
+      expand = function(snippet) MiniSnippets.default_insert({ body = snippet }) end,
+      active = function(filter) return MiniSnippets.session.get(false) ~= nil end,
+      jump = function(direction)
+        if direction > 0 then
+          MiniSnippets.session.jump("next")
+        elseif direction < 0 then
+          MiniSnippets.session.jump("prev")
+        end
+      end,
+    },
     sources = {
-      { name = "dap" },
+      -- providers = {
+      --   snippets = {
+      --     should_show_items = function(ctx)
+      --       return ctx.trigger.kind ~= vim.lsp.protocol.CompletionTriggerKind.TriggerCharacter
+      --     end,
+      --   },
+      -- },
+      default = function() return { "lsp", "path" } end,
     },
   })
 end)
+
