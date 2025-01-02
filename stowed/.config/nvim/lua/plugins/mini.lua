@@ -220,7 +220,7 @@ MiniDeps.later(function()
     vim.ui.select(items, {
       format_item = function(item)
         if item.scope then
-          return string.format("%s (%s)", item.builtin, item.scope)
+          return ("%s (%s)"):format(item.builtin, item.scope)
         else
           return item.builtin
         end
@@ -235,12 +235,17 @@ end)
 MiniDeps.later(function() require("mini.splitjoin").setup({}) end)
 
 MiniDeps.later(function()
+  local function status_filename()
+    if vim.bo.filetype == "qf" then return "%F " .. vim.w.quickfix_title end
+    return MiniStatusline.section_filename({ trunc_width = 140 })
+  end
+
   local function active()
     local git = MiniStatusline.section_git({ trunc_width = 40 })
     local diff = MiniStatusline.section_diff({ trunc_width = 75 })
     local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
     local lsp = MiniStatusline.section_lsp({ trunc_width = 75 })
-    local filename = MiniStatusline.section_filename({ trunc_width = 140 })
+    local filename = status_filename()
     local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
     local location = MiniStatusline.section_location({ trunc_width = 75 })
 
@@ -253,11 +258,44 @@ MiniDeps.later(function()
     })
   end
 
+  local function inactive()
+    local filename = "%F"
+    if vim.bo.filetype == "qf" then filename = "%F " .. vim.w.quickfix_title end
+    return "%#MiniStatuslineInactive# " .. filename .. "%="
+  end
+
   require("mini.statusline").setup({
     content = {
       active = active,
+      inactive = inactive,
     },
   })
+  vim.g.qf_disable_statusline = 0
+end)
+
+MiniDeps.later(function()
+  local gen_loader = require("mini.snippets").gen_loader
+  require("mini.snippets").setup({
+    snippets = {
+      gen_loader.from_runtime("global.json"),
+      gen_loader.from_lang(),
+    },
+  })
+  local function select_snippet()
+    local snippets = MiniSnippets.default_prepare(MiniSnippets.config.snippets, {})
+
+    vim.ui.select(snippets, {
+      format_item = function(item) return ("%s | %s"):format(item.prefix, item.desc) end,
+      preview_item = function(item)
+        return vim.split(item.body, "\n", { plain = true, trimempty = true })
+      end,
+      prompt = "Snippets",
+    }, function(item)
+      if not item then return end
+      MiniSnippets.default_insert(item, {})
+    end)
+  end
+  vim.keymap.set("n", "<Leader>ss", select_snippet, { desc = "Snippets" })
 end)
 
 MiniDeps.later(function()
