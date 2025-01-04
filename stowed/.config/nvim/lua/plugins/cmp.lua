@@ -23,9 +23,6 @@ MiniDeps.later(function()
         auto_show_delay_ms = 0,
         window = { border = "single" },
       },
-      list = {
-        selection = function(ctx) return ctx.mode == "cmdline" and "auto_insert" or "preselect" end,
-      },
     },
     signature = {
       enabled = true,
@@ -43,15 +40,8 @@ MiniDeps.later(function()
       end,
     },
     sources = {
-      -- providers = {
-      --   snippets = {
-      --     should_show_items = function(ctx)
-      --       return ctx.trigger.kind ~= vim.lsp.protocol.CompletionTriggerKind.TriggerCharacter
-      --     end,
-      --   },
-      -- },
-      default = function() return { "lsp", "path" } end,
+      cmdline = {},
+      default = { "lsp", "path" },
     },
   })
 end)
-

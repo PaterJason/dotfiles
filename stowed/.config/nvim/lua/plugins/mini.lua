@@ -235,17 +235,16 @@ end)
 MiniDeps.later(function() require("mini.splitjoin").setup({}) end)
 
 MiniDeps.later(function()
-  local function status_filename()
-    if vim.bo.filetype == "qf" then return "%F " .. vim.w.quickfix_title end
-    return MiniStatusline.section_filename({ trunc_width = 140 })
-  end
-
   local function active()
     local git = MiniStatusline.section_git({ trunc_width = 40 })
     local diff = MiniStatusline.section_diff({ trunc_width = 75 })
     local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
     local lsp = MiniStatusline.section_lsp({ trunc_width = 75 })
-    local filename = status_filename()
+    local filename = (
+      vim.bo.filetype == "qf"
+      and vim.w.quickfix_title
+      and "%F " .. vim.w.quickfix_title
+    ) or MiniStatusline.section_filename({ trunc_width = 140 })
     local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
     local location = MiniStatusline.section_location({ trunc_width = 75 })
 
@@ -259,9 +258,9 @@ MiniDeps.later(function()
   end
 
   local function inactive()
-    local filename = "%F"
-    if vim.bo.filetype == "qf" then filename = "%F " .. vim.w.quickfix_title end
-    return "%#MiniStatuslineInactive# " .. filename .. "%="
+    return "%#MiniStatuslineInactive# "
+      .. ((vim.bo.filetype == "qf" and vim.w.quickfix_title and "%F " .. vim.w.quickfix_title) or "%F")
+      .. "%="
   end
 
   require("mini.statusline").setup({
@@ -270,7 +269,6 @@ MiniDeps.later(function()
       inactive = inactive,
     },
   })
-  vim.g.qf_disable_statusline = 0
 end)
 
 MiniDeps.later(function()

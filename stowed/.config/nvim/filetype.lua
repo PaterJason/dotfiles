@@ -19,7 +19,7 @@ vim.filetype.add({
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "gitcommit" },
-  callback = function() vim.wo.spell = true end,
+  callback = function(_args) vim.wo.spell = true end,
   group = "JPConfig",
   desc = "Set spell",
 })
