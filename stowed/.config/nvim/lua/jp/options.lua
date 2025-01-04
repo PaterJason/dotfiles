@@ -43,7 +43,7 @@ o.wrapscan = false
 o.inccommand = "split"
 o.tabstop = 2
 o.shiftwidth = 0
-o.completeopt = "menuone,noinsert,popup"
+o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
 o.nrformats = "alpha,hex,bin,unsigned"
 
 -- Extra UI options
@@ -63,7 +63,7 @@ o.foldtext = ""
 vim.cmd("packadd cfilter")
 
 -- Lower priority then treesitter (100)
--- vim.highlight.priorities.semantic_tokens = 95
+-- vim.hl.priorities.semantic_tokens = 95
 
 -- Diagnostics
 local diagnostic_signs = {
@@ -80,6 +80,10 @@ vim.diagnostic.config({
     header = "",
     source = true,
     title = "Diagnostics",
+  },
+  jump = {
+    float = true,
+    wrap = false,
   },
   virtual_text = {
     spacing = 2,

@@ -2,7 +2,7 @@ MiniDeps.later(function()
   MiniDeps.add({
     source = "Saghen/blink.cmp",
     depends = { "rafamadriz/friendly-snippets" },
-    checkout = "v0.9.0", -- check releases for latest tag
+    checkout = "v0.9.2", -- check releases for latest tag
   })
 
   require("blink.cmp").setup({

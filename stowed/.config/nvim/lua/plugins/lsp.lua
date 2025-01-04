@@ -6,165 +6,42 @@ MiniDeps.later(function()
     },
   })
 
-  local lspconfig = require("lspconfig")
-  require("lspconfig.ui.windows").default_options.border = "single"
+  for filename in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp", {}) do
+    local server = filename:gsub("%.lua$", "")
 
-  local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    local ok, default_config = pcall(
+      function() return require("lspconfig.configs." .. server).default_config end
+    )
 
-  ---@type table<string, lspconfig.Config>
-  local server_settings = {
-    -- vscode-langservers-extracted
-    cssls = {},
-    eslint = {},
-    html = {},
-    jsonls = {
-      settings = {
-        json = {
-          schemas = require("schemastore").json.schemas(),
-          validate = { enable = true },
-        },
-      },
-    },
-    htmx = {},
-    clojure_lsp = {},
-    bashls = {},
-    gopls = {
-      settings = {
-        gopls = {
-          codelenses = {
-            gc_details = true,
-          },
-          usePlaceholders = true,
-          hints = {
-            assignVariableTypes = true,
-            compositeLiteralFields = true,
-            compositeLiteralTypes = true,
-            constantValues = true,
-            functionTypeParameters = true,
-            parameterNames = true,
-            rangeVariableTypes = true,
-          },
-        },
-      },
-    },
-    lua_ls = {
-      settings = {
-        Lua = {
-          runtime = {
-            version = "LuaJIT",
-            path = { "lua/?.lua", "lua/?/init.lua" },
-            pathStrict = true,
-          },
-          workspace = {
-            library = {
-              vim.env.VIMRUNTIME,
-              "${3rd}/luv/library",
-            },
-          },
-          completion = {
-            callSnippet = "Replace",
-          },
-          hint = { enable = true },
-          format = { enable = false },
-        },
-      },
-      on_init = function(client)
-        if vim.uv.fs_stat(vim.fs.joinpath(client.root_dir, "init.lua")) then
-          local library = vim.api.nvim_get_runtime_file("lua/", true)
-          library[1] = "${3rd}/luv/library"
+    if ok then
+      ---@type vim.lsp.Config
+      local lsp_config = vim.deepcopy(default_config, true)
+      lsp_config.root_dir = function(cb)
+        local bufnr = vim.api.nvim_get_current_buf()
+        local bufname = vim.api.nvim_buf_get_name(bufnr)
+        local get_root_dir = default_config.root_dir
+        local async = require("lspconfig.async")
+        async.run(function()
+          local root_dir
+          if type(get_root_dir) == "function" then
+            root_dir = get_root_dir(vim.fs.normalize(bufname), bufnr)
+            async.reenter()
+            if not vim.api.nvim_buf_is_valid(bufnr) then return end
+          elseif type(get_root_dir) == "string" then
+            root_dir = get_root_dir
+          end
+          if root_dir then
+            cb(root_dir)
+          elseif default_config.single_file_support then
+            local pseudo_root = #bufname == 0 and vim.loop.cwd()
+              or vim.fs.dirname(vim.fs.normalize(bufname))
+            cb(pseudo_root)
+          end
+        end)
+      end
 
-          client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
-            workspace = {
-              library = library,
-              ignoreDir = {
-                "/catppuccin/*/",
-                "catppuccin*.lua",
-                "/cmp_*/",
-                "/conform/formatters/",
-                "/lint/linters/",
-                "/lspconfig/server_configurations/",
-                "/mason-*/",
-                "/mason/*/",
-                "/schemastore/catalog.lua",
-              },
-            },
-          })
-        end
-      end,
-    },
-    rust_analyzer = {
-      settings = {
-        ["rust-analyzer"] = {
-          check = {
-            command = "clippy",
-            extraArgs = { "--", "-W", "clippy::pedantic" },
-          },
-          diagnostics = { warningsAsInfo = { "clippy::pedantic" } },
-        },
-      },
-    },
-    templ = {},
-    texlab = {
-      settings = {
-        texlab = {
-          build = { onSave = true, forwardSearchAfter = true },
-          forwardSearch = {
-            onSave = true,
-            executable = "zathura",
-            args = { "--synctex-forward", "%l:1:%f", "%p" },
-          },
-          chktex = { onEdit = true, onOpenAndSave = true },
-        },
-      },
-    },
-    taplo = {},
-    ts_ls = {
-      settings = {
-        typescript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = true,
-            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayEnumMemberValueHints = true,
-          },
-        },
-        javascript = {
-          inlayHints = {
-            includeInlayParameterNameHints = "all",
-            includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-            includeInlayFunctionParameterTypeHints = true,
-            includeInlayVariableTypeHints = true,
-            includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-            includeInlayPropertyDeclarationTypeHints = true,
-            includeInlayFunctionLikeReturnTypeHints = true,
-            includeInlayEnumMemberValueHints = true,
-          },
-        },
-      },
-    },
-    yamlls = {
-      settings = {
-        yaml = {
-          schemas = require("schemastore").yaml.schemas(),
-        },
-      },
-    },
-    lemminx = {
-      settings = {
-        xml = {
-          catalogs = { vim.fs.normalize("~/.config/fontconfig/catalog.xml") },
-        },
-      },
-    },
-    marksman = {},
-  }
-  for server, config in pairs(server_settings) do
-    config.capabilities = capabilities
-    lspconfig[server].setup(config)
+      vim.lsp.config(server, lsp_config)
+    end
   end
 end)
 
@@ -184,5 +61,5 @@ MiniDeps.later(function()
       },
     },
   })
-  vim.keymap.set("n", "<Leader>m", vim.cmd.Mason, { desc = "Mason" })
+  vim.keymap.set("n", "<Leader>m", "<Cmd>Mason<CR>", { desc = "Mason" })
 end)

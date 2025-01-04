@@ -36,8 +36,6 @@ MiniDeps.later(
   end
 )
 
-MiniDeps.later(function() require("mini.bracketed").setup({}) end)
-
 MiniDeps.later(function()
   require("mini.bufremove").setup({})
   vim.keymap.set("n", "<Leader>bd", MiniBufremove.delete, { desc = "Delete buffer" })

@@ -6,6 +6,7 @@ MiniDeps.later(function()
 
   local dap = require("dap")
   local widgets = require("dap.ui.widgets")
+  ---@diagnostic disable-next-line: missing-fields
   require("nvim-dap-virtual-text").setup({
     highlight_new_as_changed = true,
   })
@@ -19,17 +20,32 @@ MiniDeps.later(function()
     dap.defaults.fallback.terminal_win_cmd = "tabnew"
   end
 
-  ---@type fun(session: dap.Session, err: any, body: any, request: any, seq: number)
-  local function start_fn(session, err, body, request, seq) dap.repl.open({ height = 10 }) end
+  ---@type dap.RequestListener<any, any>
+  local start_fn = function(session, err, body, request, seq) dap.repl.open({ height = 10 }) end
   dap.listeners.before.attach["user"] = start_fn
   dap.listeners.before.launch["user"] = start_fn
 
-  vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+  vim.keymap.set("n", "<F5>", function() require("dap").continue() end, { desc = "Continue" })
+  vim.keymap.set("n", "<F10>", function() require("dap").step_over() end, { desc = "Step over" })
+  vim.keymap.set("n", "<F11>", function() dap.step_into() end, { desc = "Step into" })
+  vim.keymap.set("n", "<F12>", function() dap.step_out() end, { desc = "Step out" })
+  vim.keymap.set(
+    "n",
+    "<Leader>db",
+    function() dap.toggle_breakpoint() end,
+    { desc = "Toggle breakpoint" }
+  )
   vim.keymap.set(
     "n",
     "<Leader>dl",
+    function() dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: ")) end,
+    { desc = "Set log point" }
+  )
+  vim.keymap.set(
+    "n",
+    "<Leader>dq",
     function() dap.list_breakpoints(true) end,
-    { desc = "List breakpoints" }
+    { desc = "Set log point" }
   )
   vim.keymap.set(
     "n",
@@ -37,7 +53,8 @@ MiniDeps.later(function()
     function() dap.repl.toggle({ height = 10 }) end,
     { desc = "Toggle repl" }
   )
-  vim.keymap.set({ "n", "v" }, "<Leader>dh", widgets.hover, { desc = "Hover" })
+  vim.keymap.set({ "n", "v" }, "<Leader>dh", function() widgets.hover() end, { desc = "Hover" })
+  vim.keymap.set({ "n", "v" }, "<Leader>dp", function() widgets.preview() end, { desc = "Preview" })
   vim.keymap.set(
     "n",
     "<Leader>df",
@@ -47,17 +64,13 @@ MiniDeps.later(function()
   vim.keymap.set(
     "n",
     "<Leader>ds",
-    function() widgets.sidebar(widgets.scopes, { width = 50 }).toggle() end,
+    function() widgets.centered_float(widgets.scopes) end,
     { desc = "Scopes" }
   )
 
-  vim.keymap.set("n", "<F7>", dap.step_back, { desc = "Step back" })
-  vim.keymap.set("n", "<F8>", dap.continue, { desc = "Continue" })
-  vim.keymap.set("n", "<F9>", dap.step_over, { desc = "Step over" })
-
   vim.api.nvim_create_autocmd("FileType", {
     pattern = "dap-repl",
-    callback = function(ev) require("dap.ext.autocompl").attach() end,
+    callback = function(_args) require("dap.ext.autocompl").attach() end,
     group = "JPConfig",
     desc = "DAP REPL",
   })
@@ -139,4 +152,6 @@ MiniDeps.later(function()
       program = "./${relativeFileDirname}",
     },
   }
+
+  MiniDeps.add("mfussenegger/nluarepl")
 end)
