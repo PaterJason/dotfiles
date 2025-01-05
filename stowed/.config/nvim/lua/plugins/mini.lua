@@ -112,6 +112,26 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
+  require("mini.git").setup({})
+  vim.keymap.set(
+    { "n", "x" },
+    "<Leader>g",
+    function() MiniGit.show_at_cursor({}) end,
+    { desc = "MiniGit show at cursor" }
+  )
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "git", "diff" },
+    callback = function(_args)
+      vim.wo.foldmethod = "expr"
+      vim.wo.foldexpr = "v:lua.MiniGit.diff_foldexpr()"
+    end,
+    group = "JPConfig",
+    desc = "Git filetypes",
+  })
+end)
+
+MiniDeps.later(function()
   local hipatterns = require("mini.hipatterns")
   hipatterns.setup({
     highlighters = {
