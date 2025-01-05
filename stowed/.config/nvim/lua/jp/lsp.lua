@@ -129,8 +129,8 @@ local function select()
   vim.ui.select(items, {
     format_item = function(item) return item.text end,
     prompt = "LSP",
-  }, function(choice)
-    if choice then choice.on_choice() end
+  }, function(item)
+    if item then item.on_choice() end
   end)
 end
 

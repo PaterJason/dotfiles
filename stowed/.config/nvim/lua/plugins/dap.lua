@@ -45,7 +45,7 @@ MiniDeps.later(function()
     "n",
     "<Leader>dq",
     function() dap.list_breakpoints(true) end,
-    { desc = "Set log point" }
+    { desc = "List breakpoints" }
   )
   vim.keymap.set(
     "n",
@@ -92,34 +92,27 @@ MiniDeps.later(function()
   }
   dap.configurations.typescript = dap.configurations.javascript
 
-  -- C, C++ & Rust
-  dap.adapters.codelldb = {
-    type = "server",
-    port = "${port}",
-    executable = {
-      command = "codelldb",
-      args = { "--port", "${port}" },
-    },
+  -- Rust
+  dap.adapters.rust_gdb = {
+    type = "executable",
+    command = "rust-gdb",
+    args = { "--quiet", "--interpreter=dap" },
   }
-  dap.configurations.cpp = {
+  dap.configurations.rust = {
     {
-      name = "Launch file",
-      type = "codelldb",
+      name = "Launch",
+      type = "rust_gdb",
       request = "launch",
       program = function()
         return vim.fn.input({
           prompt = "Path to executable: ",
-          default = vim.uv.cwd() .. "/",
+          default = vim.fn.getcwd() .. "/target/debug/",
           completion = "file",
         })
       end,
       cwd = "${workspaceFolder}",
-      stopOnEntry = false,
-      lldb = { showDisassembly = "never" },
     },
   }
-  dap.configurations.c = dap.configurations.cpp
-  dap.configurations.rust = dap.configurations.cpp
 
   -- Go
   dap.adapters.delve = {

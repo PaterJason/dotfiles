@@ -224,8 +224,8 @@ MiniDeps.later(function()
         end
       end,
       prompt = "Pickers",
-    }, function(choice)
-      if choice then choice.callback({ scope = choice.scope }) end
+    }, function(item)
+      if item then item.callback({ scope = item.scope }) end
     end)
   end, { desc = "Select picker" })
 end)

@@ -20,16 +20,10 @@ local function debug_cargo(args)
   local dap = require("dap")
   dap.run({
     name = "rust-analyzer.debugSingle",
-    type = "codelldb",
+    type = "rust_gdb",
     request = "launch",
-    program = "${cargo:program}",
-    cargo = {
-      args = cmd_args,
-      cwd = args.cwd,
-      problemMatcher = "$rustc",
-    },
-    sourceLanguages = { "rust" },
-    stopOnEntry = false,
+    program = "cargo",
+    args = cmd_args,
   })
 end
 
@@ -48,19 +42,17 @@ return {
     ["rust-analyzer.runSingle"] = function(command, ctx)
       local client = vim.lsp.get_client_by_id(ctx.client_id)
       if not client then return end
-      vim.ui.select(command.arguments, {
-        format_item = function(item) return item.label end,
-        prompt = command.title,
-      }, function(choice) run_cargo(choice.args) end)
+      if #command.arguments == 1 then
+        run_cargo(command.arguments[1].args)
+      else
+        vim.ui.select(command.arguments, {
+          format_item = function(item) return item.label end,
+          prompt = command.title,
+        }, function(item) run_cargo(item.args) end)
+      end
     end,
     ["rust-analyzer.debugSingle"] = function(command, ctx)
       vim.print("rust-analyzer.runSingle", command, ctx)
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      if not client then return end
-      vim.ui.select(command.arguments, {
-        format_item = function(item) return item.label end,
-        prompt = command.title,
-      }, function(choice) debug_cargo(choice.args) end)
     end,
   },
 }
