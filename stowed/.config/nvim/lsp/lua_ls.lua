@@ -38,6 +38,8 @@ return {
         -- "conform.nvim",
         "catppuccin",
         "mason.nvim",
+        -- "mini.nvim",
+        -- "nluarepl",
         -- "nvim-dap",
         -- "nvim-dap-virtual-text",
         -- "nvim-lint",
@@ -46,7 +48,6 @@ return {
         -- "nvim-treesitter-context",
         -- "nvim-treesitter-sexp",
         -- "nvim-treesitter",
-        -- "oil.nvim",
       }
       for _, value in ipairs(deps_session) do
         local path = vim.fs.joinpath(value.path, "lua")

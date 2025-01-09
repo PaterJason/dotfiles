@@ -106,7 +106,7 @@ MiniDeps.later(function()
       program = function()
         return vim.fn.input({
           prompt = "Path to executable: ",
-          default = vim.fn.getcwd() .. "/target/debug/",
+          default = vim.uv.cwd() .. "/target/debug/",
           completion = "file",
         })
       end,
