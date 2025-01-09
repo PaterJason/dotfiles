@@ -111,6 +111,32 @@ MiniDeps.later(function()
   )
 end)
 
+MiniDeps.now(function()
+  require("mini.files").setup({
+    mappings = {
+      reveal_cwd = "",
+      trim_left = "",
+      trim_right = "",
+    },
+    windows = {
+      max_number = 1,
+      width_focus = 80,
+    },
+  })
+  vim.keymap.set(
+    "n",
+    "-",
+    function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
+    { desc = "Open parent directory" }
+  )
+  vim.keymap.set(
+    "n",
+    "_",
+    function() MiniFiles.open(nil, false) end,
+    { desc = "Open current working directory" }
+  )
+end)
+
 MiniDeps.later(function()
   require("mini.git").setup({})
   vim.keymap.set(
@@ -140,13 +166,11 @@ MiniDeps.later(function()
   })
 end)
 
-MiniDeps.later(function()
+MiniDeps.now(function()
   require("mini.icons").setup({
     style = "glyph",
   })
 end)
-
-MiniDeps.later(function() require("mini.jump").setup({}) end)
 
 MiniDeps.later(function()
   require("mini.misc").setup({ make_global = {} })
