@@ -155,6 +155,27 @@ MiniDeps.later(function()
     group = "JPConfig",
     desc = "Git filetypes",
   })
+
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "MiniGitCommandSplit",
+    callback = function(args)
+      local subcmd = args.data.git_subcommand
+      ---@type integer, integer
+      local win_src, win_out = args.data.win_source, args.data.win_stdout
+      local buf_src = vim.api.nvim_win_get_buf(win_src)
+      local buf_out = vim.api.nvim_win_get_buf(win_out)
+      local buf_data_src = MiniGit.get_buf_data(buf_src)
+      if buf_data_src then vim.bo[buf_out].path = ".,," .. buf_data_src.root end
+
+      if subcmd == "help" then
+        vim.bo[args.buf].filetype = "man"
+      elseif subcmd == "blame" then
+        vim.fn.winrestview({ topline = vim.fn.line("w0", win_src) })
+        vim.api.nvim_win_set_cursor(win_out, { vim.fn.line(".", win_src), 0 })
+      end
+    end,
+    group = "JPConfig",
+  })
 end)
 
 MiniDeps.later(function()

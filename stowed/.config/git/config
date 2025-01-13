@@ -1,6 +1,10 @@
 [user]
 	email = jasonbipaterson@gmail.com
 	name = Jason Paterson
+[branch]
+	sort = -committerdate
+[commit]
+	verbose = true
 [pull]
 	rebase = interactive
 [push]

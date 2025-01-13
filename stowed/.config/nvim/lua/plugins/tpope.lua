@@ -1,4 +1,4 @@
-MiniDeps.later(function()
+MiniDeps.now(function()
   MiniDeps.add("tpope/vim-abolish")
 
   MiniDeps.add("tpope/vim-sleuth")

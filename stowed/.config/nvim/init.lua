@@ -26,6 +26,7 @@ MiniDeps.later(function()
   vim.keymap.set("n", "<Leader>pu", "<Cmd>DepsUpdate<CR>", { desc = "Update" })
 end)
 
+require("plugins.tpope")
 require("plugins.mini")
 require("plugins.misc")
 
@@ -33,7 +34,6 @@ require("plugins.dap")
 require("plugins.cmp")
 require("plugins.lsp")
 require("plugins.misc_dev")
-require("plugins.tpope")
 require("plugins.treesitter")
 
 require("clj-tools")
