@@ -12,8 +12,6 @@ MiniDeps.later(
         inside_last = "",
       },
       custom_textobjects = {
-        a = false,
-        f = false,
         B = MiniExtra.gen_ai_spec.buffer(),
         D = MiniExtra.gen_ai_spec.diagnostic(),
         I = MiniExtra.gen_ai_spec.indent(),
@@ -342,21 +340,24 @@ MiniDeps.later(function()
       gen_loader.from_lang(),
     },
   })
-  local function select_snippet()
-    local snippets = MiniSnippets.default_prepare(MiniSnippets.config.snippets, {})
+  local function select() MiniSnippets.expand({ match = false }) end
+  vim.keymap.set("i", "<C-g><C-j>", select, { desc = "Expand all" })
+  vim.keymap.set("n", "<Leader>ss", select, { desc = "Snippets" })
 
-    vim.ui.select(snippets, {
-      format_item = function(item) return ("%s | %s"):format(item.prefix, item.desc) end,
-      preview_item = function(item)
-        return vim.split(item.body, "\n", { plain = true, trimempty = true })
-      end,
-      prompt = "Snippets",
-    }, function(item)
-      if not item then return end
-      MiniSnippets.default_insert(item, {})
-    end)
-  end
-  vim.keymap.set("n", "<Leader>ss", select_snippet, { desc = "Snippets" })
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "MiniSnippetsSessionStart",
+    callback = function()
+      vim.api.nvim_create_autocmd("ModeChanged", {
+        pattern = "*:n",
+        once = true,
+        callback = function()
+          while MiniSnippets.session.get() do
+            MiniSnippets.session.stop()
+          end
+        end,
+      })
+    end,
+  })
 end)
 
 MiniDeps.later(function()

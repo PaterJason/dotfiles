@@ -277,24 +277,26 @@ local function attach(args)
       { buffer = bufnr, desc = "Hover" }
     )
   end
-  vim.keymap.set("n", "gO", function()
-    vim.lsp.buf.document_symbol({
-      on_list = function(options)
-        vim.fn.setloclist(0, {}, " ", {
-          quickfixtextfunc = function(info)
-            local l = {}
-            for i = info.start_idx, info.end_idx do
-              table.insert(l, options.items[i].text)
-            end
-            return l
-          end,
-          title = options.title,
-          items = options.items,
-        })
-        vim.cmd("lopen")
-      end,
-    })
-  end, { desc = "vim.lsp.buf.document_symbol()" })
+  if supports_method(methods.textDocument_documentSymbol) then
+    vim.keymap.set("n", "gO", function()
+      vim.lsp.buf.document_symbol({
+        on_list = function(options)
+          vim.fn.setloclist(0, {}, " ", {
+            quickfixtextfunc = function(info)
+              local l = {}
+              for i = info.start_idx, info.end_idx do
+                table.insert(l, options.items[i].text)
+              end
+              return l
+            end,
+            title = options.title,
+            items = options.items,
+          })
+          vim.cmd("lopen")
+        end,
+      })
+    end, { desc = "vim.lsp.buf.document_symbol()" })
+  end
   if supports_method(methods.textDocument_signatureHelp) then
     vim.keymap.set(
       "i",
