@@ -1,3 +1,9 @@
+" Set default fond
+set font "Monospace 12"
+
+" Show status line and vertical scroll bar
+set guioptions sv
+
 set synctex true
 set synctex-editor-command "code -g %{input}:%{line}"
 
