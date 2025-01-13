@@ -37,6 +37,7 @@ return {
         -- "blink.cmp",
         -- "conform.nvim",
         "catppuccin",
+        "diffview.nvim",
         "mason.nvim",
         -- "mini.nvim",
         -- "nluarepl",

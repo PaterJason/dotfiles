@@ -189,6 +189,7 @@ MiniDeps.now(function()
   require("mini.icons").setup({
     style = "glyph",
   })
+  MiniIcons.mock_nvim_web_devicons()
 end)
 
 MiniDeps.later(function()

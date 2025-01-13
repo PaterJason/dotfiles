@@ -15,6 +15,7 @@ MiniDeps.now(function()
     integrations = {
       blink_cmp = true,
       dap = true,
+      diffview = true,
       markdown = true,
       mason = true,
       mini = {
