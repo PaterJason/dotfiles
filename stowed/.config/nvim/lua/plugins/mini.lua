@@ -145,7 +145,7 @@ MiniDeps.later(function()
   )
 
   vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "git", "diff" },
+    pattern = { "git", "diff", "gitcommit" },
     callback = function(_args)
       vim.wo.foldmethod = "expr"
       vim.wo.foldexpr = "v:lua.MiniGit.diff_foldexpr()"
