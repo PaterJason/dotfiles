@@ -20,13 +20,18 @@ MiniDeps.later(function()
     dap.defaults.fallback.terminal_win_cmd = "tabnew"
   end
 
+  local winopts = {
+    height = 12,
+    winfixheight = true,
+  }
+
   ---@type dap.RequestListener<any, any>
-  local start_fn = function(session, err, body, request, seq) dap.repl.open({ height = 10 }) end
+  local start_fn = function(session, err, body, request, seq) dap.repl.open(winopts) end
   dap.listeners.before.attach["user"] = start_fn
   dap.listeners.before.launch["user"] = start_fn
 
-  vim.keymap.set("n", "<F5>", function() require("dap").continue() end, { desc = "Continue" })
-  vim.keymap.set("n", "<F10>", function() require("dap").step_over() end, { desc = "Step over" })
+  vim.keymap.set("n", "<F5>", function() dap.continue() end, { desc = "Continue" })
+  vim.keymap.set("n", "<F10>", function() dap.step_over() end, { desc = "Step over" })
   vim.keymap.set("n", "<F11>", function() dap.step_into() end, { desc = "Step into" })
   vim.keymap.set("n", "<F12>", function() dap.step_out() end, { desc = "Step out" })
   vim.keymap.set(
@@ -50,7 +55,7 @@ MiniDeps.later(function()
   vim.keymap.set(
     "n",
     "<Leader>dr",
-    function() dap.repl.toggle({ height = 10 }) end,
+    function() dap.repl.toggle(winopts) end,
     { desc = "Toggle repl" }
   )
   vim.keymap.set({ "n", "v" }, "<Leader>dh", function() widgets.hover() end, { desc = "Hover" })
@@ -93,15 +98,15 @@ MiniDeps.later(function()
   dap.configurations.typescript = dap.configurations.javascript
 
   -- Rust
-  dap.adapters.rust_gdb = {
+  dap.adapters.lldb = {
     type = "executable",
-    command = "rust-gdb",
-    args = { "--quiet", "--interpreter=dap" },
+    command = "/usr/bin/lldb-dap",
+    name = "lldb",
   }
   dap.configurations.rust = {
     {
       name = "Launch",
-      type = "rust_gdb",
+      type = "lldb",
       request = "launch",
       program = function()
         return vim.fn.input({
@@ -111,6 +116,27 @@ MiniDeps.later(function()
         })
       end,
       cwd = "${workspaceFolder}",
+      runInTerminal = true,
+      stopOnEntry = false,
+      args = {},
+      initCommands = function()
+        local rustc_sysroot = vim.fn.trim(vim.fn.system("rustc --print sysroot"))
+        local script_import = 'command script import "'
+          .. rustc_sysroot
+          .. '/lib/rustlib/etc/lldb_lookup.py"'
+        local commands_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_commands"
+
+        local commands = { script_import }
+        local file = io.open(commands_file, "r")
+        if file then
+          for line in file:lines() do
+            table.insert(commands, line)
+          end
+          file:close()
+        end
+
+        return commands
+      end,
     },
   }
 
