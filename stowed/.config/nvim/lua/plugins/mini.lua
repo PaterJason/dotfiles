@@ -165,6 +165,7 @@ MiniDeps.later(function()
       local buf_data_src = MiniGit.get_buf_data(buf_src)
       if buf_data_src then vim.bo[buf_out].path = ".,," .. buf_data_src.root end
 
+      vim.bo[args.buf].modifiable = false
       if subcmd == "help" then
         vim.bo[args.buf].filetype = "man"
       elseif subcmd == "blame" then
@@ -359,6 +360,19 @@ MiniDeps.later(function()
       })
     end,
   })
+
+  for _, value in ipairs({
+    "MiniSnippetsCurrent",
+    "MiniSnippetsCurrentReplace",
+    "MiniSnippetsFinal",
+    "MiniSnippetsUnvisited",
+    "MiniSnippetsVisited",
+  }) do
+    vim.cmd({
+      cmd = "highlight",
+      args = { value, "cterm=underdotted", "gui=underdotted" },
+    })
+  end
 end)
 
 MiniDeps.later(function()
