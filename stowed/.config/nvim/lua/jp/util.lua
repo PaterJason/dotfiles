@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 ---@param client vim.lsp.Client
 ---@param settings table
