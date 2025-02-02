@@ -37,3 +37,8 @@ require("plugins.misc_dev")
 require("plugins.treesitter")
 
 require("clj-tools")
+
+MiniDeps.later(function()
+  -- Loaded modules after all plugins are loaded
+  DEPSPOST_MODNAMES = vim.tbl_keys(package.loaded)
+end)
