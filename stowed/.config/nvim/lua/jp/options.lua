@@ -66,12 +66,6 @@ vim.cmd("packadd cfilter")
 -- vim.hl.priorities.semantic_tokens = 95
 
 -- Diagnostics
-local diagnostic_signs = {
-  [vim.diagnostic.severity.ERROR] = " ",
-  [vim.diagnostic.severity.WARN] = " ",
-  [vim.diagnostic.severity.INFO] = " ",
-  [vim.diagnostic.severity.HINT] = " ",
-}
 vim.diagnostic.config({
   severity_sort = true,
   signs = false,
@@ -85,16 +79,24 @@ vim.diagnostic.config({
     float = true,
     wrap = false,
   },
-  virtual_text = {
-    spacing = 2,
-    prefix = function(diagnostic, i, total)
-      local sign = diagnostic_signs[diagnostic.severity]
-      return (i == total and vim.trim(sign) or sign)
-    end,
-  },
+  virtual_text = true,
 })
-vim.keymap.set("n", "<Leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
-vim.keymap.set("n", "<Leader>Q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "gK", function()
+  local new_config = not vim.diagnostic.config().virtual_lines
+  vim.diagnostic.config({ virtual_lines = new_config })
+end, { desc = "Toggle diagnostic virtual_lines" })
+vim.keymap.set(
+  "n",
+  "<Leader>q",
+  function() vim.diagnostic.setloclist({}) end,
+  { desc = "Open diagnostics list" }
+)
+vim.keymap.set(
+  "n",
+  "<Leader>Q",
+  function() vim.diagnostic.setqflist({}) end,
+  { desc = "Open diagnostics list" }
+)
 
 -- GUI
 if vim.fn.has("gui_running") == 1 then vim.o.guifont = "Monospace:h10" end
