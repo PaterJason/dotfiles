@@ -1,4 +1,4 @@
-local g, o, opt = vim.g, vim.o, vim.opt
+local g, o = vim.g, vim.o
 
 -- Enables the experimental Lua module loader
 vim.loader.enable()
@@ -22,7 +22,7 @@ o.spelllang = "en"
 o.spelloptions = "camel"
 o.swapfile = false
 o.updatetime = 250
-opt.diffopt:append({ "vertical", "algorithm:histogram", "indent-heuristic", "linematch:60" })
+o.diffopt = "internal,filler,closeoff,vertical,indent-heuristic,linematch:60,algorithm:histogram"
 
 -- Appearance
 o.background = "light"
@@ -48,8 +48,8 @@ o.nrformats = "alpha,hex,bin,unsigned"
 
 -- Extra UI options
 o.list = true
-opt.listchars = { tab = "| ", trail = "·", nbsp = "␣", extends = "…", precedes = "…" }
-opt.fillchars = { eob = " ", fold = " " }
+o.listchars = "tab:| ,trail:·,nbsp:␣,extends:…,precedes:…"
+o.fillchars = "eob: ,fold: "
 o.wildmode = "longest:full,full"
 
 -- Folds
