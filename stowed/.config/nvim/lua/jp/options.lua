@@ -43,7 +43,7 @@ o.wrapscan = false
 o.inccommand = "split"
 o.tabstop = 2
 o.shiftwidth = 0
-o.completeopt = "menu,menuone,noinsert,fuzzy,popup"
+o.completeopt = "menuone,noinsert,fuzzy"
 o.nrformats = "alpha,hex,bin,unsigned"
 
 -- Extra UI options

@@ -94,6 +94,26 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
+  require("mini.completion").setup({
+    set_vim_settings = false,
+  })
+  vim.api.nvim_create_autocmd({ "FileType", "OptionSet" }, {
+    callback = function(args)
+      local omnifunc = vim.bo[args.buf].omnifunc
+      if not vim.list_contains({ "", "v:lua.vim.lsp.omnifunc" }, omnifunc) then
+        vim.b[args.buf].minicompletion_config = {
+          fallback_action = "<C-x><C-o>",
+        }
+      else
+        vim.b[args.buf].minicompletion_config = nil
+      end
+    end,
+    group = "JPConfig",
+    desc = "Omnifunc fallback completion",
+  })
+end)
+
+MiniDeps.later(function()
   require("mini.diff").setup({
     mappings = {
       apply = "<Leader>hs",
@@ -309,6 +329,7 @@ MiniDeps.later(function()
 end)
 
 MiniDeps.later(function()
+  MiniDeps.add("rafamadriz/friendly-snippets")
   local gen_loader = require("mini.snippets").gen_loader
   require("mini.snippets").setup({
     snippets = {

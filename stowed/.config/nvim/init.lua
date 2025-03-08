@@ -31,7 +31,6 @@ require("plugins.mini")
 require("plugins.misc")
 
 require("plugins.dap")
-require("plugins.cmp")
 require("plugins.lsp")
 require("plugins.misc_dev")
 require("plugins.treesitter")
