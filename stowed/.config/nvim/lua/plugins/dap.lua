@@ -26,7 +26,7 @@ MiniDeps.later(function()
   }
 
   ---@type dap.RequestListener<any, any>
-  local start_fn = function(session, err, body, request, seq) dap.repl.open(winopts) end
+  local start_fn = function(_, _, _, _, _) dap.repl.open(winopts) end
   dap.listeners.before.attach["user"] = start_fn
   dap.listeners.before.launch["user"] = start_fn
 
@@ -73,13 +73,6 @@ MiniDeps.later(function()
     { desc = "Scopes" }
   )
 
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "dap-repl",
-    callback = function(_args) require("dap.ext.autocompl").attach() end,
-    group = "JPConfig",
-    desc = "DAP REPL",
-  })
-
   -- JavaScript & TypeScript
   dap.adapters.firefox = {
     type = "executable",
@@ -120,22 +113,19 @@ MiniDeps.later(function()
       stopOnEntry = false,
       args = {},
       initCommands = function()
-        local rustc_sysroot = vim.fn.trim(vim.fn.system("rustc --print sysroot"))
-        local script_import = 'command script import "'
-          .. rustc_sysroot
-          .. '/lib/rustlib/etc/lldb_lookup.py"'
+        local sysroot_system_obj = vim.system({ "rustc", "--print", "sysroot" }):wait()
+        assert(
+          sysroot_system_obj.stdout ~= nil,
+          "failed to get rust sysroot using `rustc --print sysroot`: " .. sysroot_system_obj.stderr
+        )
+        local rustc_sysroot = vim.trim(sysroot_system_obj.stdout)
+        local script_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_lookup.py"
         local commands_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_commands"
 
-        local commands = { script_import }
-        local file = io.open(commands_file, "r")
-        if file then
-          for line in file:lines() do
-            table.insert(commands, line)
-          end
-          file:close()
-        end
-
-        return commands
+        return {
+          ([[!command script import '%s']]):format(script_file),
+          ([[command source '%s']]):format(commands_file),
+        }
       end,
     },
   }

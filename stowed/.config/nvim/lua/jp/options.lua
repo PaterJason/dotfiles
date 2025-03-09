@@ -13,6 +13,8 @@ g.loaded_node_provider = 0
 g.mapleader = " "
 g.maplocalleader = [[\]]
 
+g.query_lint_on = { "BufEnter", "InsertLeave", "TextChanged" }
+
 -- General
 o.clipboard = "unnamedplus"
 o.confirm = true
@@ -74,6 +76,7 @@ vim.diagnostic.config({
     header = "",
     source = true,
     title = "Diagnostics",
+    title_pos = "left",
   },
   jump = {
     float = true,

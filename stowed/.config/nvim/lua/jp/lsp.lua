@@ -273,7 +273,13 @@ local function attach(args)
     vim.keymap.set(
       "n",
       "K",
-      function() vim.lsp.buf.hover({ border = "single", title = ("Hover: %s"):format(client.name) }) end,
+      function()
+        vim.lsp.buf.hover({
+          border = "single",
+          title = ("Hover: %s"):format(client.name),
+          title_pos = "left",
+        })
+      end,
       { buffer = bufnr, desc = "Hover" }
     )
   end
@@ -281,13 +287,25 @@ local function attach(args)
     vim.keymap.set(
       "i",
       "<C-S>",
-      function() vim.lsp.buf.signature_help({ border = "single", title = "Signature help" }) end,
+      function()
+        vim.lsp.buf.signature_help({
+          border = "single",
+          title = "Signature help",
+          title_pos = "left",
+        })
+      end,
       { desc = "Signature help" }
     )
     vim.keymap.set(
       "n",
       "grs",
-      function() vim.lsp.buf.signature_help({ border = "single", title = "Signature help" }) end,
+      function()
+        vim.lsp.buf.signature_help({
+          border = "single",
+          title = "Signature help",
+          title_pos = "left",
+        })
+      end,
       { desc = "Signature help" }
     )
   end

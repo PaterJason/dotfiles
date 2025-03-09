@@ -10,5 +10,4 @@ end, {
   desc = "QUERY HELP",
   nargs = 1,
 })
-
 vim.bo.keywordprg = ":QueryKeywordPrg"

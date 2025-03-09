@@ -39,22 +39,3 @@ MiniDeps.now(function()
     end
   end
 end)
-
-MiniDeps.later(function()
-  MiniDeps.add({
-    source = "williamboman/mason.nvim",
-    hooks = { post_checkout = function() vim.cmd("MasonUpdate") end },
-  })
-
-  require("mason").setup({
-    ui = {
-      border = "single",
-      icons = {
-        package_installed = "✓",
-        package_pending = "➜",
-        package_uninstalled = "✗",
-      },
-    },
-  })
-  vim.keymap.set("n", "<Leader>m", "<Cmd>Mason<CR>", { desc = "Mason" })
-end)

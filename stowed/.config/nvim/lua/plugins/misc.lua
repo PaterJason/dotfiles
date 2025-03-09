@@ -13,10 +13,8 @@ MiniDeps.now(function()
     end,
     -- default_integrations = false,
     integrations = {
-      blink_cmp = true,
       dap = true,
       markdown = true,
-      mason = true,
       mini = {
         enabled = true,
         indentscope_color = "overlay0",
