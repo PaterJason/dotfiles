@@ -146,65 +146,6 @@ local function attach(args)
   if not client then return end
   local bufnr = args.buf
   local function supports_method(method) return client:supports_method(method, bufnr) end
-
-  -- if supports_method(methods.textDocument_completion) then
-  --   vim.lsp.completion.enable(true, client.id, bufnr, {
-  --     autotrigger = true,
-  --   })
-  --   vim.keymap.set("i", "<C-Space>", vim.lsp.completion.trigger, { buffer = bufnr })
-  -- end
-
-  -- Autocommands
-  -- vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
-  -- if supports_method(methods.completionItem_resolve) then
-  --   vim.api.nvim_create_autocmd("CompleteChanged", {
-  --     group = attach_augroup,
-  --     buffer = bufnr,
-  --     callback = function(_args)
-  --       local lsp_data = vim.tbl_get(vim.v.event, "completed_item", "user_data", "nvim", "lsp")
-  --       if not lsp_data or lsp_data.client_id ~= client.id then return end
-  --       ---@type lsp.CompletionItem
-  --       local completion_item = lsp_data.completion_item
-  --
-  --       for request_id, request in pairs(client.requests) do
-  --         if request.method == methods.completionItem_resolve and request.type == "pending" then
-  --           client:cancel_request(request_id)
-  --         end
-  --       end
-  --
-  --       local selected_idx = vim.fn.complete_info({ "selected" })["selected"]
-  --       ---@param doc (string|lsp.MarkupContent)?
-  --       local function info_win(doc)
-  --         local info = (type(doc) == "string" and doc) or (type(doc) == "table" and doc.value)
-  --         if not info then return end
-  --
-  --         local winData = vim.api.nvim__complete_set(selected_idx, { info = info })
-  --         if not winData.winid or not vim.api.nvim_win_is_valid(winData.winid) then return end
-  --         vim.api.nvim_win_set_config(winData.winid, { border = "single" })
-  --         if type(doc) == "table" and doc.kind == "markdown" then
-  --           vim.treesitter.start(winData.bufnr, "markdown")
-  --           vim.wo[winData.winid].conceallevel = 3
-  --         end
-  --       end
-  --
-  --       if completion_item.documentation then
-  --         info_win(completion_item.documentation)
-  --       else
-  --         client:request(
-  --           methods.completionItem_resolve,
-  --           completion_item,
-  --           function(err, result, _context)
-  --             if err then return end
-  --             ---@cast result lsp.CompletionItem
-  --             local doc = result.documentation
-  --             info_win(doc)
-  --           end,
-  --           bufnr
-  --         )
-  --       end
-  --     end,
-  --   })
-  -- end
   if supports_method(methods.textDocument_documentHighlight) then
     vim.api.nvim_create_autocmd("CursorHold", {
       callback = function(_args)
