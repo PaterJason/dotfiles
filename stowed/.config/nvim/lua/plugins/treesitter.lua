@@ -3,10 +3,6 @@ MiniDeps.later(function()
     source = "nvim-treesitter/nvim-treesitter",
     depends = {
       "nvim-treesitter/nvim-treesitter-context",
-      {
-        source = "PaterJason/nvim-treesitter-sexp",
-        checkout = "HEAD",
-      },
     },
     hooks = { post_checkout = function() vim.cmd("TSUpdate") end },
   })
