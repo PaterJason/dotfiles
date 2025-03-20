@@ -211,44 +211,7 @@ local function attach(args)
 
   -- Keymaps
   if supports_method(methods.textDocument_hover) then
-    vim.keymap.set(
-      "n",
-      "K",
-      function()
-        vim.lsp.buf.hover({
-          border = "single",
-          title = ("Hover: %s"):format(client.name),
-          title_pos = "left",
-        })
-      end,
-      { buffer = bufnr, desc = "Hover" }
-    )
-  end
-  if supports_method(methods.textDocument_signatureHelp) then
-    vim.keymap.set(
-      "i",
-      "<C-S>",
-      function()
-        vim.lsp.buf.signature_help({
-          border = "single",
-          title = "Signature help",
-          title_pos = "left",
-        })
-      end,
-      { desc = "Signature help" }
-    )
-    vim.keymap.set(
-      "n",
-      "grs",
-      function()
-        vim.lsp.buf.signature_help({
-          border = "single",
-          title = "Signature help",
-          title_pos = "left",
-        })
-      end,
-      { desc = "Signature help" }
-    )
+    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, desc = "Hover" })
   end
   if supports_method(methods.textDocument_codeLens) then
     vim.keymap.set("n", "grl", vim.lsp.codelens.run, { buffer = bufnr, desc = "Run code lens" })

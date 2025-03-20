@@ -36,6 +36,7 @@ o.relativenumber = true
 o.shortmess = "aoOTICF"
 o.splitbelow = true
 o.splitright = true
+o.winborder = "single"
 
 -- Editing
 o.ignorecase = true

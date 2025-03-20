@@ -17,8 +17,7 @@ MiniDeps.now(function()
       ---@type vim.lsp.Config
       local lsp_config = vim.deepcopy(default_config, true)
       if type(default_config.root_dir) == "function" then
-        lsp_config.root_dir = function(cb)
-          local bufnr = vim.api.nvim_get_current_buf()
+        lsp_config.root_dir = function(bufnr, cb)
           local bufname = vim.api.nvim_buf_get_name(bufnr)
           local async = require("lspconfig.async")
           async.run(function()
