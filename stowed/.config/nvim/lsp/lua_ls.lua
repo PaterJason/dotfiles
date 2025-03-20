@@ -30,7 +30,7 @@ return {
         "${3rd}/luv/library",
       }
 
-      for _, modname in pairs(DEPSPOST_MODNAMES) do
+      for _, modname in pairs(DEPS_MODNAMES) do
         local info = vim.loader.find(modname, {})[1]
         if info then
           local path = info.modpath

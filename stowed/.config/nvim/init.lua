@@ -37,5 +37,5 @@ require("plugins.treesitter")
 
 MiniDeps.later(function()
   -- Loaded modules after all plugins are loaded
-  DEPSPOST_MODNAMES = vim.tbl_keys(package.loaded)
+  DEPS_MODNAMES = vim.tbl_keys(package.loaded)
 end)
