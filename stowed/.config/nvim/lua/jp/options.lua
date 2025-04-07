@@ -86,8 +86,19 @@ vim.diagnostic.config({
   virtual_text = true,
 })
 vim.keymap.set("n", "gK", function()
-  local new_config = not vim.diagnostic.config().virtual_lines
-  vim.diagnostic.config({ virtual_lines = new_config })
+  vim.diagnostic.config({
+    virtual_lines = { current_line = true },
+    virtual_text = false,
+  })
+  vim.api.nvim_create_autocmd({ "CursorMoved" }, {
+    callback = function()
+      vim.diagnostic.config({
+        virtual_lines = false,
+        virtual_text = true,
+      })
+    end,
+    once = true,
+  })
 end, { desc = "Toggle diagnostic virtual_lines" })
 vim.keymap.set(
   "n",

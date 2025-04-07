@@ -1,12 +1,3 @@
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.experimental = {
-  clojuredocs = true,
-  cursorInfo = true,
-  projectTree = true,
-  serverInfo = true,
-  testTree = true,
-}
-
 local cmds = {
   { "ab", "drag-param-backward", "Drag param backward" }, --`[file-uri,row,col]`
   { "af", "drag-param-forward", "Drag param forward" }, --`[file-uri,row,col]`
@@ -58,7 +49,6 @@ local cmds = {
 
 ---@type vim.lsp.Config
 return {
-  capabilities = capabilities,
   commands = {
     ["code-lens-references"] = function(_command, _ctx) vim.lsp.buf.references() end,
   },

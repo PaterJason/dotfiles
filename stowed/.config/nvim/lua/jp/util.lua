@@ -1,7 +1,7 @@
 local M = {}
 
 ---@param client vim.lsp.Client
----@param settings table
+---@param settings lsp.LSPObject
 function M.lsp_extend_settings(client, settings)
   for key, value in pairs(settings) do
     ---@diagnostic disable-next-line: param-type-mismatch

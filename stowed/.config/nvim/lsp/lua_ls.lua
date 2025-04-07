@@ -15,6 +15,10 @@ return {
       },
       completion = {
         callSnippet = "Replace",
+        showWord = "Disable",
+      },
+      diagnostics = {
+        libraryFiles = "Disable",
       },
       hint = {
         enable = true,
