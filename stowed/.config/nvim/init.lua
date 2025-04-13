@@ -30,9 +30,8 @@ require("plugins.tpope")
 require("plugins.mini")
 require("plugins.misc")
 
+require("plugins.dev")
 require("plugins.dap")
-require("plugins.lsp")
-require("plugins.misc_dev")
 require("plugins.treesitter")
 
 MiniDeps.later(function()

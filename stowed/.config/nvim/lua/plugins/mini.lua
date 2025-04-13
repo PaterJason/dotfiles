@@ -96,20 +96,15 @@ end)
 MiniDeps.later(function()
   require("mini.completion").setup({
     set_vim_settings = false,
-  })
-  vim.api.nvim_create_autocmd({ "FileType", "OptionSet" }, {
-    callback = function(args)
-      local omnifunc = vim.bo[args.buf].omnifunc
-      if not vim.list_contains({ "", "v:lua.vim.lsp.omnifunc" }, omnifunc) then
-        vim.b[args.buf].minicompletion_config = {
-          fallback_action = "<C-x><C-o>",
-        }
+    fallback_action = function()
+      if not vim.list_contains({ "", "v:lua.vim.lsp.omnifunc" }, vim.bo.omnifunc) then
+        local keys = vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true)
+        vim.api.nvim_feedkeys(keys, "i", false)
       else
-        vim.b[args.buf].minicompletion_config = nil
+        local keys = vim.api.nvim_replace_termcodes("<C-n>", true, false, true)
+        vim.api.nvim_feedkeys(keys, "i", false)
       end
     end,
-    group = "JPConfig",
-    desc = "Omnifunc fallback completion",
   })
 end)
 

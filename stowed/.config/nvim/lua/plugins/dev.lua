@@ -1,3 +1,12 @@
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "neovim/nvim-lspconfig",
+    depends = {
+      "b0o/SchemaStore.nvim",
+    },
+  })
+end)
+
 MiniDeps.later(function()
   MiniDeps.add("mfussenegger/nvim-lint")
 
@@ -5,6 +14,7 @@ MiniDeps.later(function()
 
   lint.linters_by_ft = {
     fish = { "fish" },
+    go = { "golangcilint" },
   }
 
   local augroup = vim.api.nvim_create_augroup("nvim_lint", {})
