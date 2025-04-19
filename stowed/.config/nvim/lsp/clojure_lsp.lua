@@ -47,57 +47,62 @@ local cmds = {
   { "gt", "go-to-test", "Go to test" }, --`[file-uri,row,col]`
 }
 
+---@param client vim.lsp.Client
+---@param bufnr integer
+local function on_attach(client, bufnr)
+  vim.api.nvim_buf_create_user_command(bufnr, "CljLsp", function(info)
+    if #info.fargs == 0 then
+      vim.ui.select(cmds, {
+        format_item = function(item) return item[3] end,
+      }, function(item, _idx)
+        if item ~= nil then vim.cmd({ cmd = "CljLsp", args = { item[2] } }) end
+      end)
+    end
+    local command = info.args
+    local position_params = vim.lsp.util.make_position_params(0, "utf-8")
+    client:exec_cmd({
+      title = "CljLsp",
+      command = command,
+      arguments = {
+        position_params.textDocument.uri,
+        position_params.position.line,
+        position_params.position.character,
+        nil,
+      },
+    }, {}, function(_err, _result, _context) end)
+  end, {
+    desc = "Run clojure-lsp command",
+    nargs = "?",
+    complete = function(arg_lead, _cmd_line, _cursor_pos)
+      return vim.tbl_filter(
+        function(s) return s:sub(1, #arg_lead) == arg_lead end,
+        vim.iter(cmds):map(function(t) return t[2] end):totable()
+      )
+    end,
+  })
+
+  for _, value in ipairs(cmds) do
+    vim.keymap.set("n", "<LocalLeader>" .. value[1], function()
+      vim.go.operatorfunc = ("{-> execute('CljLsp %s')}"):format(value[2])
+      return "g@l"
+    end, {
+      expr = true,
+      buffer = bufnr,
+      desc = value[3],
+    })
+  end
+end
+
 ---@type vim.lsp.Config
 return {
   commands = {
     ["code-lens-references"] = function(_command, _ctx) vim.lsp.buf.references() end,
+    ["go-to-test"] = function(command, ctx) vim.notify(vim.inspect({ "go-to-test", command, ctx })) end,
   },
   ---@type table<string, lsp.Handler>
   handlers = {
     ["clojure/serverInfo/raw"] = function(_err, result, _ctx) vim.print(result) end,
     ["clojure/cursorInfo/raw"] = function(_err, result, _ctx) vim.print(result) end,
   },
-  on_attach = function(client, bufnr)
-    vim.api.nvim_buf_create_user_command(bufnr, "CljLsp", function(info)
-      if #info.fargs == 0 then
-        vim.ui.select(cmds, {
-          format_item = function(item) return item[3] end,
-        }, function(item, _idx)
-          if item ~= nil then vim.cmd({ cmd = "CljLsp", args = { item[2] } }) end
-        end)
-      end
-      local command = info.args
-      local position_params = vim.lsp.util.make_position_params(0, "utf-8")
-      client:exec_cmd({
-        title = "CljLsp",
-        command = command,
-        arguments = {
-          position_params.textDocument.uri,
-          position_params.position.line,
-          position_params.position.character,
-          nil,
-        },
-      }, {}, function(_err, _result, _context) end)
-    end, {
-      desc = "Run clojure-lsp command",
-      nargs = "?",
-      complete = function(arg_lead, _cmd_line, _cursor_pos)
-        return vim.tbl_filter(
-          function(s) return s:sub(1, #arg_lead) == arg_lead end,
-          vim.iter(cmds):map(function(t) return t[2] end):totable()
-        )
-      end,
-    })
-
-    for _, value in ipairs(cmds) do
-      vim.keymap.set("n", "<LocalLeader>" .. value[1], function()
-        vim.go.operatorfunc = ("{-> execute('CljLsp %s')}"):format(value[2])
-        return "g@l"
-      end, {
-        expr = true,
-        buffer = bufnr,
-        desc = value[3],
-      })
-    end
-  end,
+  on_attach = on_attach,
 }

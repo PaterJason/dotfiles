@@ -1,11 +1,13 @@
-MiniDeps.now(function()
-  MiniDeps.add({
-    source = "neovim/nvim-lspconfig",
-    depends = {
-      "b0o/SchemaStore.nvim",
-    },
-  })
-end)
+MiniDeps.now(
+  function()
+    MiniDeps.add({
+      source = "neovim/nvim-lspconfig",
+      depends = {
+        "b0o/SchemaStore.nvim",
+      },
+    })
+  end
+)
 
 MiniDeps.later(function()
   MiniDeps.add("mfussenegger/nvim-lint")
@@ -13,6 +15,8 @@ MiniDeps.later(function()
   local lint = require("lint")
 
   lint.linters_by_ft = {
+    -- bash = { "bash" },
+    -- sh = { "bash" },
     fish = { "fish" },
     go = { "golangcilint" },
   }
@@ -32,6 +36,23 @@ MiniDeps.later(function()
       -- clojure = { "zprint" },
       fish = { "fish_indent" },
       lua = { "stylua" },
+
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
+      vue = { "prettier" },
+      css = { "prettier" },
+      scss = { "prettier" },
+      less = { "prettier" },
+      html = { "prettier" },
+      json = { "prettier" },
+      jsonc = { "prettier" },
+      yaml = { "prettier" },
+      markdown = { "prettier" },
+      ["markdown.mdx"] = { "prettier" },
+      graphql = { "prettier" },
+      handlebars = { "prettier" },
     },
   })
   vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
@@ -116,5 +137,13 @@ MiniDeps.later(function()
       vim.keymap.set("n", "<LocalLeader>np", action.eval_input, { desc = "Eval input", buffer = 0 })
       vim.keymap.set("n", "<LocalLeader>ni", action.interrupt, { desc = "Interrupt", buffer = 0 })
     end,
+  })
+end)
+
+MiniDeps.later(function()
+  MiniDeps.add("David-Kunz/gen.nvim")
+
+  require("gen").setup({
+    model = "gemma3:4b",
   })
 end)

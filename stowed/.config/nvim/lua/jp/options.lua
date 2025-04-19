@@ -40,12 +40,12 @@ o.winborder = "single"
 
 -- Editing
 o.ignorecase = true
-o.infercase = true
 o.smartcase = true
 o.wrapscan = false
 o.inccommand = "split"
 o.tabstop = 2
 o.shiftwidth = 0
+o.infercase = true
 o.completeopt = "menuone,noinsert,fuzzy"
 o.nrformats = "alpha,hex,bin,unsigned"
 

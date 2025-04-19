@@ -5,8 +5,8 @@ return {
       validate = { enable = true },
     },
   },
-  on_init = function(client, _initialize_result)
-    require("jp.util").lsp_extend_settings(client, {
+  before_init = function(_params, config)
+    require("jp.util").lsp_extend_config(config, {
       json = { schemas = require("schemastore").json.schemas() },
     })
   end,

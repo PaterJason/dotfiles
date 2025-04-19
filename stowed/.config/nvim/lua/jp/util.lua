@@ -1,16 +1,16 @@
 local M = {}
 
----@param client vim.lsp.Client
+---@param config vim.lsp.ClientConfig
 ---@param settings lsp.LSPObject
-function M.lsp_extend_settings(client, settings)
+function M.lsp_extend_config(config, settings)
   for key, value in pairs(settings) do
-    ---@diagnostic disable-next-line: param-type-mismatch
-    client.config.settings[key] = vim.tbl_deep_extend("force", client.config.settings[key], value)
+    local setting = config.settings[key]
+    if type(setting) == "table" then
+      config.settings[key] = vim.tbl_deep_extend("force", setting, value)
+    else
+      config.settings[key] = value
+    end
   end
-  client:notify(
-    vim.lsp.protocol.Methods.workspace_didChangeConfiguration,
-    { settings = client.config.settings }
-  )
 end
 
 return M

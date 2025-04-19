@@ -2,17 +2,6 @@
 return {
   settings = {
     Lua = {
-      runtime = {
-        version = "LuaJIT",
-        path = { "lua/?.lua", "lua/?/init.lua" },
-        pathStrict = true,
-      },
-      workspace = {
-        library = {
-          vim.env.VIMRUNTIME,
-          "${3rd}/luv/library",
-        },
-      },
       completion = {
         callSnippet = "Replace",
         showWord = "Disable",
@@ -25,43 +14,61 @@ return {
         setType = true,
       },
       format = { enable = false },
+      codeLens = {
+        enable = true,
+      },
     },
   },
-  on_init = function(client, _initialize_result)
-    if client.root_dir and vim.uv.fs_stat(vim.fs.joinpath(client.root_dir, "init.lua")) then
+  before_init = function(params, config)
+    local root_path = params.rootPath
+    if root_path == nil then return end
+    if
+      not vim.tbl_isempty(vim.fs.find("nvim", {
+        upward = true,
+        path = root_path,
+        type = "directory",
+      }))
+    then
       local library = {
         vim.fs.joinpath(vim.env.VIMRUNTIME, "lua"),
         "${3rd}/luv/library",
       }
-
-      for _, modname in pairs(DEPS_MODNAMES) do
-        local info = vim.loader.find(modname, {})[1]
-        if info then
-          local path = info.modpath
-          if vim.startswith(path, MiniDeps.config.path.package) then
-            library[#library + 1] = info.modpath
-          end
-        end
-      end
-
-      require("jp.util").lsp_extend_settings(client, {
+      local settings = {
         Lua = {
+          runtime = {
+            version = "LuaJIT",
+            path = { "lua/?.lua", "lua/?/init.lua" },
+            pathStrict = true,
+          },
           workspace = {
             library = library,
-            ignoreDir = {
-              "test/",
-              "tests/",
-
-              "/catppuccin/*/",
-              "catppuccin*.lua",
-              "/conform/formatters/",
-              "/lint/linters/",
-              "/lspconfig/configs/",
-              "/schemastore/catalog.lua",
-            },
           },
         },
-      })
+      }
+
+      if vim.uv.fs_stat(vim.fs.joinpath(root_path, "init.lua")) then
+        for _, modname in pairs(vim.g.packages_loaded_at_startup) do
+          local info = vim.loader.find(modname, {})[1]
+          if info then
+            local path = info.modpath
+            if vim.startswith(path, MiniDeps.config.path.package) then
+              library[#library + 1] = info.modpath
+            end
+          end
+        end
+        settings.Lua.workspace.ignoreDir = {
+          "test/",
+          "tests/",
+
+          "/catppuccin/*/",
+          "catppuccin*.lua",
+          "/conform/formatters/",
+          "/lint/linters/",
+          "/lspconfig/",
+          "/schemastore/catalog.lua",
+        }
+      end
+      require("jp.util").lsp_extend_config(config, settings)
     end
   end,
 }
