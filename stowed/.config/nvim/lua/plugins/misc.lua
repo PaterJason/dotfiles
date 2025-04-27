@@ -51,6 +51,9 @@ MiniDeps.now(function()
   MiniDeps.add("stevearc/oil.nvim")
 
   require("oil").setup({
+    view_options = {
+      show_hidden = true,
+    },
     float = { border = "single" },
     confirmation = { border = "single" },
     progress = { border = "single" },

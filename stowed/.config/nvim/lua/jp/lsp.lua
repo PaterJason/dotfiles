@@ -1,56 +1,54 @@
-local methods = vim.lsp.protocol.Methods
-
 local augroup = vim.api.nvim_create_augroup("JPConfigLsp", {})
 local attach_augroup = vim.api.nvim_create_augroup("JPConfigLspAttach", {})
 local documentColor_ns = vim.api.nvim_create_namespace("lsp.documentColor")
 
 local function select()
-  ---@type {text: string, on_choice: fun(), method: string}[]
+  ---@type {text: string, on_choice: fun(), method: vim.lsp.protocol.Method}[]
   local items = {
     {
       text = "Add workspace folder",
       on_choice = vim.lsp.buf.add_workspace_folder,
-      method = methods.workspace_workspaceFolders,
+      method = "workspace/workspaceFolders",
     },
     {
       text = "Code action",
       on_choice = vim.lsp.buf.code_action,
-      method = methods.textDocument_codeAction,
+      method = "textDocument/codeAction",
     },
     {
       text = "Declaration",
       on_choice = vim.lsp.buf.declaration,
-      method = methods.textDocument_declaration,
+      method = "textDocument/declaration",
     },
     {
       text = "Definition",
       on_choice = vim.lsp.buf.definition,
-      method = methods.textDocument_definition,
+      method = "textDocument/definition",
     },
     {
       text = "Document symbol",
       on_choice = vim.lsp.buf.document_symbol,
-      method = methods.textDocument_documentSymbol,
+      method = "textDocument/documentSymbol",
     },
     {
       text = "Format",
       on_choice = vim.lsp.buf.format,
-      method = methods.textDocument_formatting,
+      method = "textDocument/formatting",
     },
     {
       text = "Hover",
       on_choice = vim.lsp.buf.hover,
-      method = methods.textDocument_hover,
+      method = "textDocument/hover",
     },
     {
       text = "Implementation",
       on_choice = vim.lsp.buf.implementation,
-      method = methods.textDocument_implementation,
+      method = "textDocument/implementation",
     },
     {
       text = "Incoming calls",
       on_choice = vim.lsp.buf.incoming_calls,
-      method = methods.callHierarchy_incomingCalls,
+      method = "callHierarchy/incomingCalls",
     },
     {
       text = "List workspace folders",
@@ -62,57 +60,57 @@ local function select()
         }
         vim.api.nvim_echo(msg, true, {})
       end,
-      method = methods.workspace_workspaceFolders,
+      method = "workspace/workspaceFolders",
     },
     {
       text = "Outgoing calls",
       on_choice = vim.lsp.buf.outgoing_calls,
-      method = methods.callHierarchy_outgoingCalls,
+      method = "callHierarchy/outgoingCalls",
     },
     {
       text = "References",
       on_choice = vim.lsp.buf.references,
-      method = methods.textDocument_references,
+      method = "textDocument/references",
     },
     {
       text = "Remove workspace folder",
       on_choice = vim.lsp.buf.remove_workspace_folder,
-      method = methods.workspace_workspaceFolders,
+      method = "workspace/workspaceFolders",
     },
     {
       text = "Rename",
       on_choice = vim.lsp.buf.rename,
-      method = methods.textDocument_rename,
+      method = "textDocument/rename",
     },
     {
       text = "Signature help",
       on_choice = vim.lsp.buf.signature_help,
-      method = methods.textDocument_signatureHelp,
+      method = "textDocument/signatureHelp",
     },
     {
       text = "Type definition",
       on_choice = vim.lsp.buf.type_definition,
-      method = methods.textDocument_typeDefinition,
+      method = "textDocument/typeDefinition",
     },
     {
       text = "Type hierarchy",
       on_choice = vim.lsp.buf.typehierarchy,
-      method = methods.textDocument_prepareTypeHierarchy,
+      method = "textDocument/prepareTypeHierarchy",
     },
     {
       text = "Workspace symbol",
       on_choice = vim.lsp.buf.workspace_symbol,
-      method = methods.workspace_symbol,
+      method = "workspace/symbol",
     },
     {
       text = "Run code lens",
       on_choice = function() vim.lsp.codelens.run() end,
-      method = methods.textDocument_codeLens,
+      method = "textDocument/codeLens",
     },
     {
       text = "Toggle inlay hints",
       on_choice = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({})) end,
-      method = methods.textDocument_inlayHint,
+      method = "textDocument/inlayHint",
     },
   }
 
@@ -140,13 +138,16 @@ vim.keymap.set("n", "<Leader>ti", function()
   vim.notify("Inlay hints " .. (is_enabled and "disabled" or "enabled"))
 end, { desc = "Toggle inlay hints" })
 
----@type fun(args: vim.api.keyset.create_autocmd.callback_args):boolean?
+---@param args vim.api.keyset.create_autocmd.callback_args
+---@return boolean?
 local function attach(args)
   local client = vim.lsp.get_client_by_id(args.data.client_id)
   if not client then return end
   local bufnr = args.buf
+  ---@param method vim.lsp.protocol.Method
+  ---@return boolean
   local function supports_method(method) return client:supports_method(method, bufnr) end
-  if supports_method(methods.textDocument_documentHighlight) then
+  if supports_method("textDocument/documentHighlight") then
     vim.api.nvim_create_autocmd("CursorHold", {
       callback = function(_args)
         vim.lsp.buf.clear_references()
@@ -161,7 +162,7 @@ local function attach(args)
       buffer = bufnr,
     })
   end
-  if supports_method(methods.textDocument_codeLens) then
+  if supports_method("textDocument/codeLens") then
     vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "InsertLeave" }, {
       callback = function(_args) vim.lsp.codelens.refresh({ bufnr = bufnr }) end,
       group = attach_augroup,
@@ -169,10 +170,10 @@ local function attach(args)
     })
     vim.lsp.codelens.refresh({ bufnr = bufnr })
   end
-  if supports_method(methods.textDocument_documentColor) then
+  if supports_method("textDocument/documentColor") then
     local function update()
       client:request(
-        methods.textDocument_documentColor,
+        "textDocument/documentColor",
         { textDocument = vim.lsp.util.make_text_document_params(bufnr) },
         function(err, result, _context)
           vim.api.nvim_buf_clear_namespace(bufnr, documentColor_ns, 0, -1)
@@ -210,10 +211,10 @@ local function attach(args)
   end
 
   -- Keymaps
-  if supports_method(methods.textDocument_hover) then
+  if supports_method("textDocument/hover") then
     vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, desc = "Hover" })
   end
-  if supports_method(methods.textDocument_codeLens) then
+  if supports_method("textDocument/codeLens") then
     vim.keymap.set("n", "grl", vim.lsp.codelens.run, { buffer = bufnr, desc = "Run code lens" })
   end
   vim.keymap.set("n", "<Leader>l", select, { buffer = bufnr, desc = "Select LSP call" })

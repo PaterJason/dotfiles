@@ -22,10 +22,10 @@ MiniDeps.later(function()
   }
 
   local augroup = vim.api.nvim_create_augroup("nvim_lint", {})
-  vim.api.nvim_create_autocmd(
-    { "BufWritePost", "BufReadPost" },
-    { group = augroup, callback = function(_args) lint.try_lint() end }
-  )
+  vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost" }, {
+    group = augroup,
+    callback = function(_args) lint.try_lint() end,
+  })
 end)
 
 MiniDeps.later(function()
