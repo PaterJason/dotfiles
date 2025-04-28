@@ -238,8 +238,3 @@ vim.api.nvim_create_autocmd("LspDetach", {
     vim.api.nvim_buf_clear_namespace(bufnr, documentColor_ns, 0, -1)
   end,
 })
-
-for filename in vim.fs.dir(vim.fn.stdpath("config") .. "/lsp", {}) do
-  local name = filename:gsub("%.lua$", "")
-  vim.lsp.enable(name)
-end

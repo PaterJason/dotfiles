@@ -1,13 +1,29 @@
-MiniDeps.now(
-  function()
-    MiniDeps.add({
-      source = "neovim/nvim-lspconfig",
-      depends = {
-        "b0o/SchemaStore.nvim",
-      },
-    })
-  end
-)
+MiniDeps.now(function()
+  MiniDeps.add({
+    source = "neovim/nvim-lspconfig",
+    depends = {
+      "b0o/SchemaStore.nvim",
+    },
+  })
+  vim.lsp.enable({
+    "bashls",
+    "clojure_lsp",
+    "cssls",
+    "eslint",
+    "gdscript",
+    "gopls",
+    "html",
+    "jsonls",
+    "lemminx",
+    "lua_ls",
+    "marksman",
+    "rust_analyzer",
+    "taplo",
+    "texlab",
+    "ts_ls",
+    "yamlls",
+  })
+end)
 
 MiniDeps.later(function()
   MiniDeps.add("mfussenegger/nvim-lint")

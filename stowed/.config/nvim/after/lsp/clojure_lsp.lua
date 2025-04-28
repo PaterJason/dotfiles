@@ -67,7 +67,6 @@ local function on_attach(client, bufnr)
         position_params.textDocument.uri,
         position_params.position.line,
         position_params.position.character,
-        nil,
       },
     }, {}, function(_err, _result, _context) end)
   end, {
