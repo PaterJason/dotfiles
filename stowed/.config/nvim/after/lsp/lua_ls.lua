@@ -21,7 +21,7 @@ return {
   },
   before_init = function(params, config)
     local root_path = params.rootPath
-    if root_path == nil then return end
+    if type(root_path) ~= "string" then return end
     if
       not vim.tbl_isempty(vim.fs.find("nvim", {
         upward = true,
