@@ -1,34 +1,21 @@
 MiniDeps.later(function()
   MiniDeps.add({
     source = "mfussenegger/nvim-dap",
-    depends = { "theHamsta/nvim-dap-virtual-text" },
+    depends = { "igorlfs/nvim-dap-view" },
   })
 
   local dap = require("dap")
-  local widgets = require("dap.ui.widgets")
-  ---@diagnostic disable-next-line: missing-fields
-  require("nvim-dap-virtual-text").setup({
-    highlight_new_as_changed = true,
+  local dap_view = require("dap-view")
+  dap_view.setup({
+    winbar = {
+      show = true,
+      -- You can add a "console" section to merge the terminal with the other views
+      sections = { "watches", "scopes", "exceptions", "breakpoints", "threads", "repl", "console" },
+    },
   })
-  if os.getenv("TMUX") then
-    dap.defaults.fallback.external_terminal = {
-      command = "/usr/bin/tmux",
-      args = { "new-window", "-a", "-d" },
-    }
-    dap.defaults.fallback.force_external_terminal = true
-  else
-    dap.defaults.fallback.terminal_win_cmd = "tabnew"
-  end
 
-  local winopts = {
-    height = 12,
-    winfixheight = true,
-  }
-
-  ---@type dap.RequestListener<any, any>
-  local start_fn = function(_, _, _, _, _) dap.repl.open(winopts) end
-  dap.listeners.before.attach["user"] = start_fn
-  dap.listeners.before.launch["user"] = start_fn
+  dap.listeners.before.attach["user"] = function() dap_view.open() end
+  dap.listeners.before.launch["user"] = function() dap_view.open() end
 
   vim.keymap.set("n", "<F5>", function() dap.continue() end, { desc = "Continue" })
   vim.keymap.set("n", "<F10>", function() dap.step_over() end, { desc = "Step over" })
@@ -46,32 +33,8 @@ MiniDeps.later(function()
     function() dap.set_breakpoint(nil, nil, vim.fn.input("Log point message: ")) end,
     { desc = "Set log point" }
   )
-  vim.keymap.set(
-    "n",
-    "<Leader>dq",
-    function() dap.list_breakpoints(true) end,
-    { desc = "List breakpoints" }
-  )
-  vim.keymap.set(
-    "n",
-    "<Leader>dr",
-    function() dap.repl.toggle(winopts) end,
-    { desc = "Toggle repl" }
-  )
-  vim.keymap.set({ "n", "v" }, "<Leader>dh", function() widgets.hover() end, { desc = "Hover" })
-  vim.keymap.set({ "n", "v" }, "<Leader>dp", function() widgets.preview() end, { desc = "Preview" })
-  vim.keymap.set(
-    "n",
-    "<Leader>df",
-    function() widgets.centered_float(widgets.frames) end,
-    { desc = "Frames" }
-  )
-  vim.keymap.set(
-    "n",
-    "<Leader>ds",
-    function() widgets.centered_float(widgets.scopes) end,
-    { desc = "Scopes" }
-  )
+  vim.keymap.set("n", "<Leader>dv", "<Cmd>DapViewToggle<CR>", { desc = "Toggle View" })
+  vim.keymap.set({ "n", "v" }, "<Leader>dw", ":DapViewWatch<CR>", { desc = "Watch" })
 
   -- JavaScript & TypeScript
   dap.adapters.firefox = {
@@ -113,12 +76,11 @@ MiniDeps.later(function()
       stopOnEntry = false,
       args = {},
       initCommands = function()
-        local sysroot_system_obj = vim.system({ "rustc", "--print", "sysroot" }):wait()
+        local rustc_sysroot = vim.fn.trim(vim.fn.system("rustc --print sysroot"))
         assert(
-          sysroot_system_obj.stdout ~= nil,
-          "failed to get rust sysroot using `rustc --print sysroot`: " .. sysroot_system_obj.stderr
+          vim.v.shell_error == 0,
+          "failed to get rust sysroot using `rustc --print sysroot`: " .. rustc_sysroot
         )
-        local rustc_sysroot = vim.trim(sysroot_system_obj.stdout)
         local script_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_lookup.py"
         local commands_file = rustc_sysroot .. "/lib/rustlib/etc/lldb_commands"
 

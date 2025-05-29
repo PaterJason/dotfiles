@@ -46,7 +46,10 @@ return {
         },
       }
 
-      if vim.uv.fs_stat(vim.fs.joinpath(root_path, "init.lua")) then
+      if
+        vim.g.packages_loaded_at_startup ~= nil
+        and vim.uv.fs_stat(vim.fs.joinpath(root_path, "init.lua"))
+      then
         for _, modname in pairs(vim.g.packages_loaded_at_startup) do
           local info = vim.loader.find(modname, {})[1]
           if info then

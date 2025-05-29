@@ -14,6 +14,7 @@ MiniDeps.now(function()
     "gopls",
     "html",
     "jsonls",
+    "kotlin_lsp",
     "lemminx",
     "lua_ls",
     "marksman",

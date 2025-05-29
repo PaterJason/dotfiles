@@ -132,6 +132,11 @@ local function select()
   end)
 end
 
+-- Keymaps
+vim.keymap.set("n", "<Leader>l", function() select() end, { desc = "Select LSP call" })
+vim.keymap.set("n", "grl", function() vim.lsp.codelens.run() end, {
+  desc = "vim.lsp.codelens.run()",
+})
 vim.keymap.set("n", "<Leader>ti", function()
   local is_enabled = vim.lsp.inlay_hint.is_enabled({})
   vim.lsp.inlay_hint.enable(not is_enabled)
@@ -210,14 +215,9 @@ local function attach(args)
     update()
   end
 
-  -- Keymaps
   if supports_method("textDocument/hover") then
     vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, { buffer = bufnr, desc = "Hover" })
   end
-  if supports_method("textDocument/codeLens") then
-    vim.keymap.set("n", "grl", vim.lsp.codelens.run, { buffer = bufnr, desc = "Run code lens" })
-  end
-  vim.keymap.set("n", "<Leader>l", select, { buffer = bufnr, desc = "Select LSP call" })
 end
 
 vim.api.nvim_create_autocmd("LspAttach", {
