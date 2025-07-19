@@ -1,6 +1,6 @@
 require("jp.options")
 require("jp.autocmds")
-require("jp.keymaps")
+require("jp.treesitter")
 require("jp.lsp")
 
 local path_package = vim.fn.stdpath("data") .. "/site"
@@ -35,7 +35,7 @@ require("plugins.dap")
 require("plugins.treesitter")
 
 MiniDeps.later(function()
-  -- Loaded modules after all plugins are loaded
+  ---Loaded modules after all plugins are loaded
   ---@type string[]
   vim.g.packages_loaded_at_startup = vim.tbl_keys(package.loaded)
 end)

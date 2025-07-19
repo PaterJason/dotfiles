@@ -1,39 +1,47 @@
 MiniDeps.later(function()
   MiniDeps.add({
     source = "nvim-treesitter/nvim-treesitter",
+    checkout = "main",
     depends = {
       "nvim-treesitter/nvim-treesitter-context",
     },
     hooks = { post_checkout = function() vim.cmd("TSUpdate") end },
   })
 
+  local ts = require("nvim-treesitter")
+
   local ensure_installed = { "regex", "luap", "luadoc", "printf", "comment" }
   for name, type in vim.fs.dir(vim.fs.joinpath(vim.env.VIMRUNTIME, "queries")) do
     if type == "directory" then ensure_installed[#ensure_installed + 1] = name end
   end
+  ts.install(ensure_installed, {})
 
-  ---@diagnostic disable-next-line: missing-fields
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = ensure_installed,
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = false,
-    },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = false,
-        node_incremental = "an",
-        scope_incremental = "aN",
-        node_decremental = "in",
-      },
-    },
-    indent = {
-      enable = true,
-    },
+  vim.api.nvim_create_autocmd("FileType", {
+    callback = function(args)
+      local lang = vim.treesitter.language.get_lang(args.match)
+
+      local available = ts.get_available()
+      if not vim.list_contains(available, lang) then return end
+
+      local installed = ts.get_installed()
+      if not vim.list_contains(installed, lang) then return end
+      vim.treesitter.start(args.buf, lang)
+      vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      vim.treesitter.start()
+    end,
+    group = "JPConfig",
   })
 
+  vim.api.nvim_create_user_command("TSInstallFt", function(args)
+    local filetype = vim.bo.filetype
+    local lang = vim.treesitter.language.get_lang(filetype)
+    if lang == nil then return end
+
+    ts.install({ lang }, { summary = true })
+  end, {})
+
+  require("treesitter-context").setup({})
   vim.keymap.set(
     "n",
     "gC",
