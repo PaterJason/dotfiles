@@ -13,18 +13,18 @@ local function select_node(node)
 
   vim.fn.setpos("'<", { 0, start_row + 1, start_col + 1, 0 })
   vim.fn.setpos("'>", { 0, end_row + 1, end_col, 0 })
-  vim.cmd.normal({ "gv", bang = true })
+  vim.cmd.normal({ 'gv', bang = true })
 end
 
---- @param direction "inner" | "outer"
+--- @param direction 'inner' | 'outer'
 local function selection_range(direction)
   if selection_nodes ~= nil then
-    local offset = direction == "outer" and -1 or 1
+    local offset = direction == 'outer' and -1 or 1
     local new_index = selection_nodes.index + offset
     if new_index <= #selection_nodes.nodes and new_index >= 1 then
       selection_nodes.index = new_index
     end
-    select_node(selection_nodes.nodes[selection_nodes.index])
+    select_node(selection_nodes.nodes[selection_nodes.index] --[[@cast -?]])
     return
   end
 
@@ -48,26 +48,27 @@ local function selection_range(direction)
     index = #nodes,
     nodes = nodes,
   }
-  select_node(nodes[#nodes])
+  select_node(nodes[#nodes] --[[@cast -?]])
 
   -- Clear selection ranges when leaving visual mode.
-  vim.api.nvim_create_autocmd("ModeChanged", {
-    once = true,
-    pattern = "v*:*",
+  vim.api.nvim_create_autocmd('ModeChanged', {
+    pattern = 'v*:*',
     callback = function() selection_nodes = nil end,
+    group = 'JPConfig',
+    once = true,
   })
 end
 
 vim.keymap.set(
-  "x",
-  "am",
-  function() selection_range("outer") end,
-  { desc = "vim.lsp.buf.selection_range('outer')" }
+  'x',
+  'am',
+  function() selection_range('outer') end,
+  { desc = 'Treesitter selection_range (outer)' }
 )
 
 vim.keymap.set(
-  "x",
-  "im",
-  function() selection_range("inner") end,
-  { desc = "vim.lsp.buf.selection_range('inner')" }
+  'x',
+  'im',
+  function() selection_range('inner') end,
+  { desc = 'Treesitter selection_range (inner)' }
 )

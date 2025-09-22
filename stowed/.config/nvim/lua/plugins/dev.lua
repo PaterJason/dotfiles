@@ -1,166 +1,21 @@
-MiniDeps.now(function()
-  MiniDeps.add({
-    source = "neovim/nvim-lspconfig",
-    depends = {
-      "b0o/SchemaStore.nvim",
-    },
-  })
-  vim.lsp.enable({
-    "bashls",
-    "clojure_lsp",
-    "cssls",
-    "eslint",
-    "gdscript",
-    "gopls",
-    "html",
-    "jsonls",
-    "kotlin_lsp",
-    "lemminx",
-    "lua_ls",
-    "marksman",
-    "rust_analyzer",
-    "taplo",
-    "texlab",
-    "ts_ls",
-    "yamlls",
-  })
-end)
-
-MiniDeps.later(function()
-  MiniDeps.add("mfussenegger/nvim-lint")
-
-  local lint = require("lint")
-
-  lint.linters_by_ft = {
-    -- bash = { "bash" },
-    -- sh = { "bash" },
-    fish = { "fish" },
-    go = { "golangcilint" },
-  }
-
-  local augroup = vim.api.nvim_create_augroup("nvim_lint", {})
-  vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost" }, {
-    group = augroup,
-    callback = function(_args) lint.try_lint() end,
-  })
-end)
-
-MiniDeps.later(function()
-  MiniDeps.add("stevearc/conform.nvim")
-
-  require("conform").setup({
-    formatters_by_ft = {
-      -- clojure = { "zprint" },
-      fish = { "fish_indent" },
-      lua = { "stylua" },
-
-      javascript = { "prettier" },
-      javascriptreact = { "prettier" },
-      typescript = { "prettier" },
-      typescriptreact = { "prettier" },
-      vue = { "prettier" },
-      css = { "prettier" },
-      scss = { "prettier" },
-      less = { "prettier" },
-      html = { "prettier" },
-      json = { "prettier" },
-      jsonc = { "prettier" },
-      yaml = { "prettier" },
-      markdown = { "prettier" },
-      ["markdown.mdx"] = { "prettier" },
-      graphql = { "prettier" },
-      handlebars = { "prettier" },
-    },
-  })
-  vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-
-  vim.api.nvim_create_user_command("Format", function(args)
-    local range = nil
-    if args.count ~= -1 then
-      local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
-      range = {
-        start = { args.line1, 0 },
-        ["end"] = { args.line2, end_line:len() },
-      }
-    end
-    require("conform").format({ async = true, lsp_fallback = true, range = range })
-  end, { range = true, desc = "Format with conform.nvim" })
-  vim.keymap.set(
-    { "n", "v" },
-    "<Leader>f",
-    ":Format<CR>",
-    { silent = true, desc = "Format with conform.nvim" }
-  )
-end)
-
-MiniDeps.later(function()
-  MiniDeps.add("PaterJason/nvim-nrepl")
-
-  local augroup = vim.api.nvim_create_augroup("nvim_nrepl", {})
-  vim.api.nvim_create_autocmd({ "FileType" }, {
-    group = augroup,
-    pattern = { "clojure" },
-    callback = function(_args)
-      require("nrepl").init()
-
-      local action = require("nrepl.action")
-      vim.keymap.set(
-        { "n", "x" },
-        "<LocalLeader>e",
-        "<Plug>(NreplEvalOperator)",
-        { desc = "Eval", buffer = 0 }
-      )
-      vim.keymap.set(
-        "n",
-        "<LocalLeader>ee",
-        action.eval_cursor,
-        { desc = "Eval cursor", buffer = 0 }
-      )
-      vim.keymap.set("n", "<LocalLeader>lf", action.load_file, { desc = "Load file", buffer = 0 })
-      vim.keymap.set("n", "<LocalLeader>ll", "<Cmd>Nrepl log<CR>", { desc = "Log", buffer = 0 })
-      vim.keymap.set(
-        "n",
-        "<LocalLeader>ls",
-        function()
-          require("nrepl.prompt").open_win(true, {
-            win = -1,
-            vertical = false,
-          })
-        end,
-        {
-          desc = "Log split",
-          buffer = 0,
-        }
-      )
-      vim.keymap.set(
-        "n",
-        "<LocalLeader>lv",
-        function()
-          require("nrepl.prompt").open_win(true, {
-            win = -1,
-            vertical = true,
-          })
-        end,
-        { desc = "Log vsplit", buffer = 0 }
-      )
-      vim.keymap.set(
-        "n",
-        "<LocalLeader>lt",
-        "<Cmd>tabnew | Nrepl log<CR>",
-        { desc = "Log split", buffer = 0 }
-      )
-
-      vim.keymap.set("n", "<LocalLeader>K", action.hover, { desc = "Hover lookup", buffer = 0 })
-      vim.keymap.set("n", "<LocalLeader>np", action.eval_input, { desc = "Eval input", buffer = 0 })
-      vim.keymap.set("n", "<LocalLeader>ni", action.interrupt, { desc = "Interrupt", buffer = 0 })
-    end,
-  })
-end)
-
-MiniDeps.later(function()
-  MiniDeps.add("David-Kunz/gen.nvim")
-
-  require("gen").setup({
-    model = "gemma3:4b",
-  })
-end)
+vim.lsp.enable({
+  'bashls', -- pacman -S bash-language-server
+  'clojure_lsp', -- paru -S clojure-lsp-bin
+  'cssls', -- pacman -S vscode-css-languageserver
+  'eslint', -- pacman -S eslint-language-server
+  'expert', -- https://github.com/elixir-lang/expert
+  'fish_lsp', -- npm i -g fish-lsp
+  'gdscript', -- pacman -S godot
+  'gopls', -- pacman -S gopls
+  'html', -- pacman -S vscode-html-languageserver
+  'jsonls', -- pacman -S vscode-json-languageserver
+  'kotlin_lsp', -- https://github.com/Kotlin/kotlin-lsp
+  'lemminx', -- paru -S lemminx
+  'emmylua_ls', -- https://github.com/EmmyLuaLs/emmylua-analyzer-rust
+  'marksman', -- pacman -S marksman
+  'rust_analyzer', -- pacman -S rust-analyzer
+  'taplo', -- pacman -S taplo-cli
+  'texlab', -- pacman -S texlab
+  'tsgo', -- npm i -g @typescript/native-preview
+  'yamlls', -- yaml-language-server
+})
