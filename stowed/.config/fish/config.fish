@@ -3,7 +3,7 @@ fish_add_path ~/.cargo/bin
 set -gx NPM_PACKAGES "$HOME/.npm-packages"
 fish_add_path ~/.npm-packages/bin
 
-if status --is-interactive
+if status is-interactive
     set -g fish_greeting
     fish_vi_key_bindings
     fish_vi_cursor
