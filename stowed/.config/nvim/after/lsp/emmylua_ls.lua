@@ -32,10 +32,6 @@ return {
     local root_dir = config.root_dir
     if root_dir == nil then return end
     local is_nvim = function(s) return vim.fs.basename(s) == 'nvim' end
-    vim.print(
-      'IS NVIM',
-      is_nvim(root_dir) or vim.iter(vim.fs.parents(root_dir)):find(is_nvim) ~= nil
-    )
     if is_nvim(root_dir) or vim.iter(vim.fs.parents(root_dir)):find(is_nvim) ~= nil then
       require('jp.util').lsp_extend_config(config, {
         emmylua = {
