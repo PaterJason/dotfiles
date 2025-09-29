@@ -9,7 +9,7 @@ local function select()
     {
       text = 'Add workspace folder',
       on_choice = function() vim.lsp.buf.add_workspace_folder() end,
-      method = ms.workspace_workspaceFolders,
+      method = ms.workspace_didChangeWorkspaceFolders,
     },
     {
       text = 'Code action',
@@ -76,7 +76,7 @@ local function select()
     {
       text = 'Remove workspace folder',
       on_choice = function() vim.lsp.buf.remove_workspace_folder() end,
-      method = ms.workspace_workspaceFolders,
+      method = ms.workspace_didChangeWorkspaceFolders,
     },
     {
       text = 'Rename',

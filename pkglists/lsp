@@ -1,6 +1,5 @@
 bash-language-server
 clojure-lsp-bin
-lua-language-server
 texlab
 typescript
 vscode-css-languageserver
