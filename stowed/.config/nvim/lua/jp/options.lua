@@ -26,6 +26,7 @@ opt.diffopt:append({ 'vertical', 'algorithm:histogram' })
 o.exrc = true
 
 -- Appearance
+o.background = 'light'
 o.number = true
 o.relativenumber = true
 o.shortmess = 'aoOTICF'
@@ -41,7 +42,7 @@ o.infercase = true
 o.inccommand = 'split'
 o.tabstop = 2
 o.shiftwidth = 0
-o.complete = 'o,.'
+if vim.fn.has('nvim-0.12') == 1 then o.complete = 'o,.' end
 o.completeopt = 'menuone,noinsert,fuzzy'
 o.nrformats = 'alpha,hex,bin,blank'
 
@@ -104,9 +105,9 @@ vim.keymap.set(
 
 -- GUI
 if vim.fn.has('gui_running') == 1 then o.guifont = 'Monospace:h10' end
-require('vim._extui').enable({
+if vim.fn.has('nvim-0.12') == 1 then require('vim._extui').enable({
   enable = true,
-})
+}) end
 
 -- Autocommands
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -114,24 +115,26 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = augroup,
   desc = 'Highlight on yank',
 })
-vim.api.nvim_create_autocmd('CmdlineChanged', {
-  callback = vim.schedule_wrap(function(_args)
-    local type = vim.fn.getcmdcompltype()
-    if
-      vim.fn.wildmenumode() == 0
-      and not vim.startswith(type, 'custom,')
-      and not vim.startswith(type, 'customlist,')
-    then
-      vim.fn.wildtrigger()
-    end
-  end),
-  group = augroup,
-  desc = 'Wildmenu autocompletion',
-})
-vim.cmd([[
-cnoremap <expr> <Up>   wildmenumode() ? "\<C-E>\<Up>"   : "\<Up>"
-cnoremap <expr> <Down> wildmenumode() ? "\<C-E>\<Down>" : "\<Down>"
+if vim.fn.has('nvim-0.12') == 1 then
+  vim.api.nvim_create_autocmd('CmdlineChanged', {
+    callback = vim.schedule_wrap(function(_args)
+      local type = vim.fn.getcmdcompltype()
+      if
+        vim.fn.wildmenumode() == 0
+        and not vim.startswith(type, 'custom,')
+        and not vim.startswith(type, 'customlist,')
+      then
+        vim.fn.wildtrigger()
+      end
+    end),
+    group = augroup,
+    desc = 'Wildmenu autocompletion',
+  })
+  vim.cmd([[
+  cnoremap <expr> <Up>   wildmenumode() ? "\<C-E>\<Up>"   : "\<Up>"
+  cnoremap <expr> <Down> wildmenumode() ? "\<C-E>\<Down>" : "\<Down>"
 ]])
+end
 
 --- ftplugin options, maybe move
 g.clojure_align_subforms = 1
