@@ -53,7 +53,7 @@ o.fillchars = 'eob: ,fold: '
 o.wildmode = 'noselect,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
 if vim.fn.executable('rg') == 1 then
-  o.grepprg = 'rg --vimgrep --smart-case'
+  o.grepprg = 'rg --vimgrep'
   o.findfunc = [[v:lua.require'valfunc'.RgFind]]
 end
 

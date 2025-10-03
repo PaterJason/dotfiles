@@ -4,7 +4,7 @@ This is a dotfiles repository
 ## Install packages
 In the `pkglists` directory:
 ```sh
-cat * | yay -S --needed -
+cat * | paru -S --needed -
 ```
 
 ## Symlink dotfiles

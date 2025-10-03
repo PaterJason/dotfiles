@@ -2,6 +2,7 @@ direnv
 fd
 fish
 git
+just
 man-db
 man-pages
 neovim

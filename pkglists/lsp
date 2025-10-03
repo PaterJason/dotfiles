@@ -1,7 +1,8 @@
 bash-language-server
 clojure-lsp-bin
 texlab
-typescript
+typescript-language-server
 vscode-css-languageserver
 vscode-html-languageserver
 vscode-json-languageserver
+yaml-language-server
