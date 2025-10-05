@@ -19,6 +19,9 @@ if status is-interactive
     if type -q vivid
         set -gx LS_COLORS "$(vivid generate catppuccin-latte)"
     end
+    if type -q nvim
+        set -gx MANPAGER "nvim +Man!"
+    end
 end
 
 if type -q direnv
