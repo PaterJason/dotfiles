@@ -54,7 +54,7 @@ o.wildmode = 'noselect,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
 if vim.fn.executable('rg') == 1 then
   o.grepprg = 'rg --vimgrep'
-  o.findfunc = [[v:lua.require'valfunc'.RgFind]]
+  o.findfunc = [[v:lua.require'func'.RgFfu]]
 end
 
 -- Folds
