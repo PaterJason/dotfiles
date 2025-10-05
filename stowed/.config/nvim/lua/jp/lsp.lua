@@ -1,5 +1,3 @@
-local ms = vim.lsp.protocol.Methods
-
 local augroup = vim.api.nvim_create_augroup('JPConfigLsp', {})
 local attach_augroup = vim.api.nvim_create_augroup('JPConfigLspAttach', {})
 
@@ -9,47 +7,47 @@ local function select()
     {
       text = 'Add workspace folder',
       on_choice = function() vim.lsp.buf.add_workspace_folder() end,
-      method = ms.workspace_didChangeWorkspaceFolders,
+      method = 'workspace/didChangeWorkspaceFolders',
     },
     {
       text = 'Code action',
       on_choice = function() vim.lsp.buf.code_action() end,
-      method = ms.textDocument_codeAction,
+      method = 'textDocument/codeAction',
     },
     {
       text = 'Declaration',
       on_choice = function() vim.lsp.buf.declaration() end,
-      method = ms.textDocument_declaration,
+      method = 'textDocument/declaration',
     },
     {
       text = 'Definition',
       on_choice = function() vim.lsp.buf.definition() end,
-      method = ms.textDocument_definition,
+      method = 'textDocument/definition',
     },
     {
       text = 'Document symbol',
       on_choice = function() vim.lsp.buf.document_symbol() end,
-      method = ms.textDocument_documentSymbol,
+      method = 'textDocument/documentSymbol',
     },
     {
       text = 'Format',
       on_choice = function() vim.lsp.buf.format() end,
-      method = ms.textDocument_formatting,
+      method = 'textDocument/formatting',
     },
     {
       text = 'Hover',
       on_choice = function() vim.lsp.buf.hover() end,
-      method = ms.textDocument_hover,
+      method = 'textDocument/hover',
     },
     {
       text = 'Implementation',
       on_choice = function() vim.lsp.buf.implementation() end,
-      method = ms.textDocument_implementation,
+      method = 'textDocument/implementation',
     },
     {
       text = 'Incoming calls',
       on_choice = function() vim.lsp.buf.incoming_calls() end,
-      method = ms.textDocument_prepareCallHierarchy,
+      method = 'textDocument/prepareCallHierarchy',
     },
     {
       text = 'List workspace folders',
@@ -61,84 +59,84 @@ local function select()
         }
         vim.api.nvim_echo(msg, true, {})
       end,
-      method = ms.workspace_workspaceFolders,
+      method = 'workspace/workspaceFolders',
     },
     {
       text = 'Outgoing calls',
       on_choice = function() vim.lsp.buf.outgoing_calls() end,
-      method = ms.textDocument_prepareCallHierarchy,
+      method = 'textDocument/prepareCallHierarchy',
     },
     {
       text = 'References',
       on_choice = function() vim.lsp.buf.references() end,
-      method = ms.textDocument_references,
+      method = 'textDocument/references',
     },
     {
       text = 'Remove workspace folder',
       on_choice = function() vim.lsp.buf.remove_workspace_folder() end,
-      method = ms.workspace_didChangeWorkspaceFolders,
+      method = 'workspace/didChangeWorkspaceFolders',
     },
     {
       text = 'Rename',
       on_choice = function() vim.lsp.buf.rename() end,
-      method = ms.textDocument_rename,
+      method = 'textDocument/rename',
     },
     {
       text = 'Signature help',
       on_choice = function() vim.lsp.buf.signature_help() end,
-      method = ms.textDocument_signatureHelp,
+      method = 'textDocument/signatureHelp',
     },
     {
       text = 'Type definition',
       on_choice = function() vim.lsp.buf.type_definition() end,
-      method = ms.textDocument_typeDefinition,
+      method = 'textDocument/typeDefinition',
     },
     {
       text = 'Subtypes',
       on_choice = function() vim.lsp.buf.typehierarchy('subtypes') end,
-      method = ms.textDocument_prepareTypeHierarchy,
+      method = 'textDocument/prepareTypeHierarchy',
     },
     {
       text = 'Supertypes',
       on_choice = function() vim.lsp.buf.typehierarchy('supertypes') end,
-      method = ms.textDocument_prepareTypeHierarchy,
+      method = 'textDocument/prepareTypeHierarchy',
     },
     {
       text = 'Workspace symbol',
       on_choice = function() vim.lsp.buf.workspace_symbol() end,
-      method = ms.workspace_symbol,
+      method = 'workspace/symbol',
     },
     {
       text = 'Run code lens',
       on_choice = function() vim.lsp.codelens.run() end,
-      method = ms.textDocument_codeLens,
+      method = 'textDocument/codeLens',
     },
     {
       text = 'Toggle inlay hints',
       on_choice = function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({})) end,
-      method = ms.textDocument_inlayHint,
+      method = 'textDocument/inlayHint',
     },
     {
       text = 'Toggle inline completion',
       on_choice = function()
         vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled())
       end,
-      method = ms.textDocument_inlineCompletion,
+      method = 'textDocument/inlineCompletion',
     },
     {
       text = 'Colour presentation selection',
       on_choice = function() vim.lsp.document_color.color_presentation() end,
-      method = ms.textDocument_documentColor,
+      method = 'textDocument/documentColor',
     },
     {
       text = 'Linked editing range on',
       on_choice = function() vim.lsp.linked_editing_range.enable(true) end,
-      method = ms.textDocument_linkedEditingRange,
+      method = 'textDocument/linkedEditingRange',
     },
     {
       text = 'Linked editing range off',
       on_choice = function() vim.lsp.linked_editing_range.enable(false) end,
-      method = ms.textDocument_linkedEditingRange,
+      method = 'textDocument/linkedEditingRange',
     },
   }
 
@@ -183,7 +181,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     ---@return boolean
     ---@nodiscard
     local function supports_method(method) return client:supports_method(method, bufnr) end
-    if supports_method(ms.textDocument_documentHighlight) then
+    if supports_method('textDocument/documentHighlight') then
       vim.api.nvim_create_autocmd('CursorHold', {
         callback = function(_args)
           vim.lsp.buf.clear_references()
@@ -198,7 +196,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         buffer = bufnr,
       })
     end
-    if supports_method(ms.textDocument_codeLens) then
+    if supports_method("textDocument/codeLens") then
       vim.api.nvim_create_autocmd({ 'BufEnter', 'TextChanged', 'InsertLeave' }, {
         callback = function(_args) vim.lsp.codelens.refresh({ bufnr = bufnr }) end,
         group = attach_augroup,
@@ -206,7 +204,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
       })
       vim.lsp.codelens.refresh({ bufnr = bufnr })
     end
-    if supports_method(ms.textDocument_hover) then
+    if supports_method("textDocument/hover") then
       vim.keymap.set(
         'n',
         'K',
@@ -214,7 +212,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         { buffer = bufnr, desc = 'Hover' }
       )
     end
-    if supports_method(ms.textDocument_foldingRange) then
+    if supports_method("textDocument/foldingRange") then
       local win = vim.api.nvim_get_current_win()
       vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
     end
