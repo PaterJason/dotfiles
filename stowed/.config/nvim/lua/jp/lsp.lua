@@ -196,7 +196,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         buffer = bufnr,
       })
     end
-    if supports_method("textDocument/codeLens") then
+    if supports_method('textDocument/codeLens') then
       vim.api.nvim_create_autocmd({ 'BufEnter', 'TextChanged', 'InsertLeave' }, {
         callback = function(_args) vim.lsp.codelens.refresh({ bufnr = bufnr }) end,
         group = attach_augroup,
@@ -204,7 +204,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
       })
       vim.lsp.codelens.refresh({ bufnr = bufnr })
     end
-    if supports_method("textDocument/hover") then
+    if supports_method('textDocument/hover') then
       vim.keymap.set(
         'n',
         'K',
@@ -212,7 +212,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         { buffer = bufnr, desc = 'Hover' }
       )
     end
-    if supports_method("textDocument/foldingRange") then
+    if supports_method('textDocument/foldingRange') then
       local win = vim.api.nvim_get_current_win()
       vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
     end

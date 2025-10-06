@@ -11,7 +11,7 @@ vim.api.nvim_create_autocmd('PackChanged', {
   group = 'JPConfig',
 })
 
-local ensure_installed = { 'regex', 'luap', 'luadoc', 'printf', 'comment' }
+local ensure_installed = { 'regex', 'luap', 'printf', 'comment' }
 for name, type in vim.fs.dir(vim.fs.joinpath(vim.env.VIMRUNTIME, 'queries')) do
   if type == 'directory' then ensure_installed[#ensure_installed + 1] = name end
 end

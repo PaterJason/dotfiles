@@ -54,8 +54,10 @@ o.wildmode = 'noselect,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
 if vim.fn.executable('rg') == 1 then
   o.grepprg = 'rg --vimgrep'
-  o.findfunc = [[v:lua.require'func'.RgFfu]]
+  o.findfunc = [[v:lua.require'vcall'.rg_ffu]]
 end
+
+o.quickfixtextfunc = [[v:lua.require'vcall'.qftf]]
 
 -- Folds
 o.foldcolumn = 'auto'
@@ -66,10 +68,13 @@ o.foldtext = ''
 vim.cmd('packadd cfilter')
 
 -- Lower priority then treesitter (100)
-vim.hl.priorities.semantic_tokens = 95
+-- vim.hl.priorities.semantic_tokens = 95
 
 -- Diagnostics
 vim.diagnostic.config({
+  virtual_text = {
+    current_line = true,
+  },
   float = {
     scope = 'cursor',
     header = '',
