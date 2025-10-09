@@ -160,17 +160,35 @@ end
 
 -- Keymaps
 vim.keymap.set('n', '<Leader>l', function() select() end, { desc = 'Select LSP call' })
-vim.keymap.set('n', 'grl', function() vim.lsp.codelens.run() end, {
-  desc = 'vim.lsp.codelens.run()',
-})
-vim.keymap.set({ 'n', 'x' }, 'grf', function() vim.lsp.buf.format() end, {
-  desc = 'vim.lsp.buf.format()',
-})
+vim.keymap.set(
+  'n',
+  'grl',
+  function() vim.lsp.codelens.run() end,
+  { desc = 'vim.lsp.codelens.run()' }
+)
+vim.keymap.set(
+  { 'n', 'x' },
+  'grf',
+  function() vim.lsp.buf.format() end,
+  { desc = 'vim.lsp.buf.format()' }
+)
 vim.keymap.set('n', '<Leader>ti', function()
   local is_enabled = vim.lsp.inlay_hint.is_enabled({})
   vim.lsp.inlay_hint.enable(not is_enabled)
   vim.notify('Inlay hints ' .. (is_enabled and 'disabled' or 'enabled'))
 end, { desc = 'Toggle inlay hints' })
+vim.keymap.set(
+  'i',
+  '<C-F>',
+  function() vim.lsp.inline_completion.get() end,
+  { desc = 'LSP: accept inline completion' }
+)
+vim.keymap.set(
+  'i',
+  '<C-G>',
+  function() vim.lsp.inline_completion.select() end,
+  { desc = 'LSP: switch inline completion' }
+)
 
 vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(args)
