@@ -57,7 +57,7 @@ function M.qftf(info)
     if item.valid == 1 and not is_toc then
       -- Type/Diagnostic
       if item.type ~= '' then
-        local severity = vim.diagnostic.severity[item.type]
+        local severity = vim.diagnostic.severity[(item.type):sub(1, 1):upper()]
         local hl_group = ({
           'DiagnosticSignError',
           'DiagnosticSignWarn',
