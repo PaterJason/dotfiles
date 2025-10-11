@@ -81,6 +81,7 @@ miniclue.setup({
 })
 
 require('mini.completion').setup({})
+vim.lsp.config('*', { capabilities = MiniCompletion.get_lsp_capabilities() })
 
 require('mini.diff').setup({})
 vim.keymap.set(

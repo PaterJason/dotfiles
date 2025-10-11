@@ -10,3 +10,5 @@ hi def link qfSeparator2	Delimiter
 hi def link qfText		Normal
 
 let b:current_syntax = 'qf'
+
+" vim: ts=8

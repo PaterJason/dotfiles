@@ -71,9 +71,8 @@ function M.qftf(info)
       if #item.module ~= 0 then
         chunks[#chunks + 1] = { item.module, 'qfFileName' }
       elseif item.bufnr ~= 0 then
-        local bufname = vim.fn.bufname(item.bufnr)
-        if #bufname ~= 0 then
-          local filename = vim.fn.fnamemodify(bufname, ':~:.')
+        local filename = vim.fn.expand(('#%s:~:.'):format(item.bufnr))
+        if #filename ~= 0 then
           local icon, icon_hl = MiniIcons.get('file', filename)
           chunks[#chunks + 1] = { icon .. ' ' .. filename, icon_hl }
         else
