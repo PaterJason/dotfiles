@@ -1,5 +1,4 @@
 local g, o, opt = vim.g, vim.o, vim.opt
-local augroup = vim.api.nvim_create_augroup('JPConfig', {})
 
 -- Enables the experimental Lua module loader
 vim.loader.enable()
@@ -129,7 +128,7 @@ require('vim._extui').enable({
 -- Autocommands
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function(_args) vim.hl.on_yank({ timeout = 250 }) end,
-  group = augroup,
+  group = 'JPConfig',
   desc = 'Highlight on yank',
 })
 vim.api.nvim_create_autocmd('CmdlineChanged', {
@@ -143,7 +142,7 @@ vim.api.nvim_create_autocmd('CmdlineChanged', {
       vim.fn.wildtrigger()
     end
   end),
-  group = augroup,
+  group = 'JPConfig',
   desc = 'Wildmenu autocompletion',
 })
 vim.cmd([[

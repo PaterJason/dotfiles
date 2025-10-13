@@ -6,7 +6,7 @@ return {
     },
   },
   before_init = function(_params, config)
-    require('jp.util').lsp_extend_config(config, {
+    require('util').lsp_extend_config(config, {
       json = { schemas = require('schemastore').json.schemas() },
     })
   end,
