@@ -1,11 +1,12 @@
 ---@meta vim.lsp
 
-vim.lsp._capability = require('vim.lsp._capability')
-vim.lsp._changetracking = require('vim.lsp._changetracking')
-vim.lsp._folding_range = require('vim.lsp._folding_range')
-vim.lsp._snippet_grammar = require('vim.lsp._snippet_grammar')
-vim.lsp._tagfunc = require('vim.lsp._tagfunc')
-vim.lsp._watchfiles = require('vim.lsp._watchfiles')
+-- vim.lsp._capability = require('vim.lsp._capability')
+-- vim.lsp._changetracking = require('vim.lsp._changetracking')
+-- vim.lsp._folding_range = require('vim.lsp._folding_range')
+-- vim.lsp._snippet_grammar = require('vim.lsp._snippet_grammar')
+-- vim.lsp._tagfunc = require('vim.lsp._tagfunc')
+-- vim.lsp._watchfiles = require('vim.lsp._watchfiles')
+
 vim.lsp.buf = require('vim.lsp.buf')
 vim.lsp.client = require('vim.lsp.client')
 vim.lsp.codelens = require('vim.lsp.codelens')
@@ -23,9 +24,10 @@ vim.lsp.rpc = require('vim.lsp.rpc')
 vim.lsp.semantic_tokens = require('vim.lsp.semantic_tokens')
 vim.lsp.util = require('vim.lsp.util')
 
-vim.treesitter._fold = require('vim.treesitter._fold')
-vim.treesitter._query_linter = require('vim.treesitter._query_linter')
-vim.treesitter._range = require('vim.treesitter._range')
+-- vim.treesitter._fold = require('vim.treesitter._fold')
+-- vim.treesitter._query_linter = require('vim.treesitter._query_linter')
+-- vim.treesitter._range = require('vim.treesitter._range')
+
 vim.treesitter.dev = require('vim.treesitter.dev')
 vim.treesitter.highlighter = require('vim.treesitter.highlighter')
 vim.treesitter.language = require('vim.treesitter.language')

@@ -22,6 +22,9 @@ config.settings.emmylua.workspace = {
     'lua/conform/formatters/**',
     'lua/lint/linters/**',
     'lua/schemastore/catalog.lua',
+
+    'test/*',
+    'tests/*',
   },
 }
 

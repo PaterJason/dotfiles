@@ -27,12 +27,17 @@ o.exrc = true
 
 -- Appearance
 o.background = 'light'
+o.fillchars = 'eob: ,fold: '
+o.list = true
+o.listchars = 'tab:| ,trail:·,nbsp:␣,extends:…,precedes:…'
 o.number = true
 o.pumborder = 'single'
+o.quickfixtextfunc = [[v:lua.require'vcall'.qftf]]
 o.relativenumber = true
 o.shortmess = 'aoOTICF'
 o.splitbelow = true
 o.splitright = true
+o.statusline = "%{%v:lua.require'vcall'.stl()%}"
 o.winborder = 'single'
 o.wrap = false
 
@@ -43,22 +48,17 @@ o.infercase = true
 o.inccommand = 'split'
 o.tabstop = 2
 o.shiftwidth = 0
-o.complete = 'o,.'
-o.completeopt = 'menuone,noselect,fuzzy'
 o.nrformats = 'alpha,hex,bin,blank'
-
--- Extra UI options
-o.list = true
-o.listchars = 'tab:| ,trail:·,nbsp:␣,extends:…,precedes:…'
-o.fillchars = 'eob: ,fold: '
-o.wildmode = 'noselect,full'
-o.wildoptions = 'pum,tagfile,fuzzy'
 if vim.fn.executable('rg') == 1 then
-  o.grepprg = 'rg --vimgrep'
   o.findfunc = [[v:lua.require'vcall'.rg_ffu]]
+  o.grepprg = 'rg --vimgrep'
 end
 
-o.quickfixtextfunc = [[v:lua.require'vcall'.qftf]]
+-- Completion
+o.complete = 'o,.'
+o.completeopt = 'menuone,noselect,fuzzy'
+o.wildmode = 'noselect,full'
+o.wildoptions = 'pum,tagfile,fuzzy'
 
 -- Folds
 o.foldcolumn = 'auto'
@@ -68,6 +68,7 @@ o.foldtext = ''
 
 vim.cmd('packadd cfilter')
 vim.cmd('packadd nvim.undotree')
+vim.cmd('packadd nvim.difftool')
 
 -- Lower priority then treesitter (100)
 -- vim.hl.priorities.semantic_tokens = 95

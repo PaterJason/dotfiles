@@ -1,5 +1,6 @@
 local M = {}
 
+--- Custom findfunc using ripgrep
 ---@param cmdarg string
 ---@param _cmdcomplete boolean
 ---@return string[]
@@ -14,6 +15,7 @@ end
 
 local namespace = vim.api.nvim_create_namespace('pqf')
 
+--- Custom quickfixtextfunc
 ---@param info {quickfix: 0|1, winid: integer, id: integer, start_idx: integer, end_idx: integer}
 ---@return string[]
 function M.qftf(info)
@@ -125,6 +127,26 @@ function M.qftf(info)
     end
   end)
   return lines
+end
+
+--- Custom statusline
+--- Default:
+--- %<%f %h%w%m%r %=%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}
+--- %{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}
+--- %{% &busy > 0 ? '◐ ' : '' %}
+--- %(%{luaeval('(package.loaded[''vim.diagnostic''] and vim.diagnostic.status()) or '''' ')} %)
+--- %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}
+---@return string
+function M.stl()
+  local filetype = vim.bo.filetype
+  if _G.MiniIcons ~= nil and filetype ~= '' then
+    local icon, icon_hl = MiniIcons.get('filetype', filetype)
+    filetype = ('[%s %s]'):format(icon, filetype)
+  end
+  local busy = vim.bo.busy > 0 and '󰦖 ' or ''
+  local diagnostic = (package.loaded['vim.diagnostic'] and vim.diagnostic.status() .. ' ') or ''
+  local ruler = '%-14.(%l,%c%V%) %P'
+  return '%f%< ' .. filetype .. '%w%m%r %=' .. busy .. diagnostic .. ruler
 end
 
 return M

@@ -247,6 +247,8 @@ vim.api.nvim_create_autocmd('LspDetach', {
     vim.api.nvim_clear_autocmds({ group = attach_augroup, buffer = bufnr })
     vim.lsp.codelens.clear(client.id)
     vim.lsp.buf.clear_references()
+
+    vim.bo[bufnr].busy = 0
   end,
   group = augroup,
 })
@@ -271,6 +273,10 @@ vim.api.nvim_create_autocmd('LspProgress', {
       value.title or client.progress.pending[params.token]
     )
     local status = (value.kind == 'end' and 'success') or 'running'
+    local busy = (value.kind == 'end' and 0) or 1
+    for bufnr, _ in pairs(client.attached_buffers) do
+      vim.bo[bufnr].busy = busy
+    end
     progress_tokens[params.token] = vim.api.nvim_echo(chunks, history, {
       id = progress_tokens[params.token],
       kind = 'progress',
@@ -281,3 +287,9 @@ vim.api.nvim_create_autocmd('LspProgress', {
     if value.kind == 'end' then progress_tokens[params.token] = nil end
   end,
 })
+
+vim.api.nvim_create_user_command(
+  'LspForceStop',
+  function(_args) vim.lsp.stop_client(vim.lsp.get_clients({ bufnr = 0 }), true) end,
+  {}
+)
