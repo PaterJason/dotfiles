@@ -46,6 +46,7 @@ o.ignorecase = true
 o.smartcase = true
 o.infercase = true
 o.inccommand = 'split'
+o.expandtab = true
 o.tabstop = 2
 o.shiftwidth = 0
 o.nrformats = 'alpha,hex,bin,blank'
@@ -56,7 +57,7 @@ end
 
 -- Completion
 o.complete = 'o,.'
-o.completeopt = 'menuone,noselect,fuzzy'
+o.completeopt = 'menuone,noinsert,fuzzy'
 o.wildmode = 'noselect,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
 
@@ -72,6 +73,9 @@ vim.cmd('packadd nvim.difftool')
 
 -- Lower priority then treesitter (100)
 -- vim.hl.priorities.semantic_tokens = 95
+vim.cmd([[
+hi link @lsp.type.string.lua @lsp
+]])
 
 -- Diagnostics
 vim.diagnostic.config({
@@ -143,8 +147,10 @@ vim.api.nvim_create_autocmd('CmdlineChanged', {
   desc = 'Wildmenu autocompletion',
 })
 vim.cmd([[
-  cnoremap <expr> <Up>   wildmenumode() ? "\<C-E>\<Up>"   : "\<Up>"
-  cnoremap <expr> <Down> wildmenumode() ? "\<C-E>\<Down>" : "\<Down>"
+  cnoremap <expr> <Up>    wildmenumode() ? "\<C-E>\<Up>"    : "\<Up>"
+  cnoremap <expr> <Down>  wildmenumode() ? "\<C-E>\<Down>"  : "\<Down>"
+  cnoremap <expr> <Left>  wildmenumode() ? "\<C-E>\<Left>"  : "\<Left>"
+  cnoremap <expr> <Right> wildmenumode() ? "\<C-E>\<Right>" : "\<Right>"
 ]])
 
 --- ftplugin options, maybe move
