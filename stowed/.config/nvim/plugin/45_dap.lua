@@ -1,9 +1,41 @@
+for name, opts in pairs({
+  DapBreakpoint = { text = ' ', texthl = 'DapBreakpoint', linehl = '', numhl = '' },
+  DapBreakpointCondition = {
+    text = ' ',
+    texthl = 'DapBreakpointCondition',
+    linehl = '',
+    numhl = '',
+  },
+  DapBreakpointRejected = {
+    text = ' ',
+    texthl = 'DapBreakpointRejected',
+    linehl = '',
+    numhl = '',
+  },
+  DapLogPoint = { text = ' ', texthl = 'DapLogPoint', linehl = '', numhl = '' },
+  DapStopped = { text = ' ', texthl = 'DapStopped', linehl = 'debugPC', numhl = '' },
+}) do
+  vim.fn.sign_define(name, opts)
+end
+
 local dap = require('dap')
 local dap_view = require('dap-view')
+--- @diagnostic disable-next-line: missing-fields, param-type-not-match
 dap_view.setup({
   winbar = {
     show = true,
-    sections = { 'watches', 'scopes', 'exceptions', 'breakpoints', 'threads', 'repl', 'console' },
+    sections = {
+      'scopes',
+      'threads',
+      'breakpoints',
+      'watches',
+      'exceptions',
+      'sessions',
+      'repl',
+      'console',
+    },
+    default_section = 'scopes',
+    controls = { enabled = true },
   },
 })
 
@@ -26,22 +58,60 @@ vim.keymap.set(
   function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end,
   { desc = 'Set log point' }
 )
+vim.keymap.set(
+  'n',
+  '<Leader>dc',
+  function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end,
+  { desc = 'Set conditional breakpoint' }
+)
 vim.keymap.set('n', '<Leader>dv', '<Cmd>DapViewToggle<CR>', { desc = 'Toggle View' })
 vim.keymap.set({ 'n', 'v' }, '<Leader>dw', ':DapViewWatch<CR>', { desc = 'Watch' })
+vim.keymap.set('n', '<Leader>dr', function() dap.run_to_cursor() end, { desc = 'Run to cursor' })
+vim.keymap.set(
+  'n',
+  '<Leader>dh',
+  function() require('dap.ui.widgets').hover() end,
+  { desc = 'Hover' }
+)
 
 -- JavaScript & TypeScript
-dap.adapters.firefox = {
-  type = 'executable',
-  command = 'firefox-debug-adapter',
+dap.adapters['pwa-node'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  id = 'pwa-node',
+  executable = {
+    command = 'node',
+    -- 💀 Make sure to update this path to point to your installation
+    args = { '/path/to/js-debug/src/dapDebugServer.js', '${port}' },
+  },
+}
+dap.adapters['pwa-chrome'] = {
+  type = 'server',
+  host = 'localhost',
+  port = '${port}',
+  id = 'pwa-chrome',
+  executable = {
+    command = 'node',
+    -- 💀 Make sure to update this path to point to your installation
+    args = { '/path/to/js-debug/src/dapDebugServer.js', '${port}' },
+  },
 }
 dap.configurations.javascript = {
   {
-    name = 'Debug with Firefox',
-    type = 'firefox',
+    type = 'pwa-node',
     request = 'launch',
-    reAttach = true,
-    url = 'http://localhost:3000',
+    name = 'Launch file',
+    program = '${file}',
+    cwd = '${workspaceFolder}',
+  },
+  {
+    type = 'pwa-chrome',
+    request = 'launch',
+    name = 'Launch Chrome',
+    url = function() return vim.fn.input('URL: ') end,
     webRoot = '${workspaceFolder}',
+    runtimeExecutable = 'chromium',
   },
 }
 dap.configurations.typescript = dap.configurations.javascript
