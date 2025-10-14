@@ -1,4 +1,13 @@
+-- Enables the experimental Lua module loader
+vim.loader.enable()
+
 local _augroup = vim.api.nvim_create_augroup('JPConfig', {})
+
+vim.cmd([[
+packadd cfilter
+packadd nvim.undotree
+packadd nvim.difftool
+]])
 
 ---@param s string
 ---@return string
@@ -36,3 +45,5 @@ vim.pack.add({
   gh('tpope/vim-eunuch'),
   gh('tpope/vim-fugitive'),
 }, {})
+
+vim.o.exrc = true

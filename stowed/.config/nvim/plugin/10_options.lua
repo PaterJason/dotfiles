@@ -1,8 +1,5 @@
 local g, o, opt = vim.g, vim.o, vim.opt
 
--- Enables the experimental Lua module loader
-vim.loader.enable()
-
 -- Disable remote plugin providers
 g.loaded_python3_provider = 0
 g.loaded_ruby_provider = 0
@@ -22,13 +19,10 @@ o.spelloptions = 'camel'
 o.swapfile = false
 o.updatetime = 250
 opt.diffopt:append({ 'vertical', 'algorithm:histogram' })
-o.exrc = true
 
 -- Appearance
 o.background = 'light'
-o.fillchars = 'eob: ,fold: '
 o.list = true
-o.listchars = 'tab:| ,trail:·,nbsp:␣,extends:…,precedes:…'
 o.number = true
 o.pumborder = 'single'
 o.quickfixtextfunc = [[v:lua.require'vcall'.qftf]]
@@ -39,6 +33,19 @@ o.splitright = true
 o.statusline = "%{%v:lua.require'vcall'.stl()%}"
 o.winborder = 'single'
 o.wrap = false
+opt.listchars = {
+  tab = '| ',
+  trail = '·',
+  nbsp = '␣',
+  extends = '…',
+  precedes = '…',
+}
+opt.fillchars = {
+  eob = ' ',
+  fold = ' ',
+  foldsep = ' ',
+  foldinner = ' ',
+}
 
 -- Editing
 o.ignorecase = true
@@ -54,21 +61,38 @@ if vim.fn.executable('rg') == 1 then
   o.grepprg = 'rg --vimgrep'
 end
 
--- Completion
-o.complete = 'o,.'
-o.completeopt = 'menuone,noinsert,fuzzy'
-o.wildmode = 'noselect,full'
-o.wildoptions = 'pum,tagfile,fuzzy'
-
 -- Folds
 o.foldcolumn = 'auto'
 o.foldlevelstart = 99
-o.foldnestmax = 10
 o.foldtext = ''
 
-vim.cmd('packadd cfilter')
-vim.cmd('packadd nvim.undotree')
-vim.cmd('packadd nvim.difftool')
+-- Completion
+o.complete = 'o,.'
+o.completeopt = 'menuone,noinsert,fuzzy'
+o.pumheight = 15
+o.wildmode = 'noselect,full'
+o.wildoptions = 'pum,tagfile,fuzzy'
+
+vim.api.nvim_create_autocmd('CmdlineChanged', {
+  callback = vim.schedule_wrap(function(_args)
+    local type = vim.fn.getcmdcompltype()
+    if
+      vim.fn.wildmenumode() == 0
+      and not vim.startswith(type, 'custom,')
+      and not vim.startswith(type, 'customlist,')
+    then
+      vim.fn.wildtrigger()
+    end
+  end),
+  group = 'JPConfig',
+  desc = 'Wildmenu autocompletion',
+})
+vim.cmd([[
+  cnoremap <expr> <Up>    wildmenumode() ? "\<C-E>\<Up>"    : "\<Up>"
+  cnoremap <expr> <Down>  wildmenumode() ? "\<C-E>\<Down>"  : "\<Down>"
+  cnoremap <expr> <Left>  wildmenumode() ? "\<C-E>\<Left>"  : "\<Left>"
+  cnoremap <expr> <Right> wildmenumode() ? "\<C-E>\<Right>" : "\<Right>"
+]])
 
 -- Lower priority then treesitter (100)
 -- vim.hl.priorities.semantic_tokens = 95
@@ -131,26 +155,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = 'JPConfig',
   desc = 'Highlight on yank',
 })
-vim.api.nvim_create_autocmd('CmdlineChanged', {
-  callback = vim.schedule_wrap(function(_args)
-    local type = vim.fn.getcmdcompltype()
-    if
-      vim.fn.wildmenumode() == 0
-      and not vim.startswith(type, 'custom,')
-      and not vim.startswith(type, 'customlist,')
-    then
-      vim.fn.wildtrigger()
-    end
-  end),
+vim.api.nvim_create_autocmd('FileType', {
   group = 'JPConfig',
-  desc = 'Wildmenu autocompletion',
+  desc = 'Close with <q>',
+  pattern = {
+    'qf',
+    'dap-float',
+  },
+  callback = function(args) vim.keymap.set('n', 'q', '<Cmd>q<CR>', { buffer = args.buf }) end,
 })
-vim.cmd([[
-  cnoremap <expr> <Up>    wildmenumode() ? "\<C-E>\<Up>"    : "\<Up>"
-  cnoremap <expr> <Down>  wildmenumode() ? "\<C-E>\<Down>"  : "\<Down>"
-  cnoremap <expr> <Left>  wildmenumode() ? "\<C-E>\<Left>"  : "\<Left>"
-  cnoremap <expr> <Right> wildmenumode() ? "\<C-E>\<Right>" : "\<Right>"
-]])
 
 --- ftplugin options, maybe move
 g.clojure_align_subforms = 1
