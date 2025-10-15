@@ -22,7 +22,6 @@ vim.pack.add({
     src = gh('catppuccin/nvim'),
     name = 'catppuccin',
   },
-  gh('stevearc/oil.nvim'),
   -- treesitter
   {
     src = gh('nvim-treesitter/nvim-treesitter'),

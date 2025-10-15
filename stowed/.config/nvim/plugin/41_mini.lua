@@ -91,6 +91,32 @@ vim.keymap.set(
   { desc = 'Toggle diff overlay' }
 )
 
+require('mini.files').setup({
+  mappings = {
+    go_in = '',
+    go_in_plus = 'l',
+    go_out = '',
+    go_out_plus = 'h',
+  },
+  windows = {
+    -- Maximum number of windows to show side by side
+    max_number = 1,
+    width_focus = 80,
+  },
+})
+vim.keymap.set(
+  'n',
+  '-',
+  function() MiniFiles.open(vim.api.nvim_buf_get_name(0), false) end,
+  { desc = 'Open parent directory' }
+)
+vim.keymap.set(
+  'n',
+  '_',
+  function() MiniFiles.open(nil, false) end,
+  { desc = 'Open current working directory' }
+)
+
 local hipatterns = require('mini.hipatterns')
 hipatterns.setup({
   highlighters = {

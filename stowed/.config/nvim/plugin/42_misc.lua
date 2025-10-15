@@ -33,16 +33,3 @@ require('catppuccin').setup({
   },
 })
 vim.cmd('colorscheme catppuccin')
-
-require('oil').setup({
-  view_options = {
-    show_hidden = true,
-  },
-  float = { border = 'single' },
-  confirmation = { border = 'single' },
-  progress = { border = 'single' },
-  ssh = { border = 'single' },
-  keymaps_help = { border = 'single' },
-})
-vim.keymap.set('n', '-', '<Cmd>Oil<CR>', { desc = 'Open parent directory' })
-vim.keymap.set('n', '_', '<Cmd>Oil ./<CR>', { desc = 'Open current working directory' })
