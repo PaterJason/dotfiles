@@ -175,22 +175,13 @@ local function select_snippet() MiniSnippets.expand({ match = false }) end
 vim.keymap.set('i', '<C-g><C-j>', select_snippet, { desc = 'Expand all' })
 vim.keymap.set('n', '<Leader>ss', select_snippet, { desc = 'Snippets' })
 
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'MiniSnippetsSessionStart',
-  callback = function()
-    vim.api.nvim_create_autocmd('ModeChanged', {
-      pattern = '*:n',
-      callback = function()
-        while MiniSnippets.session.get() do
-          MiniSnippets.session.stop()
-        end
-      end,
-      group = 'JPConfig',
-      once = true,
-    })
-  end,
-  group = 'JPConfig',
-})
+vim.keymap.set('n', '<Esc>', function()
+  while MiniSnippets.session.get() do
+    MiniSnippets.session.stop()
+  end
+  vim.cmd('noh')
+  return '<Esc>'
+end, { desc = 'Escape', expr = true })
 
 for _, value in ipairs({
   'MiniSnippetsCurrent',
