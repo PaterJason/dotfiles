@@ -19,6 +19,7 @@ for name, opts in pairs({
 end
 
 local dap = require('dap')
+
 local dap_view = require('dap-view')
 --- @diagnostic disable-next-line: missing-fields, param-type-not-match
 dap_view.setup({
@@ -41,6 +42,12 @@ dap_view.setup({
 
 dap.listeners.before.attach['user'] = function() dap_view.open() end
 dap.listeners.before.launch['user'] = function() dap_view.open() end
+
+require('nvim-dap-virtual-text').setup({
+  highlight_new_as_changed = true,
+  virt_text_pos = 'eol',
+})
+vim.cmd([[hi link NvimDapVirtualText LspInlayHint]])
 
 vim.keymap.set('n', '<F5>', function() dap.continue() end, { desc = 'Continue' })
 vim.keymap.set('n', '<F10>', function() dap.step_over() end, { desc = 'Step over' })
@@ -68,33 +75,30 @@ vim.keymap.set('n', '<Leader>dv', '<Cmd>DapViewToggle<CR>', { desc = 'Toggle Vie
 vim.keymap.set({ 'n', 'v' }, '<Leader>dw', ':DapViewWatch<CR>', { desc = 'Watch' })
 vim.keymap.set('n', '<Leader>dr', function() dap.run_to_cursor() end, { desc = 'Run to cursor' })
 vim.keymap.set(
-  'n',
+  { 'n', 'v' },
   '<Leader>dh',
   function() require('dap.ui.widgets').hover() end,
   { desc = 'Hover' }
 )
 
 -- JavaScript & TypeScript
+-- gh release download --pattern 'js-debug-dap-*.gz' --repo 'microsoft/vscode-js-debug' -O - | tar -xzvf -
 dap.adapters['pwa-node'] = {
   type = 'server',
   host = 'localhost',
   port = '${port}',
-  id = 'pwa-node',
   executable = {
     command = 'node',
-    -- 💀 Make sure to update this path to point to your installation
-    args = { '/path/to/js-debug/src/dapDebugServer.js', '${port}' },
+    args = { vim.fs.abspath('~/src/dap/js-debug/src/dapDebugServer.js'), '${port}' },
   },
 }
 dap.adapters['pwa-chrome'] = {
   type = 'server',
   host = 'localhost',
   port = '${port}',
-  id = 'pwa-chrome',
   executable = {
     command = 'node',
-    -- 💀 Make sure to update this path to point to your installation
-    args = { '/path/to/js-debug/src/dapDebugServer.js', '${port}' },
+    args = { vim.fs.abspath('~/src/dap/js-debug/src/dapDebugServer.js'), '${port}' },
   },
 }
 dap.configurations.javascript = {
@@ -108,13 +112,14 @@ dap.configurations.javascript = {
   {
     type = 'pwa-chrome',
     request = 'launch',
-    name = 'Launch Chrome',
-    url = function() return vim.fn.input('URL: ') end,
+    name = 'Launch Chromium',
     webRoot = '${workspaceFolder}',
-    runtimeExecutable = 'chromium',
+    runtimeExecutable = '/usr/bin/chromium',
   },
 }
+dap.configurations.javascriptreact = dap.configurations.javascript
 dap.configurations.typescript = dap.configurations.javascript
+dap.configurations.typescriptreact = dap.configurations.javascript
 
 -- LLDB
 dap.adapters.lldb = {

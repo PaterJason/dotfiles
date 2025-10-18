@@ -36,7 +36,7 @@ vim.pack.add({
   gh('PaterJason/nvim-nrepl'),
   -- dap
   'https://codeberg.org/mfussenegger/nvim-dap',
-  'https://codeberg.org/mfussenegger/nluarepl',
+  gh('theHamsta/nvim-dap-virtual-text'),
   gh('igorlfs/nvim-dap-view'),
   -- tpope
   gh('tpope/vim-abolish'),
