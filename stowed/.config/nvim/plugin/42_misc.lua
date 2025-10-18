@@ -1,4 +1,13 @@
 require('catppuccin').setup({
+  custom_highlights = function(colors)
+    return {
+      Pmenu = { bg = colors.none },
+    }
+  end,
+  float = {
+    transparent = true,
+    solid = false,
+  },
   default_integrations = false,
   integrations = {
     dap = true,
