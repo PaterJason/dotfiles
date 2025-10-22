@@ -46,6 +46,7 @@ function M.qftf(info)
       )
     )
 
+  local icons = require('icons')
   for i = info.start_idx, info.end_idx do
     local item = items[i]
     assert(item ~= nil)
@@ -57,15 +58,11 @@ function M.qftf(info)
     if item.valid == 1 and not is_toc then
       -- Type/Diagnostic
       if item.type ~= '' then
+        ---@type integer
         local severity = vim.diagnostic.severity[(item.type):sub(1, 1):upper()]
-        local hl_group = ({
-          'DiagnosticSignError',
-          'DiagnosticSignWarn',
-          'DiagnosticSignInfo',
-          'DiagnosticSignHint',
-        })[severity]
-        local type_string = item.type
-        if item.nr > 0 then type_string = type_string .. '[' .. item.nr .. ']' end
+        local hl_group = icons.diagnostic_hl[severity]
+        local type_string = icons.diagnostic[severity] or item.type
+        if item.nr > 0 then type_string = ('%s[%s]'):format(type_string, item.nr) end
         chunks[#chunks + 1] = { type_string, hl_group }
       end
 
@@ -140,7 +137,7 @@ end
 function M.stl()
   local filetype = vim.bo.filetype
   if _G.MiniIcons ~= nil and filetype ~= '' then
-    local icon, icon_hl = MiniIcons.get('filetype', filetype)
+    local icon, _icon_hl = MiniIcons.get('filetype', filetype)
     filetype = ('[%s %s]'):format(icon, filetype)
   end
   local dap = (package.loaded['dap'] and require('dap').status()) or ''

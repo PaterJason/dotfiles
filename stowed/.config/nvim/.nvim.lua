@@ -17,14 +17,15 @@ local config = vim.lsp.config['emmylua_ls']
 config.settings.emmylua.workspace = {
   library = library,
   ignoreGlobs = {
-    'lua/catppuccin/*/**',
+    'lua/catppuccin/*/**/*.lua',
     'lua/**/catppuccin*.lua',
-    'lua/conform/formatters/**',
-    'lua/lint/linters/**',
+    'lua/dap-view/*/**/*.lua',
+    -- 'lua/conform/formatters/**',
+    -- 'lua/lint/linters/**',
     'lua/schemastore/catalog.lua',
 
-    'test/*',
-    'tests/*',
+    'test/**',
+    'tests/**',
   },
 }
 

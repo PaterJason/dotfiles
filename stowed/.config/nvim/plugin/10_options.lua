@@ -61,7 +61,7 @@ o.shiftwidth = 0
 o.nrformats = 'alpha,hex,bin,blank'
 if vim.fn.executable('rg') == 1 then
   o.findfunc = [[v:lua.require'vcall'.rg_ffu]]
-  o.grepprg = 'rg --vimgrep'
+  o.grepprg = 'rg --vimgrep --smart-case'
 end
 
 -- Folds
@@ -105,6 +105,9 @@ hi link @lsp.type.string.lua @lsp
 
 -- Diagnostics
 vim.diagnostic.config({
+  signs = {
+    text = require('icons').diagnostic,
+  },
   virtual_text = {
     current_line = true,
   },

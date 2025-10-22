@@ -2,7 +2,7 @@ local augroup = vim.api.nvim_create_augroup('JPConfigLsp', {})
 local attach_augroup = vim.api.nvim_create_augroup('JPConfigLspAttach', {})
 
 local function select()
-  ---@type {text: string, on_choice: fun(), method: vim.lsp.protocol.Method}[]
+  ---@type {text: string, on_choice: fun(), method?: vim.lsp.protocol.Method.ClientToServer}[]
   local items = {
     {
       text = 'Add workspace folder',
@@ -59,7 +59,7 @@ local function select()
         }
         vim.api.nvim_echo(msg, true, {})
       end,
-      method = 'workspace/workspaceFolders',
+      method = nil,
     },
     {
       text = 'Outgoing calls',

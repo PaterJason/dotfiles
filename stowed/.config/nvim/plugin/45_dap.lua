@@ -1,21 +1,12 @@
-for name, opts in pairs({
-  DapBreakpoint = { text = ' ', texthl = 'DapBreakpoint', linehl = '', numhl = '' },
-  DapBreakpointCondition = {
-    text = ' ',
-    texthl = 'DapBreakpointCondition',
-    linehl = '',
-    numhl = '',
-  },
-  DapBreakpointRejected = {
-    text = ' ',
-    texthl = 'DapBreakpointRejected',
-    linehl = '',
-    numhl = '',
-  },
-  DapLogPoint = { text = ' ', texthl = 'DapLogPoint', linehl = '', numhl = '' },
-  DapStopped = { text = ' ', texthl = 'DapStopped', linehl = 'debugPC', numhl = '' },
+--- catppuccin integration adds hl groups
+for name, text in pairs({
+  DapBreakpoint = { ' ' },
+  DapBreakpointCondition = { ' ' },
+  DapBreakpointRejected = { ' ' },
+  DapLogPoint = { ' ' },
+  DapStopped = { ' ', 'debugPC' },
 }) do
-  vim.fn.sign_define(name, opts)
+  vim.fn.sign_define(name, { text = text[1], texthl = name, linehl = text[2] })
 end
 
 local dap = require('dap')
@@ -43,6 +34,7 @@ dap_view.setup({
 dap.listeners.before.attach['user'] = function() dap_view.open() end
 dap.listeners.before.launch['user'] = function() dap_view.open() end
 
+--- @diagnostic disable-next-line: missing-fields, param-type-not-match
 require('nvim-dap-virtual-text').setup({
   highlight_new_as_changed = true,
   virt_text_pos = 'eol',
