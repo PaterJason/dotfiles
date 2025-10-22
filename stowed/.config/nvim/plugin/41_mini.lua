@@ -26,6 +26,23 @@ require('mini.basics').setup({
   autocommands = { basic = false },
 })
 
+require('mini.bracketed').setup({
+  buffer = { suffix = '' }, -- built in
+  comment = { suffix = '/' },
+  -- conflict = { suffix = 'x' },
+  diagnostic = { suffix = '' }, -- built in
+  -- file = { suffix = 'f' },
+  -- indent = { suffix = 'i' },
+  -- jump = { suffix = 'j' },
+  location = { suffix = '' }, -- built in
+  oldfile = { suffix = '' },
+  quickfix = { suffix = '' }, -- built in
+  -- treesitter = { suffix = 't' },
+  -- undo = { suffix = 'u' },
+  -- window = { suffix = 'w' },
+  -- yank = { suffix = 'y' },
+})
+
 require('mini.bufremove').setup({})
 vim.keymap.set('n', '<Leader>bd', MiniBufremove.delete, { desc = 'Delete buffer' })
 vim.keymap.set('n', '<Leader>bw', MiniBufremove.wipeout, { desc = 'Wipeout buffer' })
@@ -94,9 +111,11 @@ vim.keymap.set(
 require('mini.files').setup({
   mappings = {
     go_in = '',
-    go_in_plus = 'l',
+    go_in_plus = '<CR>',
     go_out = '',
-    go_out_plus = 'h',
+    go_out_plus = '-',
+    trim_left = '',
+    trim_right = '',
   },
   windows = {
     -- Maximum number of windows to show side by side
@@ -116,6 +135,57 @@ vim.keymap.set(
   function() MiniFiles.open(nil, false) end,
   { desc = 'Open current working directory' }
 )
+
+---@param params table
+---@param _willMethod vim.lsp.protocol.Method.ClientToServer.Request
+---@param didMethod vim.lsp.protocol.Method.ClientToServer.Notification
+local function wsFile(params, _willMethod, didMethod)
+  -- for _, client in ipairs(vim.lsp.get_clients({ method = willMethod })) do
+  --   client:request(willMethod, params, function(_err, result, _context, _config)
+  --     if result ~= nil then vim.lsp.util.apply_workspace_edit(result, client.offset_encoding) end
+  --   end)
+  -- end
+  for _, client in ipairs(vim.lsp.get_clients({ method = didMethod })) do
+    client:notify(didMethod, params)
+  end
+end
+vim.api.nvim_create_autocmd('User', {
+  desc = 'Notify LSPs that a file was renamed',
+  pattern = { 'MiniFilesActionRename', 'MiniFilesActionMove' },
+  callback = function(args)
+    ---@type lsp.RenameFilesParams
+    local params = {
+      files = {
+        { oldUri = vim.uri_from_fname(args.data.from), newUri = vim.uri_from_fname(args.data.to) },
+      },
+    }
+    wsFile(params, 'workspace/willRenameFiles', 'workspace/didRenameFiles')
+  end,
+})
+
+vim.api.nvim_create_autocmd('User', {
+  desc = 'Notify LSPs that a file was created',
+  pattern = { 'MiniFilesActionCreate', 'MiniFilesActionCopy' },
+  callback = function(args)
+    ---@type lsp.CreateFilesParams
+    local params = { files = { { uri = vim.uri_from_fname(args.data.to) } } }
+    wsFile(params, 'workspace/willCreateFiles', 'workspace/didCreateFiles')
+  end,
+})
+
+vim.api.nvim_create_autocmd('User', {
+  desc = 'Notify LSPs that a file was deleted',
+  pattern = { 'MiniFilesActionDelete' },
+  callback = function(args)
+    local uri = vim.uri_from_fname(args.data.from)
+    ---@type lsp.DeleteFilesParams
+    local params = { files = { { uri = uri } } }
+    wsFile(params, 'workspace/willDeleteFiles', 'workspace/didDeleteFiles')
+
+    local bufnr = vim.uri_to_bufnr(uri)
+    vim.api.nvim_buf_delete(bufnr, { force = true })
+  end,
+})
 
 local hipatterns = require('mini.hipatterns')
 hipatterns.setup({
