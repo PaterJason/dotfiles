@@ -13,7 +13,7 @@ function M.rg_ffu(cmdarg, _cmdcomplete)
   end
 end
 
-local namespace = vim.api.nvim_create_namespace('pqf')
+local namespace = vim.api.nvim_create_namespace('config.qf')
 
 --- Custom quickfixtextfunc
 ---@param info {quickfix: 0|1, winid: integer, id: integer, start_idx: integer, end_idx: integer}

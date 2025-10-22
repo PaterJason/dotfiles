@@ -72,3 +72,43 @@ vim.keymap.set(
   function() selection_range('inner') end,
   { desc = 'Treesitter selection_range (inner)' }
 )
+
+local namespace = vim.api.nvim_create_namespace('treesitter.diagnostic')
+
+--- @param bufnr integer
+local function lint(bufnr)
+  local query = vim.treesitter.query.parse('lua', '[(ERROR)(MISSING)] @tslint')
+  if vim.bo[bufnr].buftype ~= '' then return end
+  local parser = assert(vim.treesitter.get_parser(bufnr, nil, {}))
+  parser:parse()
+  --- @type vim.Diagnostic[]
+  local diagnostics = {}
+  parser:for_each_tree(function(tree, ltree)
+    local lang = ltree:lang()
+    if vim.list_contains({ 'comment' }, lang) then return end
+    for _id, node, metadata, _match in query:iter_captures(tree:root(), bufnr) do
+      local range = vim.treesitter.get_range(node, 0, metadata)
+      local message = node:missing() and 'Missing ' .. node:type()
+        or 'Syntax error: ' .. vim.treesitter.get_node_text(node, bufnr):gsub('\n', ' ')
+      diagnostics[#diagnostics + 1] = {
+        bufnr = bufnr,
+        namespace = namespace,
+        lnum = range[1],
+        col = range[2],
+        end_lnum = range[4],
+        end_col = range[5],
+        severity = vim.diagnostic.severity.ERROR,
+        message = message,
+        source = ('TS[%s]'):format(lang),
+      }
+    end
+  end)
+  vim.diagnostic.set(namespace, bufnr, diagnostics, {})
+end
+
+vim.api.nvim_create_user_command(
+  'TSLint',
+  function(_args) lint(vim.api.nvim_get_current_buf()) end,
+  {}
+)
+vim.api.nvim_create_user_command('TSLintReset', function(_args) vim.diagnostic.reset(namespace) end, {})
