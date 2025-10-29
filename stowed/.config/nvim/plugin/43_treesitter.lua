@@ -50,6 +50,7 @@ end, {})
 
 --- @diagnostic disable-next-line: param-type-not-match
 require('treesitter-context').setup({
+  enable = false,
   max_lines = 4,
 })
 vim.keymap.set(

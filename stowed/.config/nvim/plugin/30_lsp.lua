@@ -138,6 +138,16 @@ local function select()
       on_choice = function() vim.lsp.linked_editing_range.enable(false) end,
       method = 'textDocument/linkedEditingRange',
     },
+    {
+      text = 'On-type formatting on',
+      on_choice = function() vim.lsp.on_type_formatting.enable(true) end,
+      method = 'textDocument/onTypeFormatting',
+    },
+    {
+      text = 'On-type formatting off',
+      on_choice = function() vim.lsp.on_type_formatting.enable(false) end,
+      method = 'textDocument/onTypeFormatting',
+    },
   }
 
   items = vim.tbl_filter(

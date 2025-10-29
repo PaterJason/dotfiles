@@ -1,4 +1,4 @@
----@meta vim.lsp
+---@meta
 
 -- vim.lsp._capability = require('vim.lsp._capability')
 -- vim.lsp._changetracking = require('vim.lsp._changetracking')

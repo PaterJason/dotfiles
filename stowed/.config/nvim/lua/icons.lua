@@ -14,11 +14,18 @@ M.diagnostic_hl = {
   [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
 }
 
-M.arrows = {
-    right = ' ',
-    left = ' ',
-    up = ' ',
-    down = ' ',
+M.arrow = {
+  right = ' ',
+  left = ' ',
+  up = ' ',
+  down = ' ',
+}
+
+M.chevron = {
+  right = ' ',
+  left = ' ',
+  up = ' ',
+  down = ' ',
 }
 
 return M

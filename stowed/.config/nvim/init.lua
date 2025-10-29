@@ -43,6 +43,6 @@ vim.pack.add({
   gh('tpope/vim-sleuth'),
   gh('tpope/vim-eunuch'),
   gh('tpope/vim-fugitive'),
-}, {})
+}, { load = true })
 
 vim.o.exrc = true

@@ -20,7 +20,7 @@ o.dictionary = '/usr/share/dict/british-english'
 o.spelllang = 'en'
 o.spelloptions = 'camel'
 o.swapfile = false
-o.updatetime = 250
+o.updatetime = 500
 opt.diffopt:append({ 'vertical', 'algorithm:histogram' })
 
 -- Appearance
@@ -33,7 +33,7 @@ o.relativenumber = true
 o.shortmess = 'aoOTICF'
 o.splitbelow = true
 o.splitright = true
-o.statusline = "%{%v:lua.require'vcall'.stl()%}"
+o.statusline = require('statusline').stl
 o.winborder = 'single'
 o.wrap = false
 opt.listchars = {

@@ -74,12 +74,14 @@ vim.keymap.set(
 )
 
 local namespace = vim.api.nvim_create_namespace('treesitter.diagnostic')
+local query = vim.treesitter.query.parse('lua', '[(ERROR)(MISSING)] @tslint')
 
 --- @param bufnr integer
 local function lint(bufnr)
-  local query = vim.treesitter.query.parse('lua', '[(ERROR)(MISSING)] @tslint')
   if vim.bo[bufnr].buftype ~= '' then return end
-  local parser = assert(vim.treesitter.get_parser(bufnr, nil, {}))
+  local parser = vim.treesitter.get_parser(bufnr)
+  --- Errors in Nvim 0.12 if no parser can be created
+  ---@cast parser -?
   parser:parse()
   --- @type vim.Diagnostic[]
   local diagnostics = {}
@@ -111,4 +113,8 @@ vim.api.nvim_create_user_command(
   function(_args) lint(vim.api.nvim_get_current_buf()) end,
   {}
 )
-vim.api.nvim_create_user_command('TSLintReset', function(_args) vim.diagnostic.reset(namespace) end, {})
+vim.api.nvim_create_user_command(
+  'TSLintReset',
+  function(_args) vim.diagnostic.reset(namespace) end,
+  {}
+)

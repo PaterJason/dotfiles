@@ -126,26 +126,4 @@ function M.qftf(info)
   return lines
 end
 
---- Custom statusline
---- Default:
---- %<%f %h%w%m%r %=%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}
---- %{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}
---- %{% &busy > 0 ? '◐ ' : '' %}
---- %(%{luaeval('(package.loaded[''vim.diagnostic''] and vim.diagnostic.status()) or '''' ')} %)
---- %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}
----@return string
-function M.stl()
-  local filetype = vim.bo.filetype
-  if _G.MiniIcons ~= nil and filetype ~= '' then
-    local icon, _icon_hl = MiniIcons.get('filetype', filetype)
-    filetype = ('[%s %s]'):format(icon, filetype)
-  end
-  local dap = (package.loaded['dap'] and require('dap').status()) or ''
-  if dap ~= '' then dap = ('[ %s]'):format(dap) end
-  local busy = vim.bo.busy > 0 and '󰦖 ' or ''
-  local diagnostic = (package.loaded['vim.diagnostic'] and vim.diagnostic.status() .. ' ') or ''
-  local ruler = '%-14.(%l,%c%V%) %P'
-  return '%f%< ' .. dap .. filetype .. '%w%m%r %=' .. busy .. diagnostic .. ruler
-end
-
 return M
