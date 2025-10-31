@@ -21,6 +21,9 @@
 [diff]
 	algorithm = histogram
 	indentHeuristic = true
+	tool = nvim_difftool
+[difftool "nvim_difftool"]
+	cmd = "nvim -c \"DiffTool $LOCAL $REMOTE\""
 [help]
 	autoCorrect = prompt
 [url "git@github.com:"]
