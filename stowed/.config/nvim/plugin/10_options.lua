@@ -77,6 +77,7 @@ o.wildmode = 'noselect,full'
 o.wildoptions = 'pum,tagfile,fuzzy'
 
 vim.api.nvim_create_autocmd('CmdlineChanged', {
+  pattern = { ':', '/', '?' },
   callback = vim.schedule_wrap(function(_args)
     local type = vim.fn.getcmdcompltype()
     if

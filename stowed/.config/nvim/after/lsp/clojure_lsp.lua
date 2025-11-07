@@ -59,7 +59,7 @@ local function on_attach(client, bufnr)
       end)
     end
     local command = info.args
-    local position_params = vim.lsp.util.make_position_params(0, 'utf-8')
+    local position_params = vim.lsp.util.make_position_params(0, client.offset_encoding)
     client:exec_cmd({
       title = 'CljLsp',
       command = command,

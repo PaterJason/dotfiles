@@ -39,20 +39,6 @@ return {
     },
   },
   commands = {
-    ['rust-analyzer.runSingle'] = function(command, ctx)
-      local client = vim.lsp.get_client_by_id(ctx.client_id)
-      if not client then return end
-      if #command.arguments == 1 then
-        run_cargo(command.arguments[1].args)
-      else
-        vim.ui.select(command.arguments, {
-          format_item = function(item) return item.label end,
-          prompt = command.title,
-        }, function(item)
-          if item ~= nil then run_cargo(item.args) end
-        end)
-      end
-    end,
     ['rust-analyzer.debugSingle'] = function(command, ctx)
       vim.print('rust-analyzer.runSingle', command, ctx)
     end,

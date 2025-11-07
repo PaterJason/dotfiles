@@ -205,7 +205,7 @@ require('mini.pairs').setup({})
 require('mini.pick').setup({
   mappings = { choose_marked = '<C-q>' },
 })
-vim.keymap.set('n', '<Leader>sg', MiniPick.builtin.grep_live, { desc = 'Resume' })
+vim.keymap.set('n', '<Leader>sg', MiniPick.builtin.grep_live, { desc = 'Grep live' })
 vim.keymap.set('n', '<Leader>sr', MiniPick.builtin.resume, { desc = 'Resume' })
 vim.keymap.set('n', '<Leader><Leader>', function()
   local scopes = {
