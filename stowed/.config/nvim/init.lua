@@ -37,7 +37,6 @@ vim.pack.add({
   -- dap
   'https://codeberg.org/mfussenegger/nvim-dap',
   gh('theHamsta/nvim-dap-virtual-text'),
-  gh('igorlfs/nvim-dap-view'),
   -- tpope
   gh('tpope/vim-abolish'),
   gh('tpope/vim-sleuth'),

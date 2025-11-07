@@ -112,14 +112,11 @@ function M.active()
     local icon, icon_hl = MiniIcons.get('filetype', filetype)
     filetype = ('[%%#%s#%s %%#StatusLine#%s]'):format(icon_hl, icon, filetype)
   end
-  local dap = (package.loaded['dap'] and require('dap').status()) or ''
-  if dap ~= '' then dap = ('[ %s]'):format(dap) end
   local busy = vim.bo.busy > 0 and '󰦖 ' or ''
   return '%f%<'
     .. (M.breadcrumbs[winnr] or '')
     .. ' '
     .. filetype
-    .. dap
     .. '%w%m%r %='
     .. busy
     .. diagnostic()
