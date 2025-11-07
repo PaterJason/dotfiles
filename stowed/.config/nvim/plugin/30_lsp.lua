@@ -46,7 +46,12 @@ local function select()
     },
     {
       text = 'Incoming calls',
-      on_choice = function() vim.lsp.buf.incoming_calls() end,
+      on_choice = function() require('lsp_hierarchy').call_hierarchy('callHierarchy/incomingCalls') end,
+      method = 'textDocument/prepareCallHierarchy',
+    },
+    {
+      text = 'Outgoing calls',
+      on_choice = function() require('lsp_hierarchy').call_hierarchy('callHierarchy/outgoingCalls') end,
       method = 'textDocument/prepareCallHierarchy',
     },
     {
@@ -60,11 +65,6 @@ local function select()
         vim.api.nvim_echo(msg, true, {})
       end,
       method = nil,
-    },
-    {
-      text = 'Outgoing calls',
-      on_choice = function() vim.lsp.buf.outgoing_calls() end,
-      method = 'textDocument/prepareCallHierarchy',
     },
     {
       text = 'References',
