@@ -46,13 +46,23 @@ local function select()
     },
     {
       text = 'Incoming calls',
-      on_choice = function() require('lsp_hierarchy').call_hierarchy('callHierarchy/incomingCalls') end,
+      on_choice = function() require('lsp_hierarchy').open('callHierarchy/incomingCalls') end,
       method = 'textDocument/prepareCallHierarchy',
     },
     {
       text = 'Outgoing calls',
-      on_choice = function() require('lsp_hierarchy').call_hierarchy('callHierarchy/outgoingCalls') end,
+      on_choice = function() require('lsp_hierarchy').open('callHierarchy/outgoingCalls') end,
       method = 'textDocument/prepareCallHierarchy',
+    },
+    {
+      text = 'Subtypes',
+      on_choice = function() require('lsp_hierarchy').open('typeHierarchy/subtypes') end,
+      method = 'textDocument/prepareTypeHierarchy',
+    },
+    {
+      text = 'Supertypes',
+      on_choice = function() require('lsp_hierarchy').open('typeHierarchy/supertypes') end,
+      method = 'textDocument/prepareTypeHierarchy',
     },
     {
       text = 'List workspace folders',
@@ -90,16 +100,6 @@ local function select()
       text = 'Type definition',
       on_choice = function() vim.lsp.buf.type_definition() end,
       method = 'textDocument/typeDefinition',
-    },
-    {
-      text = 'Subtypes',
-      on_choice = function() vim.lsp.buf.typehierarchy('subtypes') end,
-      method = 'textDocument/prepareTypeHierarchy',
-    },
-    {
-      text = 'Supertypes',
-      on_choice = function() vim.lsp.buf.typehierarchy('supertypes') end,
-      method = 'textDocument/prepareTypeHierarchy',
     },
     {
       text = 'Workspace symbol',
