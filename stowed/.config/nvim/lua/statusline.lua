@@ -22,6 +22,7 @@ local ruler = '%-14.(%l,%c%V%) %P'
 --- %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}
 local M = {}
 
+--- LSP Document Symbol Breadcrumbs
 ---@type table<integer, string>
 M.breadcrumbs = {}
 
@@ -104,6 +105,56 @@ vim.api.nvim_create_autocmd({
   end,
 })
 
+--- LSP Code Action Lightbulb
+---@type integer
+local code_action_count = 0
+vim.api.nvim_create_autocmd({
+  'CursorMoved',
+}, {
+  desc = 'Lsp code action lightbulb',
+  group = 'JPConfig',
+  callback = function(_args)
+    code_action_count = 0
+    vim.cmd('redrawstatus')
+  end,
+})
+vim.api.nvim_create_autocmd({
+  'CursorHold',
+}, {
+  desc = 'Lsp code action lightbulb',
+  group = 'JPConfig',
+  callback = function(args)
+    local bufnr, winnr = args.buf, vim.api.nvim_get_current_win()
+
+    local method = 'textDocument/codeAction'
+    if #vim.lsp.get_clients({ bufnr = bufnr, method = method }) == 0 then return end
+    local diagnostics = vim.lsp.diagnostic.from(vim.diagnostic.get(bufnr, {
+      lnum = vim.api.nvim_win_get_cursor(winnr)[1] - 1,
+    }))
+    vim.lsp.buf_request_all(bufnr, method, function(client, _bufnr)
+      local range = vim.lsp.util.make_range_params(winnr, client.offset_encoding)
+      ---@type lsp.CodeActionParams
+      return {
+        textDocument = range.textDocument,
+        range = range.range,
+        context = {
+          diagnostics = diagnostics,
+          triggerKind = vim.lsp.protocol.CodeActionTriggerKind.Invoked,
+        },
+      }
+    end, function(results, _context, _config)
+      code_action_count = 0
+      for _client_id, result in pairs(results) do
+        if result.result ~= nil then
+          ---@cast result.result (lsp.Command | lsp.CodeAction)[]
+          code_action_count = code_action_count + #result.result
+        end
+      end
+      vim.cmd('redrawstatus')
+    end)
+  end,
+})
+
 ---@return string
 function M.active()
   local winnr = vim.api.nvim_get_current_win()
@@ -113,12 +164,15 @@ function M.active()
     filetype = ('[%%#%s#%s %%#StatusLine#%s]'):format(icon_hl, icon, filetype)
   end
   local busy = vim.bo.busy > 0 and '󰦖 ' or ''
+  local lightbulb = ''
+  if code_action_count > 0 then lightbulb = ('󰌵 %s '):format(code_action_count) end
   return '%f%<'
     .. (M.breadcrumbs[winnr] or '')
     .. ' '
     .. filetype
     .. '%w%m%r %='
     .. busy
+    .. lightbulb
     .. diagnostic()
     .. ruler
 end

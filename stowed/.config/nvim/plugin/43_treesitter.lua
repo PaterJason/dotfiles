@@ -33,6 +33,7 @@ end
 
 vim.api.nvim_create_autocmd('FileType', {
   callback = function(args)
+    if vim.fn.bufloaded(args.buf) == 0 then return end
     local lang = vim.treesitter.language.get_lang(args.match)
     if lang == nil then return end
     start(args.buf, lang)

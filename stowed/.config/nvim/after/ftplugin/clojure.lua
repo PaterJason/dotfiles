@@ -2,12 +2,7 @@
 require('nrepl').init()
 
 local action = require('nrepl.action')
-vim.keymap.set(
-  { 'n', 'x' },
-  '<LocalLeader>e',
-  '<Plug>(NreplEvalOperator)',
-  { desc = 'Eval', buffer = 0 }
-)
+vim.keymap.set({ 'n', 'x' }, 'g=', '<Plug>(NreplEvalOperator)', { desc = 'Eval', buffer = 0 })
 vim.keymap.set('n', 'g==', action.eval_cursor, { desc = 'Eval cursor', buffer = 0 })
 vim.keymap.set('n', '<LocalLeader>lf', action.load_file, { desc = 'Load file', buffer = 0 })
 vim.keymap.set('n', '<LocalLeader>ll', '<Cmd>Nrepl log<CR>', { desc = 'Log', buffer = 0 })

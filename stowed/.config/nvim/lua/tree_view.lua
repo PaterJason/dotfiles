@@ -179,7 +179,8 @@ end
 function M.open(view)
   vim.cmd('12 split')
   local bufnr = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_win_set_buf(0, bufnr)
+  vim.bo[bufnr].bufhidden = 'wipe'
+  vim.api.nvim_set_current_buf(bufnr)
   vim.wo.winfixbuf = true
   vim.wo.winfixheight = true
   M.render(bufnr, view)
