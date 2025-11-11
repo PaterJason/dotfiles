@@ -23,8 +23,8 @@ local ruler = '%-14.(%l,%c%V%) %P'
 local M = {}
 
 --- LSP Document Symbol Breadcrumbs
----@type table<integer, string>
-M.breadcrumbs = {}
+---@type string
+local breadcrumbs = ''
 
 local kind_map = {}
 for k, v in pairs(vim.lsp.protocol.SymbolKind) do
@@ -68,6 +68,13 @@ local function get_symbol_information_path(path, bufnr, inner, symbols)
 end
 
 vim.api.nvim_create_autocmd({
+  'CursorMoved',
+}, {
+  desc = 'Lsp breadcrumbs',
+  group = 'JPConfig',
+  callback = function(_args) breadcrumbs = '' end,
+})
+vim.api.nvim_create_autocmd({
   'CursorHold',
 }, {
   desc = 'Lsp breadcrumbs',
@@ -76,7 +83,7 @@ vim.api.nvim_create_autocmd({
     local bufnr = args.buf
     local winnr = vim.api.nvim_get_current_win()
     local method = 'textDocument/documentSymbol'
-    M.breadcrumbs[winnr] = nil
+    breadcrumbs = ''
     local client = vim.lsp.get_clients({ bufnr = bufnr, method = method })[1]
     if client == nil then return end
     local chevron = require('icons').chevron.right
@@ -99,7 +106,7 @@ vim.api.nvim_create_autocmd({
       end
       local s = table.concat(path, chevron)
       if #s > 0 then s = chevron .. s end
-      M.breadcrumbs[winnr] = s
+      breadcrumbs = s
       vim.cmd('redrawstatus')
     end, bufnr)
   end,
@@ -113,10 +120,7 @@ vim.api.nvim_create_autocmd({
 }, {
   desc = 'Lsp code action lightbulb',
   group = 'JPConfig',
-  callback = function(_args)
-    code_action_count = 0
-    vim.cmd('redrawstatus')
-  end,
+  callback = function(_args) code_action_count = 0 end,
 })
 vim.api.nvim_create_autocmd({
   'CursorHold',
@@ -167,7 +171,7 @@ function M.active()
   local lightbulb = ''
   if code_action_count > 0 then lightbulb = ('󰌵 %s '):format(code_action_count) end
   return '%f%<'
-    .. (M.breadcrumbs[winnr] or '')
+    .. breadcrumbs
     .. ' '
     .. filetype
     .. '%w%m%r %='
