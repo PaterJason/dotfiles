@@ -14,21 +14,16 @@ end
 ---| 'typeHierarchy/subtypes'
 ---| 'typeHierarchy/supertypes'
 function M.open(method)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local winnr = vim.api.nvim_get_current_win()
-  local prepare_method
-  if method == 'callHierarchy/incomingCalls' or method == 'callHierarchy/outgoingCalls' then
-    prepare_method = 'textDocument/prepareCallHierarchy'
-  else
-    prepare_method = 'textDocument/prepareTypeHierarchy'
-  end
+  local bufnr, winnr = vim.api.nvim_get_current_buf(), vim.api.nvim_get_current_win()
+  local prepare_method = (
+    vim.list_contains({ 'callHierarchy/incomingCalls', 'callHierarchy/outgoingCalls' }, method)
+    and 'textDocument/prepareCallHierarchy'
+  ) or 'textDocument/prepareTypeHierarchy'
   local client = vim.lsp.get_clients({ bufnr = bufnr, method = prepare_method })[1]
   if client == nil then return end
-  local offset_encoding = client.offset_encoding
-
   client:request(
     prepare_method,
-    vim.lsp.util.make_position_params(0, offset_encoding),
+    vim.lsp.util.make_position_params(0, client.offset_encoding),
     function(err, prepare_result, _context, _config)
       assert(err == nil, 'Error preparing hierarchy' .. vim.inspect(err))
       if prepare_result == nil then
@@ -69,12 +64,10 @@ function M.open(method)
           if res == nil then return {} end
           local expand_result = res.result
           if expand_result == nil then return {} end
-          ---@type lsp.CallHierarchyItem[]
-          local children = {}
-          for i, item in ipairs(expand_result) do
-            children[i] = item.from or item.to or item
-          end
-          return children
+          return vim
+            .iter(expand_result)
+            :map(function(item) return item.from or item.to or item end)
+            :totable()
         end,
         action = function(data)
           ---@type lsp.Location
@@ -83,7 +76,7 @@ function M.open(method)
             range = data.selectionRange,
           }
           vim.api.nvim_set_current_win(winnr)
-          vim.lsp.util.show_document(location, offset_encoding)
+          vim.lsp.util.show_document(location, client.offset_encoding)
         end,
       }
       tree_view.open(view)

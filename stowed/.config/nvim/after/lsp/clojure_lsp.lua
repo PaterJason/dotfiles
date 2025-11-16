@@ -54,6 +54,9 @@ local cmds = {
 ---@param client vim.lsp.Client
 ---@param bufnr integer
 local function on_attach(client, bufnr)
+  function _G.CljLspComplete()
+    return vim.iter(cmds):map(function(t) return t[2] end):join('\n')
+  end
   vim.api.nvim_buf_create_user_command(bufnr, 'CljLsp', function(info)
     if #info.fargs == 0 then
       vim.ui.select(cmds, {
@@ -76,12 +79,7 @@ local function on_attach(client, bufnr)
   end, {
     desc = 'Run clojure-lsp command',
     nargs = '?',
-    complete = function(arg_lead, _cmd_line, _cursor_pos)
-      return vim.tbl_filter(
-        function(s) return s:sub(1, #arg_lead) == arg_lead end,
-        vim.iter(cmds):map(function(t) return t[2] end):totable()
-      )
-    end,
+    complete = [[custom,v:lua.CljLspComplete]],
   })
 
   for _, value in ipairs(cmds) do

@@ -1,8 +1,7 @@
 local function diagnostic()
   if package.loaded['vim.diagnostic'] == nil then return '' end
   local counts = vim.diagnostic.count(0)
-  local signs = require('icons').diagnostic
-  local hls = require('icons').diagnostic_hl
+  local signs, hls = require('icons').diagnostic, require('icons').diagnostic_hl
   local result_str = vim
     .iter(pairs(counts))
     :map(
@@ -43,26 +42,32 @@ end
 ---@param bufnr integer
 ---@param inner vim.Range
 ---@param symbols lsp.DocumentSymbol[]
+---@param offset_encoding lsp.PositionEncodingKind
 ---@return void
-local function get_document_symbol_path(path, bufnr, inner, symbols)
+local function get_document_symbol_path(path, bufnr, inner, symbols, offset_encoding)
   ---@type lsp.DocumentSymbol
   local symbol = vim.iter(symbols):find(function(s)
-    local range = vim.range.lsp(bufnr, s.range, 'utf-8')
+    --- @diagnostic disable-next-line: need-check-nil
+    local range = vim.range.lsp(bufnr, s.range, offset_encoding)
     return range:has(inner)
   end)
   if symbol == nil then return end
   append_chunk(path, symbol)
-  if symbol.children ~= nil then get_document_symbol_path(path, bufnr, inner, symbol.children) end
+  if symbol.children ~= nil then
+    get_document_symbol_path(path, bufnr, inner, symbol.children, offset_encoding)
+  end
 end
 
 ---@param path string[]
 ---@param bufnr integer
 ---@param inner vim.Range
 ---@param symbols lsp.SymbolInformation[]
+---@param offset_encoding lsp.PositionEncodingKind
 ---@return void
-local function get_symbol_information_path(path, bufnr, inner, symbols)
+local function get_symbol_information_path(path, bufnr, inner, symbols, offset_encoding)
   for _, symbol in ipairs(symbols) do
-    local range = vim.range.lsp(bufnr, symbol.location.range, 'utf-8')
+    --- @diagnostic disable-next-line: need-check-nil
+    local range = vim.range.lsp(bufnr, symbol.location.range, offset_encoding)
     if range:has(inner) then append_chunk(path, symbol) end
   end
 end
@@ -80,8 +85,7 @@ vim.api.nvim_create_autocmd({
   desc = 'Lsp breadcrumbs',
   group = 'JPConfig',
   callback = function(args)
-    local bufnr = args.buf
-    local winnr = vim.api.nvim_get_current_win()
+    local bufnr, winnr = args.buf, vim.api.nvim_get_current_win()
     local method = 'textDocument/documentSymbol'
     breadcrumbs = ''
     local client = vim.lsp.get_clients({ bufnr = bufnr, method = method })[1]
@@ -100,9 +104,9 @@ vim.api.nvim_create_autocmd({
       assert(_err == nil, _err)
       if result == nil then
       elseif vim.tbl_get(result, 1, 'range') ~= nil then
-        get_document_symbol_path(path, bufnr, inner, result)
+        get_document_symbol_path(path, bufnr, inner, result, client.offset_encoding or 'utf-8')
       else
-        get_symbol_information_path(path, bufnr, inner, result)
+        get_symbol_information_path(path, bufnr, inner, result, client.offset_encoding or 'utf-8')
       end
       local s = table.concat(path, chevron)
       if #s > 0 then s = chevron .. s end
@@ -161,7 +165,6 @@ vim.api.nvim_create_autocmd({
 
 ---@return string
 function M.active()
-  local winnr = vim.api.nvim_get_current_win()
   local filetype = vim.bo.filetype
   if _G.MiniIcons ~= nil and filetype ~= '' then
     local icon, icon_hl = MiniIcons.get('filetype', filetype)

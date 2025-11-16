@@ -49,10 +49,11 @@ return {
       })
     end
   end,
-  ---@type table<string,fun(command: lsp.Command, ctx: table)>
+  ---@type table<string,fun(command: lsp.Command, ctx: lsp.HandlerContext)>
   commands = {
-    ['editor.action.showReferences'] = function(command, _ctx)
-      local items = vim.lsp.util.locations_to_items(command.arguments[3], 'utf-8')
+    ['editor.action.showReferences'] = function(command, ctx)
+      local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+      local items = vim.lsp.util.locations_to_items(command.arguments[3], client.offset_encoding)
       vim.fn.setqflist({}, ' ', {
         items = items,
         title = ('%s (%s)'):format(command.command, command.title),
