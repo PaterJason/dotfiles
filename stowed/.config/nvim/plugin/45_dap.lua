@@ -21,26 +21,22 @@ else
   dap.defaults.fallback.terminal_win_cmd = 'tabnew'
 end
 
-local winopts = {
-  height = 10,
-  winfixbuf = true,
-  winfixheight = true,
-  statusline = [[%<%f [ %{%v:lua.require'dap'.status()%}]%h%w%m%r %=%-14.(%l,%c%V%) %P]],
-}
+dap.listeners.before.attach['user'] = function() require('dap_view').tab_open('repl') end
+dap.listeners.before.launch['user'] = function() require('dap_view').tab_open('repl') end
 
-dap.listeners.before.attach['user'] = function()
-  require('dap_view').dap_widget('scopes')
-  dap.repl.open(winopts)
-end
-dap.listeners.before.launch['user'] = function()
-  require('dap_view').dap_widget('scopes')
-  dap.repl.open(winopts)
-end
+vim.api.nvim_create_user_command('DapView', function(cmd)
+  local tab = cmd.args or 'repl'
+  require('dap_view').tab_open(tab)
+end, {
+  desc = 'Dap View',
+  nargs = '?',
+  complete = [[custom,v:lua.require'dap_view'.complete_tabs]],
+})
 
-vim.keymap.set('n', '<Leader>dw', function()
+vim.keymap.set('n', '<Leader>dv', function()
   local dap_view = require('dap_view')
   vim.ui.select(dap_view.tabs, {}, function(item, _idx)
-    if item ~= nil then dap_view.dap_widget(item) end
+    if item ~= nil then dap_view.tab_open(item) end
   end)
 end, { desc = 'Sessions' })
 
