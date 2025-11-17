@@ -226,6 +226,7 @@ vim.keymap.set('n', '<Leader><Leader>', function()
       'references',
       'type_definition',
       'workspace_symbol',
+      'workspace_symbol_live',
     },
     marks = { 'all', 'global', 'buf' },
     options = { 'all', 'global', 'win', 'buf' },
